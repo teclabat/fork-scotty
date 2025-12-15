@@ -106,7 +106,7 @@ jobs:
             libsmi2-dev libieee1284-3 libieee1284-3-dev snmp-mibs-downloader \
             libwine winbind winetricks wine-binfmt dosbox libnss-winbind \
             libpam-winbind traceroute libnet-traceroute-perl snmp libsnmp-dev \
-            libnetsnmptrapd40 libntirpc3.5 libsnmp-perl smistrip
+            libnetsnmptrapd40 libntirpc4.3t64 libsnmp-perl smistrip
           if test -x /home/linuxbrew/.linuxbrew/bin/brew; then \
             sync && echo "linuxbrew found; attempting to use it..."; \
             eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"; \
