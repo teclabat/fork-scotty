@@ -130,7 +130,7 @@ jobs:
           fi
           if test -x "$(which npm)"; then \
             sync && echo "using $(which npm) to install some things..."; \
-            (time npm install tcl tcl-js) || (npm install tcl) || (npm install tcl-js); \
+            time npm install tcl-js; \
           else \
             echo "skipping npm"; \
           fi
@@ -148,7 +148,7 @@ jobs:
           fi
           if test -x "$(which yarn)"; then \
             sync && echo "using $(which yarn) to install some things..."; \
-            time yarn add tcl tcl-js; \
+            time yarn add tcl-js; \
           else \
             echo "skipping yarn"; \
           fi
