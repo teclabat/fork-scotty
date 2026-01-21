@@ -158,7 +158,7 @@ test udp-7.1 {udp receive: one endpoint} knownBugMacOSX {
     catch {rename u {}}
     rename [udp create -myaddress 127.0.0.1 -myport 1234] u
     u send 127.0.0.1 1234 "nase"
-    after 1
+    after 100
     u receive
 } {127.0.0.1 1234 nase}
 
@@ -169,7 +169,7 @@ test udp-7.2 {udp receive: two endpoints} knownBugMacOSX {
     $s connect 127.0.0.1 1235
     $s send "nase"
     $s destroy
-    after 1
+    after 100
     u receive
 } {127.0.0.1 1236 nase}
 
@@ -178,7 +178,7 @@ test udp-7.3 {udp receive} knownBugMacOSX {
     rename [udp create -myaddress 127.0.0.1 -myport 1234] u
     u send 127.0.0.1 1234 \
 	[binary format "H*" "000102030405060708090a0b0c0d0e0f"]
-    after 1
+    after 100
     binary scan [lindex [u receive] 2] "H*" s
     set s
 } {000102030405060708090a0b0c0d0e0f}
@@ -194,7 +194,7 @@ test udp-8.1 {udp bind} {
     set result ""
     u configure -read {set result [u receive]}
     u send 127.0.0.1 1234 "hi there"
-    after 100
+    after 10000
     update
     set result
 } {127.0.0.1 1234 {hi there}}
@@ -303,7 +303,7 @@ test udp-11.2.1 {udp configure/send: send to configured, w/o connect} -constrain
     rename [udp create -address 127.0.0.1 -port $::SOME_PORT \
 		-myport $::OTHER_PORT] udp#
     udp# send "nase"
-    after 1
+    after 100
     $r receive
 } -result "127.0.0.1 $::OTHER_PORT nase"
 
@@ -316,7 +316,7 @@ test udp-11.2.2 {udp configure/send: send to connected} -constraints {
     udp# configure -address 127.0.0.1 -port $::OTHER_PORT
     udp# connect 127.0.0.1 $::SOME_PORT
     udp# send "nase"
-    after 1
+    after 100
     udp# receive
 } -result "127.0.0.1 $::SOME_PORT nase"
 

@@ -157,14 +157,16 @@ TNM_EXTERN int
 Tnm_NtpObjCmd	(ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
 TNM_EXTERN int
-Tnm_SunrpcObjCmd (ClientData clientData, Tcl_Interp *interp, 
+Tnm_SunrpcObjCmd (ClientData clientData, Tcl_Interp *interp,
 			     int objc, Tcl_Obj *const objv[]);
+#if 0  /* SMX and INED commands removed from build */
 TNM_EXTERN int
-Tnm_InedObjCmd	(ClientData clientData, Tcl_Interp *interp, 
+Tnm_InedObjCmd	(ClientData clientData, Tcl_Interp *interp,
 			     int objc, Tcl_Obj *const objv[]);
 TNM_EXTERN int
 Tnm_SmxObjCmd	(ClientData clientData, Tcl_Interp *interp,
 			     int objc, Tcl_Obj *const objv[]);
+#endif
 TNM_EXTERN int
 Tnm_SmiObjCmd	(ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);

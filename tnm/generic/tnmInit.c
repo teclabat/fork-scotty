@@ -58,7 +58,7 @@ typedef struct {
 static CmdInfo tnmCmds[] = {
     { "Tnm::dns",	Tnm_DnsObjCmd,		 0 },
     { "Tnm::icmp",	Tnm_IcmpObjCmd,		 0 },
-    { "Tnm::ined",	Tnm_InedObjCmd,		 0 },
+    /* { "Tnm::ined",	Tnm_InedObjCmd,		 0 }, */ /* INED command removed */
     { "Tnm::job",	Tnm_JobObjCmd,		 1 },
     { "Tnm::map",	Tnm_MapObjCmd,		 1 },
     { "Tnm::mib",	Tnm_MibObjCmd,		 0 },
@@ -67,7 +67,7 @@ static CmdInfo tnmCmds[] = {
 #ifdef HAVE_SMI_H
     { "Tnm::smi",	Tnm_SmiObjCmd,		 0 },
 #endif
-    { "Tnm::smx",	Tnm_SmxObjCmd,		 1 },
+    /* { "Tnm::smx",	Tnm_SmxObjCmd,		 1 }, */ /* SMX command removed */
     { "Tnm::snmp",	Tnm_SnmpObjCmd,		 0 },
     /* { "Tnm::sunrpc",	Tnm_SunrpcObjCmd,	 0 }, */ /* RPC support disabled */
     { "Tnm::syslog",	Tnm_SyslogObjCmd,	 0 },
@@ -464,9 +464,10 @@ TnmInit(Tcl_Interp *interp, int safe)
     if (InitCmds(interp, safe) != TCL_OK) {
 	return TCL_ERROR;
     }
-    if (TnmSmxInit(interp) != TCL_OK) {
+    /* SMX command removed */
+    /* if (TnmSmxInit(interp) != TCL_OK) {
 	return TCL_ERROR;
-    }
+    } */
 
     return SourceInitFiles(interp);
 }

@@ -317,26 +317,24 @@ TEA_SETUP_COMPILER
 
 # generic tnm
 TEA_ADD_SOURCES([
-		   generic/tnmInit.c 
-		   generic/tnmUtil.c 
-		   generic/tnmJob.c 
-		   generic/tnmIned.c 
-		   generic/tnmSyslog.c 
+		   generic/tnmInit.c
+		   generic/tnmUtil.c
+		   generic/tnmJob.c
+		   generic/tnmSyslog.c
 		   generic/tnmIcmp.c
 		   generic/tnmDns.c
 		   generic/tnmUdp.c
 		   generic/tnmNtp.c
-		   generic/tnmNetdb.c 
-		   generic/tnmMap.c 
-		   generic/tnmMapUtil.c 
-		   generic/tnmMapEvent.c 
-		   generic/tnmMapNode.c 
-		   generic/tnmMapNet.c 
-		   generic/tnmMapLink.c 
-		   generic/tnmMapPort.c 
-		   generic/tnmMapGroup.c 
-		   generic/tnmObj.c 
-		   generic/tnmSmx.c
+		   generic/tnmNetdb.c
+		   generic/tnmMap.c
+		   generic/tnmMapUtil.c
+		   generic/tnmMapEvent.c
+		   generic/tnmMapNode.c
+		   generic/tnmMapNet.c
+		   generic/tnmMapLink.c
+		   generic/tnmMapPort.c
+		   generic/tnmMapGroup.c
+		   generic/tnmObj.c
 	       ])
 # snmp
 TEA_ADD_SOURCES([

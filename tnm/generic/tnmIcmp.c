@@ -239,12 +239,21 @@ Tnm_IcmpObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *con
     int flags = 0;		/* the flags for this request */
     int x, code;
 
-    enum commands { 
-	cmdEcho, cmdMask, cmdTimestamp, cmdTrace, cmdTtl
+    enum commands {
+	cmdEcho,
+#ifndef _WIN32
+	cmdMask, cmdTimestamp,  /* Not supported on Windows (ICMP.DLL limitation) */
+#endif
+	cmdTrace, cmdTtl
     } cmd;
 
     static const char *cmdTable[] = {
-	"echo", "mask", "timestamp", "trace", "ttl", (char *) NULL
+	"echo",
+#ifndef _WIN32
+	"mask", "timestamp",  /* Not supported on Windows (ICMP.DLL limitation) */
+#endif
+	"trace", "ttl",
+	(char *) NULL
     };
 
     TnmIcmpRequest *icmpPtr;
@@ -396,12 +405,14 @@ Tnm_IcmpObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *con
     case cmdEcho:
 	type = TNM_ICMP_TYPE_ECHO;
 	break;
+#ifndef _WIN32
     case cmdMask:
 	type = TNM_ICMP_TYPE_MASK;
 	break;
     case cmdTimestamp:
 	type = TNM_ICMP_TYPE_TIMESTAMP;
 	break;
+#endif
     case cmdTtl:
 	type = TNM_ICMP_TYPE_TRACE;
 	x++;

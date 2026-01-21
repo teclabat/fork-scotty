@@ -941,11 +941,11 @@ Tnm_NetdbObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *co
     int result;
 
     enum commands {
-	cmdHosts, cmdIp, cmdNetworks, cmdProtocols, cmdServices, cmdSunrpcs
+	cmdHosts, cmdIp, cmdNetworks, cmdProtocols, cmdServices
     } cmd;
 
     static const char* cmdTable[] = {
-	"hosts", "ip", "networks", "protocols", "services", "sunrpcs",
+	"hosts", "ip", "networks", "protocols", "services",
 	(char *) NULL
     };
 
@@ -975,11 +975,6 @@ Tnm_NetdbObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *co
 	break;
     case cmdServices:
 	result = NetdbServices(interp, objc, objv);
-	break;
-    case cmdSunrpcs:
-	/* RPC functionality disabled for MinGW64 compatibility */
-	Tcl_SetResult(interp, "sunrpcs command not available (RPC support disabled)", TCL_STATIC);
-	result = TCL_ERROR;
 	break;
     }
 

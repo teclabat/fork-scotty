@@ -482,6 +482,7 @@ TnmCreateSocketHandler	(int sock, int mask,
 TNM_EXTERN void
 TnmDeleteSocketHandler	(int sock);
 
+#if 0  /* SMX command removed from build */
 /*
  *----------------------------------------------------------------
  * The following functions are used to implement the SMX support.
@@ -490,5 +491,6 @@ TnmDeleteSocketHandler	(int sock);
 
 TNM_EXTERN int
 TnmSmxInit		(Tcl_Interp *interp);
+#endif
 
 #endif /* _TNMINT */
