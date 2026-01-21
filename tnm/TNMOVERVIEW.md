@@ -14,6 +14,7 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 - ⚠️ **Limited**: Works with known limitations or differences
 - ❌ **Broken**: Non-functional or crashes
 - 🔶 **Untested**: Not tested on the platform
+- ✂️ **Removed**: Removed from the build (not available)
 
 ## Removed Commands
 
@@ -78,7 +79,7 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 | `ttl <hop> <hosts>` | ✅ | ✅ | Set TTL for echo | `Tnm::icmp ttl 5 192.168.1.1` |
 | `trace <hop> <hosts>` | ✅ | ✅ | Traceroute functionality | `Tnm::icmp trace 10 google.com` |
 
-**Options**: `-timeout <ms>`, `-retries <n>`, `-size <bytes>`, `-delay <ms>` (⚠️ Windows ignores), `-window <n>` (⚠️ Windows differs)
+**Options**: `-timeout <ms>`, `-retries <n>`, `-size <bytes>`, `-delay <ms>` (⚠️ Not supported on Windows), `-window <n>` (⚠️ Different behavior on Windows)
 
 **Notes**: Windows 100% functional for available commands. `mask` and `timestamp` removed from Windows builds due to ICMP.DLL limitations. Echo and trace work reliably. Linux 100% functional with all commands.
 
