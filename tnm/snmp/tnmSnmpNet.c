@@ -101,8 +101,17 @@ TnmSnmpOpen(Tcl_Interp *interp, struct sockaddr_in *addr)
      */
 
     for (sockPtr = tnmSnmpSocketList; sockPtr; sockPtr = sockPtr->nextPtr) {
+#ifdef _WIN32
+        {
+            int namelen_int = (int)namelen;
+            code = getsockname(sockPtr->sock,
+                              (struct sockaddr *) &name, &namelen_int);
+            namelen = namelen_int;
+        }
+#else
 	code = getsockname(sockPtr->sock,
 			   (struct sockaddr *) &name, &namelen);
+#endif
 	if (code == 0 && memcmp(&name, addr, namelen) == 0) {
 	    sockPtr->refCount++;
 	    return sockPtr;
@@ -587,9 +596,19 @@ TnmSnmpSend(Tcl_Interp *interp, TnmSnmp *session, u_char *packet, int packetlen,
 	struct sockaddr_in name, *from = NULL;
 	socklen_t namelen = sizeof(name);
 
+#ifdef _WIN32
+        {
+            int namelen_int = (int)namelen;
+            if (getsockname(sock, (struct sockaddr *) &name, &namelen_int) == 0) {
+                namelen = namelen_int;
+#else
 	if (getsockname(sock, (struct sockaddr *) &name, &namelen) == 0) {
+#endif
 	    from = &name;
 	}
+#ifdef _WIN32
+        }
+#endif
 	
 	TnmSnmpDumpPacket(packet, packetlen, from, to);
     }
@@ -653,9 +672,19 @@ TnmSnmpRecv(Tcl_Interp *interp, u_char *packet, int	*packetlen, struct sockaddr_
 	struct sockaddr_in name, *to = NULL;
 	socklen_t namelen = sizeof(name);
 
+#ifdef _WIN32
+        {
+            int namelen_int = (int)namelen;
+            if (getsockname(sock, (struct sockaddr *) &name, &namelen_int) == 0) {
+                namelen = namelen_int;
+#else
 	if (getsockname(sock, (struct sockaddr *) &name, &namelen) == 0) {
+#endif
 	    to = &name;
 	}
+#ifdef _WIN32
+        }
+#endif
 
 	TnmSnmpDumpPacket(packet, *packetlen, from, to);
     }
@@ -704,9 +733,19 @@ AgentRecv(Tcl_Interp	*interp, TnmSnmp *session, u_char *packet, int *packetlen, 
 	struct sockaddr_in name, *to = NULL;
 	socklen_t namelen = sizeof(name);
 
+#ifdef _WIN32
+        {
+            int namelen_int = (int)namelen;
+            if (getsockname(sock, (struct sockaddr *) &name, &namelen_int) == 0) {
+                namelen = namelen_int;
+#else
 	if (getsockname(sock, (struct sockaddr *) &name, &namelen) == 0) {
+#endif
 	    to = &name;
 	}
+#ifdef _WIN32
+        }
+#endif
 
 	TnmSnmpDumpPacket(packet, *packetlen, from, to);
     }

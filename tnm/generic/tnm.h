@@ -87,21 +87,37 @@ typedef long LONG;
 #define TNM_URL	"https://github.com/jorge-leon/scotty"
 #endif
 
+/*
+ * Include platform-specific definitions before tcl.h
+ * This ensures struct __stat64 is defined before Tcl tries to use it
+ */
+#ifndef _TNMPORT
+#include "tnmPort.h"
+#endif
+
 #include <tcl.h>
 
 /*
- * The support follows the convention that a macro called BUILD_xxxx, where
- * xxxx is the name of a library we are building, is set on the compile line
- * for sources that are to be placed in the library.
+ * Windows DLL export/import declarations
  */
-
-#ifdef TCL_STORAGE_CLASS
-# undef TCL_STORAGE_CLASS
-#endif
-#ifdef BUILD_tnm
-# define TCL_STORAGE_CLASS DLLEXPORT
+#if defined(_WIN32) || defined(__CYGWIN__)
+#  define TNM_DLLEXPORT __declspec(dllexport)
+#  define TNM_DLLIMPORT __declspec(dllimport)
 #else
-# define TCL_STORAGE_CLASS DLLIMPORT
+#  define TNM_DLLEXPORT
+#  define TNM_DLLIMPORT
+#endif
+
+/*
+ * TNM_EXTERN is used for TNM's internal functions to control DLL symbol visibility.
+ * When building the DLL (BUILD_tnm defined), we export symbols.
+ * When using the DLL, we import symbols.
+ * This is separate from Tcl's EXTERN to avoid interfering with Tcl's type definitions.
+ */
+#ifdef BUILD_tnm
+#  define TNM_EXTERN TNM_DLLEXPORT extern
+#else
+#  define TNM_EXTERN TNM_DLLIMPORT extern
 #endif
 
 /*
@@ -110,46 +126,46 @@ typedef long LONG;
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 Tnm_MapObjCmd	(ClientData clientData, Tcl_Interp *interp,
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_JobObjCmd	(ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_MibObjCmd	(ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_NetdbObjCmd	(ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_SnmpObjCmd	(ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_IcmpObjCmd	(ClientData clientData, Tcl_Interp *interp,
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_SyslogObjCmd (ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_UdpObjCmd	(ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_DnsObjCmd	(ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_NtpObjCmd	(ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_SunrpcObjCmd (ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_InedObjCmd	(ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_SmxObjCmd	(ClientData clientData, Tcl_Interp *interp,
 			     int objc, Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 Tnm_SmiObjCmd	(ClientData clientData, Tcl_Interp *interp, 
 			     int objc, Tcl_Obj *const objv[]);
 

@@ -247,12 +247,12 @@ TnmIcmp(Tcl_Interp *interp, TnmIcmpRequest *icmpPtr)
 	hIcmp = LoadLibrary("ICMP.DLL");
 	if (hIcmp) {
 	    Tcl_CreateExitHandler(IcmpExit, hIcmp);
-	    (FARPROC) pIcmpCreateFile 
-		= (FARPROC) GetProcAddress(hIcmp, "IcmpCreateFile");
-	    (FARPROC) pIcmpCloseHandle
-		= (FARPROC) GetProcAddress(hIcmp, "IcmpCloseHandle");
-	    (FARPROC) pIcmpSendEcho 
-		= (FARPROC) GetProcAddress(hIcmp, "IcmpSendEcho");
+	    pIcmpCreateFile
+		= (HANDLE (WINAPI *)(VOID)) GetProcAddress(hIcmp, "IcmpCreateFile");
+	    pIcmpCloseHandle
+		= (BOOL (WINAPI *)(HANDLE)) GetProcAddress(hIcmp, "IcmpCloseHandle");
+	    pIcmpSendEcho
+		= (DWORD (WINAPI *)(HANDLE, DWORD, LPVOID, WORD, PIP_OPTION_INFORMATION, LPVOID, DWORD, DWORD)) GetProcAddress(hIcmp, "IcmpSendEcho");
 	    if (! pIcmpCreateFile || ! pIcmpCloseHandle || ! pIcmpSendEcho) {
 		FreeLibrary(hIcmp);
 		hIcmp = 0;

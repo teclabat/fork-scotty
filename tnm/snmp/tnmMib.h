@@ -35,10 +35,10 @@ typedef struct TnmOid {
     u_int staticSpace[TNM_OID_STATIC_SIZE];
 } TnmOid;
 
-EXTERN void
+TNM_EXTERN void
 TnmOidInit		(TnmOid *oidPtr);
 
-EXTERN void
+TNM_EXTERN void
 TnmOidFree		(TnmOid *oidPtr);
 
 #define TnmOidGet(oidPtr,index)		((oidPtr)->elements[index])
@@ -46,31 +46,31 @@ TnmOidFree		(TnmOid *oidPtr);
 #define TnmOidGetLength(oidPtr)		((oidPtr)->length)
 #define TnmOidGetElements(oidPtr)	((oidPtr)->elements)
 
-EXTERN void
+TNM_EXTERN void
 TnmOidSetLength		(TnmOid *oidPtr, int length);
 
-EXTERN int
+TNM_EXTERN int
 TnmOidAppend		(TnmOid *oidPtr, u_int value);
 
-EXTERN int
+TNM_EXTERN int
 TnmOidFromString	(TnmOid *oidPtr, const char *string);
 
-EXTERN char*
+TNM_EXTERN char*
 TnmOidToString		(TnmOid *oidPtr);
 
-EXTERN void
+TNM_EXTERN void
 TnmOidCopy		(TnmOid *dstOidPtr, TnmOid *srcOidPtr);
 
-EXTERN int
+TNM_EXTERN int
 TnmOidCompare		(TnmOid *oidPtr1, TnmOid *oidPtr2);
 
-EXTERN int
+TNM_EXTERN int
 TnmOidInTree		(TnmOid *treePtr, TnmOid *oidPtr);
 
-EXTERN int
+TNM_EXTERN int
 TnmIsOid		(const char *str);
 
-EXTERN char*
+TNM_EXTERN char*
 TnmHexToOid		(const char *str);
 
 /*
@@ -79,15 +79,15 @@ TnmHexToOid		(const char *str);
  *----------------------------------------------------------------
  */
 
-EXTERN Tcl_ObjType tnmOidType;
+TNM_EXTERN Tcl_ObjType tnmOidType;
 
-EXTERN Tcl_Obj*
+TNM_EXTERN Tcl_Obj*
 TnmNewOidObj		(TnmOid *oidPtr);
 
-EXTERN void
+TNM_EXTERN void
 TnmSetOidObj		(Tcl_Obj *objPtr, TnmOid *oidPtr);
 
-EXTERN TnmOid*
+TNM_EXTERN TnmOid*
 TnmGetOidFromObj	(Tcl_Interp *interp, Tcl_Obj *objPtr);
 
 #define TNM_OID_AS_OID	0x00
@@ -177,7 +177,7 @@ typedef struct TnmMibNode {
     struct TnmMibNode *nextPtr;   /* List of peer nodes.		    */
 } TnmMibNode;
 
-EXTERN Tcl_Obj *tnmMibModulesLoaded;
+TNM_EXTERN Tcl_Obj *tnmMibModulesLoaded;
 
 /*
  *----------------------------------------------------------------
@@ -191,7 +191,7 @@ EXTERN Tcl_Obj *tnmMibModulesLoaded;
 #define TNM_MIB_READWRITE 	3
 #define TNM_MIB_READCREATE	4
 
-EXTERN TnmTable tnmMibAccessTable[];
+TNM_EXTERN TnmTable tnmMibAccessTable[];
 
 /*
  *----------------------------------------------------------------
@@ -212,7 +212,7 @@ EXTERN TnmTable tnmMibAccessTable[];
 #define TNM_MIB_TYPE_ASSIGNMENT		11
 #define TNM_MIB_VALUE_ASSIGNEMENT	12
 
-EXTERN TnmTable tnmMibMacroTable[];
+TNM_EXTERN TnmTable tnmMibMacroTable[];
 
 /*
  *----------------------------------------------------------------
@@ -224,7 +224,7 @@ EXTERN TnmTable tnmMibMacroTable[];
 #define TNM_MIB_DEPRECATED	2
 #define TNM_MIB_OBSOLETE	3
 
-EXTERN TnmTable tnmMibStatusTable[];
+TNM_EXTERN TnmTable tnmMibStatusTable[];
 
 /*
  *----------------------------------------------------------------
@@ -243,12 +243,12 @@ EXTERN TnmTable tnmMibStatusTable[];
  *----------------------------------------------------------------
  */
 
-EXTERN char *tnmMibFileName;		/* Current MIB file name loaded. */
-EXTERN int tnm_MibLineNumber;		/* Current MIB file line number. */
-EXTERN char *tnmMibModuleName;		/* Current MIB module name loaded. */
-EXTERN TnmMibNode *tnmMibTree;		/* The root of the MIB tree. */
-EXTERN TnmMibType *tnmMibTypeList;	/* List of textual conventions. */
-EXTERN TnmMibType *tnmMibTypeSaveMark;	/* The first already saved */
+TNM_EXTERN char*tnmMibFileName;		/* Current MIB file name loaded. */
+TNM_EXTERN int tnm_MibLineNumber;		/* Current MIB file line number. */
+TNM_EXTERN char*tnmMibModuleName;		/* Current MIB module name loaded. */
+TNM_EXTERN TnmMibNode *tnmMibTree;		/* The root of the MIB tree. */
+TNM_EXTERN TnmMibType *tnmMibTypeList;	/* List of textual conventions. */
+TNM_EXTERN TnmMibType *tnmMibTypeSaveMark;	/* The first already saved */
 					/* element in tnmMibTypeList. */
 
 /*
@@ -258,59 +258,59 @@ EXTERN TnmMibType *tnmMibTypeSaveMark;	/* The first already saved */
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 TnmMibLoadFile		(Tcl_Interp *interp, Tcl_Obj *objPtr);
 
-EXTERN int
+TNM_EXTERN int
 TnmMibLoadCore		(Tcl_Interp *interp);
 
-EXTERN int
+TNM_EXTERN int
 TnmMibLoad		(Tcl_Interp *interp);
 
-EXTERN char*
+TNM_EXTERN char*
 TnmMibGetString		(char *fileName, int fileOffset);
 
-EXTERN TnmMibNode*
+TNM_EXTERN TnmMibNode*
 TnmMibNodeFromOid	(TnmOid *oidPtr, TnmOid *nodeOidPtr);
 
-EXTERN void
+TNM_EXTERN void
 TnmMibNodeToOid		(TnmMibNode *nodePtr, TnmOid *oidPtr);
 
-EXTERN char*
+TNM_EXTERN char*
 TnmMibGetOid		(const char *name);
 
-EXTERN char*
+TNM_EXTERN char*
 TnmMibGetName		(char *oid,  int exact);
 
-EXTERN int
+TNM_EXTERN int
 TnmMibGetBaseSyntax	(const char *name);
 
-EXTERN TnmMibNode*
+TNM_EXTERN TnmMibNode*
 TnmMibFindNode		(const char *name, int *offset, int exact);
 
-EXTERN TnmMibNode*
+TNM_EXTERN TnmMibNode*
 TnmFindMibNode		(TnmOid *oidPtr, char **tailPtr);
 
-EXTERN Tcl_Obj*
+TNM_EXTERN Tcl_Obj*
 TnmMibFormat		(char *name, int exact, char *arg);
 
-EXTERN char*
+TNM_EXTERN char*
 TnmMibScan		(const char *name, int exact, const char *arg);
 
-EXTERN Tcl_Obj*
+TNM_EXTERN Tcl_Obj*
 TnmMibFormatValue	(TnmMibType *typePtr, int syntax, 
 				     Tcl_Obj *value);
-EXTERN Tcl_Obj*
+TNM_EXTERN Tcl_Obj*
 TnmMibScanValue		(TnmMibType *typePtr, int syntax, 
 				     Tcl_Obj *value);
-EXTERN int
+TNM_EXTERN int
 TnmMibGetValue		(int syntax, Tcl_Obj *objPtr,
 				     TnmMibType *typePtr, Tcl_Obj **newPtr);
-EXTERN int
+TNM_EXTERN int
 TnmMibPack		(Tcl_Interp *interp, TnmOid *oidPtr,
 				     int objc, Tcl_Obj **objv, int implied,
 				     TnmMibNode **indexNodeList);
-EXTERN int
+TNM_EXTERN int
 TnmMibUnpack		(Tcl_Interp *interp, TnmOid *oidPtr,
 				     int offset, int implied,
 				     TnmMibNode **indexNodeList);
@@ -320,13 +320,13 @@ TnmMibUnpack		(Tcl_Interp *interp, TnmOid *oidPtr,
  *----------------------------------------------------------------
  */
 
-EXTERN char*
+TNM_EXTERN char*
 TnmMibParse		(char *file, char *frozen);
 
-EXTERN TnmMibNode*
+TNM_EXTERN TnmMibNode*
 TnmMibReadFrozen	(FILE *fp);
 
-EXTERN void
+TNM_EXTERN void
 TnmMibWriteFrozen	(FILE *fp, TnmMibNode *nodePtr);
 
 /*
@@ -336,19 +336,19 @@ TnmMibWriteFrozen	(FILE *fp, TnmMibNode *nodePtr);
  *----------------------------------------------------------------
  */
 
-EXTERN TnmMibNode*
+TNM_EXTERN TnmMibNode*
 TnmMibNewNode		(char *label);
 
-EXTERN int
+TNM_EXTERN int
 TnmMibAddNode		(TnmMibNode **rootPtr, 
 				     TnmMibNode *nodePtr);
-EXTERN TnmMibType*
+TNM_EXTERN TnmMibType*
 TnmMibAddType		(TnmMibType *typePtr);
 
-EXTERN TnmMibType*
+TNM_EXTERN TnmMibType*
 TnmMibFindType		(const char *name);
 
-EXTERN void
+TNM_EXTERN void
 TnmMibListTypes		(char *pattern, Tcl_Obj *listPtr);
 
 #endif /* _TNMMIB */

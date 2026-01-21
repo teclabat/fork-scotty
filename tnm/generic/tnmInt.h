@@ -57,7 +57,7 @@ typedef size_t socklen_t;
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 TnmMkDir		(Tcl_Interp *interp, Tcl_Obj *pathname);
 
 /*
@@ -68,13 +68,13 @@ TnmMkDir		(Tcl_Interp *interp, Tcl_Obj *pathname);
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 TnmInit			(Tcl_Interp *interp, int safe);
 
-EXTERN void
+TNM_EXTERN void
 TnmInitPath		(Tcl_Interp *interp);
 
-EXTERN void
+TNM_EXTERN void
 TnmInitDns		(Tcl_Interp *interp);
 
 /*
@@ -90,22 +90,22 @@ typedef struct TnmTable {
     char *value;
 } TnmTable;
 
-EXTERN char*
+TNM_EXTERN char*
 TnmGetTableValue	(TnmTable *table, unsigned key);
 
-EXTERN int
+TNM_EXTERN int
 TnmGetTableKey		(TnmTable *table, const char *value);
 
-EXTERN char*
+TNM_EXTERN char*
 TnmGetTableValues	(TnmTable *table);
 
-EXTERN void
+TNM_EXTERN void
 TnmListFromTable	(TnmTable *table, Tcl_Obj *listPtr,
 				     char *pattern);
-EXTERN int
+TNM_EXTERN int
 TnmGetTableKeyFromObj	(Tcl_Interp *interp, TnmTable *table,
 				     Tcl_Obj *objPtr, char *what);
-EXTERN void
+TNM_EXTERN void
 TnmListFromList		(Tcl_Obj *objPtr, Tcl_Obj *listPtr,
 				     char *pattern);
 	
@@ -128,11 +128,11 @@ typedef struct TnmConfig {
     TnmGetConfigProc *getOption;
 } TnmConfig;
 
-EXTERN int
+TNM_EXTERN int
 TnmSetConfig		(Tcl_Interp *interp, TnmConfig *config,
 				     ClientData obj, int objc, 
 				     Tcl_Obj *const objv[]);
-EXTERN int
+TNM_EXTERN int
 TnmGetConfig		(Tcl_Interp *interp, TnmConfig *config,
 				     ClientData obj, int objc, 
 				     Tcl_Obj *const objv[]);
@@ -170,63 +170,63 @@ typedef unsigned int TnmInteger32;
 #error "need to port the Tnm integer 32 data type to this platform"
 #endif
 
-EXTERN Tcl_ObjType tnmUnsigned64Type;
+TNM_EXTERN Tcl_ObjType tnmUnsigned64Type;
 
-EXTERN Tcl_Obj*
+TNM_EXTERN Tcl_Obj*
 TnmNewUnsigned64Obj	(TnmUnsigned64 u);
 
-EXTERN void
+TNM_EXTERN void
 TnmSetUnsigned64Obj	(Tcl_Obj *objPtr, TnmUnsigned64 u);
 
-EXTERN int
+TNM_EXTERN int
 TnmGetUnsigned64FromObj	(Tcl_Interp *interp, Tcl_Obj *objPtr,
 				     TnmUnsigned64 *uPtr);
 
-EXTERN Tcl_ObjType tnmUnsigned32Type;
+TNM_EXTERN Tcl_ObjType tnmUnsigned32Type;
 
-EXTERN Tcl_Obj*
+TNM_EXTERN Tcl_Obj*
 TnmNewUnsigned32Obj	(TnmUnsigned32 u);
 
-EXTERN void
+TNM_EXTERN void
 TnmSetUnsigned32Obj	(Tcl_Obj *objPtr, TnmUnsigned32 u);
 
-EXTERN int
+TNM_EXTERN int
 TnmGetUnsigned32FromObj	(Tcl_Interp *interp, Tcl_Obj *objPtr,
 				     TnmUnsigned32 *uPtr);
 
-EXTERN Tcl_ObjType tnmInteger32Type;
+TNM_EXTERN Tcl_ObjType tnmInteger32Type;
 
-EXTERN Tcl_Obj*
+TNM_EXTERN Tcl_Obj*
 TnmNewInteger32Obj	(TnmInteger32 i);
 
-EXTERN void
+TNM_EXTERN void
 TnmSetInteger32Obj	(Tcl_Obj *objPtr, TnmInteger32 i);
 
-EXTERN int
+TNM_EXTERN int
 TnmGetInteger32FromObj	(Tcl_Interp *interp, Tcl_Obj *objPtr,
 				     TnmInteger32 *iPtr);
 
-EXTERN Tcl_ObjType tnmOctetStringType;
+TNM_EXTERN Tcl_ObjType tnmOctetStringType;
 
-EXTERN Tcl_Obj*
+TNM_EXTERN Tcl_Obj*
 TnmNewOctetStringObj	(char *bytes, int length);
 
-EXTERN void
+TNM_EXTERN void
 TnmSetOctetStringObj	(Tcl_Obj *objPtr, char *bytes,
 				     int length);
-EXTERN char*
+TNM_EXTERN char*
 TnmGetOctetStringFromObj (Tcl_Interp *interp, Tcl_Obj *objPtr,
 				     int *lengthPtr);
 
-EXTERN Tcl_ObjType tnmIpAddressType;
+TNM_EXTERN Tcl_ObjType tnmIpAddressType;
 
-EXTERN Tcl_Obj*
+TNM_EXTERN Tcl_Obj*
 TnmNewIpAddressObj	(struct in_addr *ipaddr);
 
-EXTERN void
+TNM_EXTERN void
 TnmSetIpAddressObj	(Tcl_Obj *objPtr, struct in_addr *ipaddr);
 
-EXTERN struct in_addr*
+TNM_EXTERN struct in_addr*
 TnmGetIpAddressFromObj	(Tcl_Interp *interp, Tcl_Obj *objPtr);
 
 /*
@@ -245,16 +245,16 @@ typedef struct TnmVector {
     ClientData staticSpace[TNM_VECTOR_STATIC_SIZE + 1];
 } TnmVector;
 
-EXTERN void
+TNM_EXTERN void
 TnmVectorInit		(TnmVector *vPtr);
 
-EXTERN void
+TNM_EXTERN void
 TnmVectorFree		(TnmVector *vPtr);
 
-EXTERN void
+TNM_EXTERN void
 TnmVectorAdd		(TnmVector *vPtr, ClientData clientData);
 
-EXTERN void
+TNM_EXTERN void
 TnmVectorDelete		(TnmVector *vPtr, ClientData clientData);
 
 #define TnmVectorGet(vPtr,index)	((vPtr)->elements[index])
@@ -269,37 +269,37 @@ TnmVectorDelete		(TnmVector *vPtr, ClientData clientData);
  *----------------------------------------------------------------
  */
 
-EXTERN int 
+TNM_EXTERN int 
 TnmGetUnsigned		(Tcl_Interp *interp, char *string,
 				     int *intPtr);
-EXTERN int 
+TNM_EXTERN int 
 TnmGetUnsignedFromObj	(Tcl_Interp *interp, Tcl_Obj *objPtr,
 				     int *intPtr);
-EXTERN int 
+TNM_EXTERN int 
 TnmGetPositive		(Tcl_Interp *interp, char *string,
 				     int *intPtr);
-EXTERN int 
+TNM_EXTERN int 
 TnmGetPositiveFromObj	(Tcl_Interp *interp, Tcl_Obj *objPtr,
 				     int *intPtr);
-EXTERN int
+TNM_EXTERN int
 TnmGetIntRangeFromObj	(Tcl_Interp *interp, Tcl_Obj *objPtr,
 				     int min, int max, int *intPtr);
-EXTERN int
+TNM_EXTERN int
 TnmSetIPAddress		(Tcl_Interp *interp, const char *name,
 				     struct sockaddr_in *addr);
-EXTERN char*
+TNM_EXTERN char*
 TnmGetIPName		(Tcl_Interp *interp,
 				     struct sockaddr_in *addr);
-EXTERN int
+TNM_EXTERN int
 TnmSetIPPort		(Tcl_Interp *interp, char *protocol,
 				     char *port, struct sockaddr_in *addr);
-EXTERN char*
+TNM_EXTERN char*
 TnmGetIPPort		(Tcl_Interp *interp, char *protocol,
 				     struct sockaddr_in *addr);
-EXTERN int
+TNM_EXTERN int
 TnmValidateIpHostName	(Tcl_Interp *interp, const char *name);
 
-EXTERN int
+TNM_EXTERN int
 TnmValidateIpAddress	(Tcl_Interp *interp, const char *address);
 
 /*
@@ -346,10 +346,10 @@ TnmValidateIpAddress	(Tcl_Interp *interp, const char *address);
 #define TNM_LOG_LOCAL6	22	/* local use 6 */
 #define TNM_LOG_LOCAL7	23	/* local use 7 */
 
-EXTERN int 
+TNM_EXTERN int 
 TnmWriteLogMessage	(char *ident, int level, int facility,
 				     char *message);
-EXTERN void
+TNM_EXTERN void
 TnmWriteMessage		(const char *msg);
 
 /*
@@ -397,7 +397,7 @@ typedef struct TnmIcmpRequest {
     struct TnmIcmpRequest *nextPtr;	/* Next queued request. */
 } TnmIcmpRequest;
 
-EXTERN int
+TNM_EXTERN int
 TnmIcmp			(Tcl_Interp *interp, 
 				     TnmIcmpRequest *icmpPtr);
 
@@ -408,16 +408,16 @@ TnmIcmp			(Tcl_Interp *interp,
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 TnmAttrSet	(Tcl_HashTable *tablePtr, Tcl_Interp *interp,
 			     char *name, char *value);
-EXTERN void
+TNM_EXTERN void
 TnmAttrList	(Tcl_HashTable *tablePtr, Tcl_Interp *interp);
 
-EXTERN void
+TNM_EXTERN void
 TnmAttrClear	(Tcl_HashTable *tablePtr);
 
-EXTERN void
+TNM_EXTERN void
 TnmAttrDump	(Tcl_HashTable *tablePtr, char *name, 
 			     Tcl_DString *dsPtr);
 
@@ -428,10 +428,10 @@ TnmAttrDump	(Tcl_HashTable *tablePtr, char *name,
  *----------------------------------------------------------------
  */
 
-EXTERN void
+TNM_EXTERN void
 TnmHexEnc	(char *s, int n, char *d);
 
-EXTERN int
+TNM_EXTERN int
 TnmHexDec	(const char *s, char *d, int *n);
 
 /*
@@ -441,10 +441,10 @@ TnmHexDec	(const char *s, char *d, int *n);
  *----------------------------------------------------------------
  */
 
-EXTERN char*
+TNM_EXTERN char*
 TnmGetHandle	(Tcl_Interp *interp, char *prefix,
 			     unsigned *id);
-EXTERN int
+TNM_EXTERN int
 TnmMatchTags	(Tcl_Interp *interp, Tcl_Obj *tagListObj, 
 			     Tcl_Obj *patternListObj);
 /*
@@ -458,28 +458,28 @@ TnmMatchTags	(Tcl_Interp *interp, Tcl_Obj *tagListObj,
 
 #define TNM_SOCKET_ERROR -1
 
-EXTERN int
+TNM_EXTERN int
 TnmSocket		(int domain, int type, int protocol);
 
-EXTERN int
+TNM_EXTERN int
 TnmSocketBind		(int s, struct sockaddr *name,
 				     socklen_t namelen);
-EXTERN int
+TNM_EXTERN int
 TnmSocketSendTo		(int s, unsigned char *buf, size_t len, int flags,
 				     struct sockaddr *to, socklen_t tolen);
-EXTERN int
+TNM_EXTERN int
 TnmSocketRecvFrom	(int s, unsigned char *buf, size_t len, int flags,
 				     struct sockaddr *from, socklen_t *fromlen);
-EXTERN int
+TNM_EXTERN int
 TnmSocketClose		(int s);
 
 typedef void (TnmSocketProc) (ClientData clientData, int mask);
 
-EXTERN void
+TNM_EXTERN void
 TnmCreateSocketHandler	(int sock, int mask,
 				     TnmSocketProc *proc,
 				     ClientData clientData);
-EXTERN void
+TNM_EXTERN void
 TnmDeleteSocketHandler	(int sock);
 
 /*
@@ -488,7 +488,7 @@ TnmDeleteSocketHandler	(int sock);
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 TnmSmxInit		(Tcl_Interp *interp);
 
 #endif /* _TNMINT */

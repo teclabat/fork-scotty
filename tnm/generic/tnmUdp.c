@@ -381,10 +381,26 @@ UdpCreate(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 #endif
 
     len = sizeof(udpPtr->name);
+#ifdef _WIN32
+    {
+        int len_int = (int)len;
+        (void) getsockname(udpPtr->sock, (struct sockaddr *) &udpPtr->name, &len_int);
+        len = len_int;
+    }
+#else
     (void) getsockname(udpPtr->sock, (struct sockaddr *) &udpPtr->name, &len);
-    
+#endif
+
     len = sizeof(udpPtr->peer);
+#ifdef _WIN32
+    {
+        int len_int = (int)len;
+        (void) getpeername(udpPtr->sock, (struct sockaddr *) &udpPtr->peer, &len_int);
+        len = len_int;
+    }
+#else
     (void) getpeername(udpPtr->sock, (struct sockaddr *) &udpPtr->peer, &len);
+#endif
 
     code = TnmSetConfig(interp, &config, (ClientData) udpPtr, objc, objv);
     if (code != TCL_OK) {
@@ -473,7 +489,15 @@ UdpConnect(Tcl_Interp *interp, Udp *udpPtr, int objc, Tcl_Obj *const objv[])
     }
 
     len = sizeof(udpPtr->peer);
+#ifdef _WIN32
+    {
+        int len_int = (int)len;
+        (void) getpeername(udpPtr->sock, (struct sockaddr *) &udpPtr->peer, &len_int);
+        len = len_int;
+    }
+#else
     (void) getpeername(udpPtr->sock, (struct sockaddr *) &udpPtr->peer, &len);
+#endif
 
     udpPtr->connected = 1;
     udpPtr->addrConfigured = 0;

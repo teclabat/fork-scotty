@@ -70,8 +70,16 @@ PKG_HEADERS	= @PKG_HEADERS@
 PKG_LIB_FILE	= @PKG_LIB_FILE@
 PKG_STUB_LIB_FILE = @PKG_STUB_LIB_FILE@
 
+# EXEEXT must be defined before the conditional below
+EXEEXT		= @EXEEXT@
+
 lib_BINARIES	= $(PKG_LIB_FILE)
+# Unix-specific daemons - only build on Unix platforms (EXEEXT is empty on Unix, .exe on Windows)
+ifeq ($(strip $(EXEEXT)),.exe)
+bin_BINARIES	=
+else
 bin_BINARIES	= nmicmpd nmtrapd
+endif
 BINARIES	= $(lib_BINARIES) $(bin_BINARIES)
 
 SHELL		= @SHELL@
@@ -109,7 +117,6 @@ PACKAGE_VERSION	= @PACKAGE_VERSION@
 CC		= @CC@
 CFLAGS_DEFAULT	= @CFLAGS_DEFAULT@
 CFLAGS_WARNING	= @CFLAGS_WARNING@
-EXEEXT		= @EXEEXT@
 LDFLAGS_DEFAULT	= @LDFLAGS_DEFAULT@
 MAKE_LIB	= @MAKE_LIB@
 MAKE_SHARED_LIB	= @MAKE_SHARED_LIB@
@@ -151,7 +158,8 @@ OLD_TCL_LIBS	= @TCL_LIBS@
 EXTRA_PATH	= $(top_builddir):$(TCL_BIN_DIR)
 EXTRA_EXTRA_PATH	= $(top_builddir):$(TCL_BIN_DIR):$(TK_BIN_DIR)
 TCLLIBPATH	= $(top_builddir)
-TCLSH_ENV	= TCL_LIBRARY=`@CYGPATH@ $(TCL_SRC_DIR)/library`
+TCLSH_ENV	= TCL_LIBRARY=$(TCL_SRC_DIR)/library
+TNM_ENV		= TNM_LIBRARY=$(srcdir)
 PKG_ENV		= @LD_LIBRARY_PATH_VAR@="$(EXTRA_PATH):$(@LD_LIBRARY_PATH_VAR@)" \
 		  PATH="$(EXTRA_PATH):$(PATH)" \
 		  TCLLIBPATH="$(TCLLIBPATH)"
@@ -159,7 +167,7 @@ PKG_ENV		= @LD_LIBRARY_PATH_VAR@="$(EXTRA_PATH):$(@LD_LIBRARY_PATH_VAR@)" \
 TCLSH_PROG	= @TCLSH_PROG@
 TCLSH		= $(PKG_ENV) $(TCLSH_ENV) $(TCLSH_PROG)
 
-OLD_WISH_ENV	= TK_LIBRARY=`@CYGPATH@ $(TK_SRC_DIR)/library`
+OLD_WISH_ENV	= TK_LIBRARY=$(TK_SRC_DIR)/library
 #WISH_PROG	= @WISH_PROG@
 OLD_WISH		= $(PKG_ENV) $(TCLSH_ENV) $(WISH_ENV) $(WISH_PROG)
 
@@ -176,7 +184,7 @@ PKG_CFLAGS	= @PKG_CFLAGS@
 # you do not compile with a similar machine setup as the Tcl core was
 # compiled with.
 OLD_DEFS		= $(TCL_DEFS) @DEFS@ $(PKG_CFLAGS)
-DEFS		= @DEFS@ $(PKG_CFLAGS)
+DEFS		= @DEFS@ $(PKG_CFLAGS) -DBUILD_tnm
 
 # Move pkgIndex.tcl to 'BINARIES' var if it is generated in the Makefile
 CONFIG_CLEAN_FILES = Makefile pkgIndex.tcl scotty config.h \
@@ -205,36 +213,38 @@ all: binaries libraries doc
 # Start of user-definable TARGETS section
 #========================================================================
 
-# SunRpc needs headers and stubs to be generated
 #--------------------------------------------------------------------
-TNM_GENERIC_DIR	= $(top_builddir)/generic
-RPCGEN		= @RPCGEN@
-PKG_LIBS	= @PKG_LIBS@
-
-# I could not tell some makes (SunOS, Minix3) how to do the following
-# with a .SUFFIX rule.
-# rpcgen does not behave consistently over different platforms with
-# respect to its output files.  The only portable way seem to be,
-# building output from input in the same directory.
-ether.h:	$(TNM_GENERIC_DIR)/ether.x
-	cp $(TNM_GENERIC_DIR)/${@:.h=.x}  .
-	$(RPCGEN) ${@:.h=.x}
-mount.h:	$(TNM_GENERIC_DIR)/mount.x
-	cp $(TNM_GENERIC_DIR)/${@:.h=.x}  .
-	$(RPCGEN) ${@:.h=.x}
-pcnfsd.h:	$(TNM_GENERIC_DIR)/pcnfsd.x
-	cp $(TNM_GENERIC_DIR)/${@:.h=.x}  .
-	$(RPCGEN) ${@:.h=.x}
-rstat.h:	$(TNM_GENERIC_DIR)/rstat.x
-	cp $(TNM_GENERIC_DIR)/${@:.h=.x}  .
-	$(RPCGEN) ${@:.h=.x}
-
-ether_clnt.c ether_xdr.c	: ether.h
-mount_clnt.c mount_xdr.c	: mount.h
-pcnfsd_clnt.c pcnfsd_xdr.c	: pcnfsd.h
-rstat_clnt.c rstat_xdr.c	: rstat.h
-
-tnmSunRpc.o: tnmSunRpc.c mount.h ether.h rstat.h pcnfsd.h
+# SunRpc support disabled - all RPC generation rules commented out
+# (rpcgen check removed, Sun RPC not available on Windows)
+#--------------------------------------------------------------------
+# TNM_GENERIC_DIR	= $(top_builddir)/generic
+# RPCGEN		= @RPCGEN@
+# PKG_LIBS	= @PKG_LIBS@
+# 
+# # I could not tell some makes (SunOS, Minix3) how to do the following
+# # with a .SUFFIX rule.
+# # rpcgen does not behave consistently over different platforms with
+# # respect to its output files.  The only portable way seem to be,
+# # building output from input in the same directory.
+# ether.h:	$(TNM_GENERIC_DIR)/ether.x
+# 	cp $(TNM_GENERIC_DIR)/${@:.h=.x}  .
+# 	$(RPCGEN) ${@:.h=.x}
+# mount.h:	$(TNM_GENERIC_DIR)/mount.x
+# 	cp $(TNM_GENERIC_DIR)/${@:.h=.x}  .
+# 	$(RPCGEN) ${@:.h=.x}
+# pcnfsd.h:	$(TNM_GENERIC_DIR)/pcnfsd.x
+# 	cp $(TNM_GENERIC_DIR)/${@:.h=.x}  .
+# 	$(RPCGEN) ${@:.h=.x}
+# rstat.h:	$(TNM_GENERIC_DIR)/rstat.x
+# 	cp $(TNM_GENERIC_DIR)/${@:.h=.x}  .
+# 	$(RPCGEN) ${@:.h=.x}
+# 
+# ether_clnt.c ether_xdr.c	: ether.h
+# mount_clnt.c mount_xdr.c	: mount.h
+# pcnfsd_clnt.c pcnfsd_xdr.c	: pcnfsd.h
+# rstat_clnt.c rstat_xdr.c	: rstat.h
+# 
+# tnmSunRpc.o: tnmSunRpc.c mount.h ether.h rstat.h pcnfsd.h
 
 # tnmUnixInit initialize tkined(library) with TKI_INSTALL_DIR and uses
 # TNM_INSTALL_DIR
@@ -249,34 +259,40 @@ TNM_INSTALL_DIR	= $(pkglibdir)
 TKI_INSTALL_DIR =	$(INSTALL_ROOT)$(prefix)/lib/Tkined$(TKI_VERSION)
 
 tnmUnixInit.o: tnmUnixInit.c
-	$(COMPILE) -DTNMLIB=\"$(TNM_INSTALL_DIR)\" -DTKINEDLIB=\"$(TKI_INSTALL_DIR)\" -c `@CYGPATH@ $<` -o $@
+	$(COMPILE) -DTNMLIB=\"$(TNM_INSTALL_DIR)\" -DTKINEDLIB=\"$(TKI_INSTALL_DIR)\" -c $< -o $@
 
 NMICMPD	= $(bindir)/nmicmpd
 tnmUnixIcmp.o: tnmUnixIcmp.c
-	$(COMPILE) -DNMICMPD=\"$(NMICMPD)\" -c `@CYGPATH@ $<` -o $@
+	$(COMPILE) -DNMICMPD=\"$(NMICMPD)\" -c $< -o $@
 
 NMTRAPD	= $(bindir)/nmtrapd
 tnmUnixSnmp.o: tnmUnixSnmp.c
-	$(COMPILE) -DNMTRAPD=\"$(NMICMPD)\" -c `@CYGPATH@ $<` -o $@
+	$(COMPILE) -DNMTRAPD=\"$(NMICMPD)\" -c $< -o $@
 
 
 # scotty et al
 #--------------------------------------------------------------------
 NM_LIBS		= @NM_LIBS@
+# Unix-specific ICMP and SNMP daemons - only build on Unix platforms
+ifneq ($(strip $(EXEEXT)),.exe)
 nmicmpd: unix/nmicmpd.c
 	$(COMPILE)  -o nmicmpd $(NM_LIBS) unix/nmicmpd.c
 
 nmtrapd: unix/nmtrapd.c
 	$(COMPILE) -o nmtrapd $(NM_LIBS) unix/nmtrapd.c
+endif
 
 # compilation fails with:
 # unix/scotty.c:143: undefined reference to `Tcl_FindExecutable'
+# Unix-specific scotty shell - only build on Unix platforms
+ifneq ($(strip $(EXEEXT)),.exe)
 scotty.o: unix/scotty.c
 	$(COMPILE) -c $(APP_CC_SWITCHES) $(CFLAGS_DEFAULT) $(CFLAGS_WARNING) \
 	    unix/scotty.c
 scotty: scotty.o
 	$(CC) -o $@ scotty.o $(CFLAGS) $(CFLAGS_DEFAULT) $(CFLAGS_WARNING) \
 	    $(TCL_LIB_SPEC) $(TCL_STUB_LIB_SPEC) $(TRHEADS_LIBS) $(LD_SEARCH_FLAGS)
+endif
 
 # tclscotty is a pure Tcl implementation of the scotty program.  It
 # does however not feature a fileevent prioritzed eventloop.
@@ -296,7 +312,12 @@ sinstall: install
 # install tnm accesories
 #--------------------------------------------------------------------
 
+# Conditionally install Unix-specific scotty shell
+ifeq ($(strip $(EXEEXT)),.exe)
+tnm-install: install-mibs install-lib install-agents install-site
+else
 tnm-install: install-mibs install-lib install-agents install-site install-bin
+endif
 
 # Some systems have broken mkdir commands. The definition below allows
 # you to use a replacement (e.g. GNU mkdir) during the install process.
@@ -524,11 +545,13 @@ doc:
 	    done)
 
 install: all install-binaries install-libraries install-doc tnm-install
+ifneq ($(strip $(EXEEXT)),.exe)
 	@echo ""
 	@echo "The Tnm extension installed two programs (nmicmpd, nmtrapd)"
 	@echo "which require root permissions to run."
 	@echo "Type 'make sinstall' as root to make them setuid root."
 	@echo ""
+endif
 
 install-binaries: binaries install-lib-binaries install-bin-binaries
 
@@ -559,25 +582,25 @@ install-doc: doc
 	done
 
 test: binaries libraries
-	$(TCLSH) `@CYGPATH@ $(srcdir)/tests/all.tcl` $(TESTFLAGS) \
+	$(TNM_ENV) $(TCLSH) $(srcdir)/tests/all.tcl $(TESTFLAGS) \
 		-load "package ifneeded ${PACKAGE_NAME} ${PACKAGE_VERSION} \
-			[list load `@CYGPATH@ $(PKG_LIB_FILE)` $(PACKAGE_NAME)]"
+			[list load $(PKG_LIB_FILE) $(PACKAGE_NAME)]"
 
 shell: binaries libraries
-	@$(TCLSH) $(SCRIPT)
+	@$(TNM_ENV) $(TCLSH) $(SCRIPT)
 
 gdb:
-	$(TCLSH_ENV) gdb $(TCLSH_PROG) $(SCRIPT)
+	$(TNM_ENV) $(TCLSH_ENV) gdb $(TCLSH_PROG) $(SCRIPT)
 
 VALGRINDARGS =	--tool=memcheck --num-callers=8 --leak-resolution=high \
 		--leak-check=yes --show-reachable=yes -v
 
 valgrind: binaries libraries
-	$(TCLSH_ENV) valgrind $(VALGRINDARGS) $(TCLSH_PROG) \
-		`@CYGPATH@ $(srcdir)/tests/all.tcl` $(TESTFLAGS)
+	$(TNM_ENV) $(TCLSH_ENV) valgrind $(VALGRINDARGS) $(TCLSH_PROG) \
+		$(srcdir)/tests/all.tcl $(TESTFLAGS)
 
 valgrindshell: binaries libraries
-	$(TCLSH_ENV) valgrind $(VALGRINDARGS) $(TCLSH_PROG) $(SCRIPT)
+	$(TNM_ENV) $(TCLSH_ENV) valgrind $(VALGRINDARGS) $(TCLSH_PROG) $(SCRIPT)
 
 depend:
 
@@ -592,9 +615,13 @@ depend:
 #========================================================================
 
 # leg20170215: add PKG_LIB as dependencies to build rpc 
-$(PKG_LIB_FILE): $(PKG_OBJECTS) $(PKG_LIBS)
+$(PKG_LIB_FILE): $(PKG_OBJECTS)
 	-rm -f $(PKG_LIB_FILE)
+ifeq ($(EXEEXT),.exe)
+	${SHLIB_LD} -Wl,--export-all-symbols -Wl,--enable-auto-import -o $@ $(PKG_OBJECTS) ${SHLIB_LD_LIBS}
+else
 	${MAKE_LIB}
+endif
 	$(RANLIB) $(PKG_LIB_FILE)
 
 $(PKG_STUB_LIB_FILE): $(PKG_STUB_OBJECTS)
@@ -617,10 +644,10 @@ $(PKG_STUB_LIB_FILE): $(PKG_STUB_OBJECTS)
 # As necessary, add $(srcdir):$(srcdir)/compat:....
 #========================================================================
 
-VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win:$(srcdir)/macosx:$(srcdir)/generic:$(srcdir)/snmp
+VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win:$(srcdir)/macosx:$(srcdir)/generic:$(srcdir)/snmp:$(srcdir)/compat
 
 .c.@OBJEXT@:
-	$(COMPILE) -c `@CYGPATH@ $<` -o $@
+	$(COMPILE) -c $< -o $@
 
 #========================================================================
 # Distribution creation

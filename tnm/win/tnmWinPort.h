@@ -22,7 +22,10 @@
  *----------------------------------------------------------------
  */
 
-#define WORDS_BIGENDIAN
+/* #define WORDS_BIGENDIAN */  /* x86_64 is little-endian, not big-endian */
+#define LITTLE_ENDIAN 1234
+#define BIG_ENDIAN 4321
+#define BYTE_ORDER LITTLE_ENDIAN
 #define HAVE_RPCENT
 #define SIZEOF_INT 4
 #define SIZEOF_UNSIGNED_INT 4
@@ -36,7 +39,7 @@
  * is available. This is only a fall through definition here.
  */
 
-#define TKI_VERSION "1.5.1"
+/* #define TKI_VERSION "1.5.1" */  /* Use version from tnm.h instead (1.6.0) */
 
 #ifndef TNMLIB
 #define TNMLIB "c:/tcl/lib/tnm3.1.3"
@@ -68,6 +71,50 @@
 #include <io.h>
 #include <windows.h>
 #include <winsock.h>
+
+/*
+ * MinGW64 compatibility: Define struct __stat64 as alias for struct _stat64
+ * Tcl uses __stat64 but MinGW64 only provides _stat64
+ */
+#if defined(__MINGW64__)
+struct __stat64 {
+    _dev_t st_dev;
+    _ino_t st_ino;
+    unsigned short st_mode;
+    short st_nlink;
+    short st_uid;
+    short st_gid;
+    _dev_t st_rdev;
+    __int64 st_size;
+    __time64_t st_atime;
+    __time64_t st_mtime;
+    __time64_t st_ctime;
+};
+#endif
+
+/*
+ * Winsock1 compatibility definitions for modern code
+ */
+#ifndef INET_ADDRSTRLEN
+#define INET_ADDRSTRLEN 16
+#endif
+
+/* Provide inet_ntop compatibility via inet_ntoa */
+#ifndef inet_ntop
+static inline const char* inet_ntop_compat(int af, const void *src, char *dst, int size) {
+    if (af == AF_INET) {
+        struct in_addr *addr = (struct in_addr *)src;
+        char *result = inet_ntoa(*addr);
+        if (result && size > 0) {
+            strncpy(dst, result, size - 1);
+            dst[size - 1] = '\0';
+            return dst;
+        }
+    }
+    return NULL;
+}
+#define inet_ntop inet_ntop_compat
+#endif
 
 #ifndef IN_CLASSD
 #define	IN_CLASSD(i)		(((long)(i) & 0xf0000000) == 0xe0000000)
@@ -154,7 +201,7 @@ extern struct netent *getnetbyname(const char *name);
  */
 
 #define TNM_SOCKET_FD	TCL_WIN_SOCKET
-typedef unsigned int socklen_t;
+/* typedef unsigned int socklen_t; */  /* Use size_t from tnmInt.h instead */
 
 /*
  *----------------------------------------------------------------

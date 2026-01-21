@@ -827,6 +827,7 @@ NetdbServices(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
  *----------------------------------------------------------------------
  */
 
+#if 0  /* RPC support disabled for MinGW64 compatibility */
 static int
 NetdbSunrpcs(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
@@ -915,6 +916,7 @@ NetdbSunrpcs(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 
     return TCL_OK;
 }
+#endif  /* RPC support disabled */
 
 /*
  *----------------------------------------------------------------------
@@ -975,7 +977,9 @@ Tnm_NetdbObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *co
 	result = NetdbServices(interp, objc, objv);
 	break;
     case cmdSunrpcs:
-	result = NetdbSunrpcs(interp, objc, objv);
+	/* RPC functionality disabled for MinGW64 compatibility */
+	Tcl_SetResult(interp, "sunrpcs command not available (RPC support disabled)", TCL_STATIC);
+	result = TCL_ERROR;
 	break;
     }
 

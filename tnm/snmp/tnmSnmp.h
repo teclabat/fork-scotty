@@ -50,7 +50,7 @@
 #endif
 #endif
 
-EXTERN TnmTable tnmSnmpVersionTable[];
+TNM_EXTERN TnmTable tnmSnmpVersionTable[];
 
 /*
  *----------------------------------------------------------------
@@ -82,7 +82,7 @@ EXTERN TnmTable tnmSnmpVersionTable[];
 #define TNM_SNMP_ENDOFWALK	       254	/* internal error code */
 #define TNM_SNMP_NORESPONSE	       255	/* internal error code */
 
-EXTERN TnmTable tnmSnmpErrorTable[];
+TNM_EXTERN TnmTable tnmSnmpErrorTable[];
 
 /*
  *----------------------------------------------------------------
@@ -122,7 +122,7 @@ typedef struct TnmSnmpMark {
     int recvSize;
 } TnmSnmpMark;
 
-EXTERN TnmSnmpMark tnmSnmpBenchMark;
+TNM_EXTERN TnmSnmpMark tnmSnmpBenchMark;
 #endif
 
 /*
@@ -195,7 +195,7 @@ typedef struct TnmSnmpSocket {
     struct TnmSnmpSocket *nextPtr;	/* pointer to next socket */
 } TnmSnmpSocket;
 
-EXTERN TnmSnmpSocket *tnmSnmpSocketList;
+TNM_EXTERN TnmSnmpSocket *tnmSnmpSocketList;
 
 TnmSnmpSocket*
 TnmSnmpOpen		(Tcl_Interp *interp, 
@@ -278,7 +278,7 @@ typedef struct TnmSnmp {
  *----------------------------------------------------------------
  */
 
-EXTERN TnmSnmp *tnmSnmpList;
+TNM_EXTERN TnmSnmp *tnmSnmpList;
 
 /*
  *----------------------------------------------------------------
@@ -291,7 +291,7 @@ EXTERN TnmSnmp *tnmSnmpList;
 #define TNM_SNMP_NORM_INT	0x02
 #define TNM_SNMP_NORM_BITS	0x04
 
-EXTERN Tcl_Obj*
+TNM_EXTERN Tcl_Obj*
 TnmSnmpNorm	(Tcl_Interp *interp, Tcl_Obj *objPtr, 
 			     int flags);
 /*
@@ -310,14 +310,14 @@ typedef struct SNMP_VarBind {
     int flags;
 } SNMP_VarBind;
 
-EXTERN void
+TNM_EXTERN void
 Tnm_SnmpFreeVBList	(int varBindSize, 
 				     SNMP_VarBind *varBindPtr);
-EXTERN int
+TNM_EXTERN int
 Tnm_SnmpSplitVBList	(Tcl_Interp *interp, char *list,
 				     int *varBindSizePtr, 
 				     SNMP_VarBind **varBindPtrPtr);
-EXTERN char*
+TNM_EXTERN char*
 Tnm_SnmpMergeVBList	(int varBindSize, 
 				     SNMP_VarBind *varBindPtr);
 
@@ -371,21 +371,21 @@ typedef struct TnmSnmpRequest {
     Tcl_Interp *interp;		     /* The interpreter needed internally. */
 } TnmSnmpRequest;
 
-EXTERN TnmSnmpRequest*
+TNM_EXTERN TnmSnmpRequest*
 TnmSnmpCreateRequest	(int id, u_char *packet, int packetlen,
 				     TnmSnmpRequestProc *proc,
 				     ClientData clientData,
 				     Tcl_Interp *interp);
-EXTERN TnmSnmpRequest*
+TNM_EXTERN TnmSnmpRequest*
 TnmSnmpFindRequest	(int id);
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpQueueRequest	(TnmSnmp *session, 
 				     TnmSnmpRequest *request);
-EXTERN void
+TNM_EXTERN void
 TnmSnmpDeleteRequest	(TnmSnmpRequest *request);
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpGetRequestId	(void);
 
 /*
@@ -417,7 +417,7 @@ TNM_SNMP_RECV_EVENT | TNM_SNMP_SEND_EVENT)
 (TNM_SNMP_GET_EVENT | TNM_SNMP_SET_EVENT | TNM_SNMP_CREATE_EVENT |\
 TNM_SNMP_CHECK_EVENT | TNM_SNMP_COMMIT_EVENT | TNM_SNMP_ROLLBACK_EVENT)
 
-EXTERN TnmTable tnmSnmpEventTable[];
+TNM_EXTERN TnmTable tnmSnmpEventTable[];
 
 /*
  *----------------------------------------------------------------
@@ -434,7 +434,7 @@ typedef struct TnmSnmpBinding {
 } TnmSnmpBinding;
 
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpEvalBinding	(Tcl_Interp *interp, TnmSnmp *session,
                                      TnmSnmpPdu *pdu, int event);
 
@@ -459,22 +459,22 @@ typedef struct TnmSnmpNode {
     struct TnmSnmpNode *nextPtr;	/* List of peer node.	    */
 } TnmSnmpNode;
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpCreateNode	(Tcl_Interp *interp, char *id,
 				     char *varName, char *defval);
-EXTERN TnmSnmpNode*
+TNM_EXTERN TnmSnmpNode*
 TnmSnmpFindNode		(TnmSnmp *session, TnmOid *oidPtr);
 
-EXTERN TnmSnmpNode*
+TNM_EXTERN TnmSnmpNode*
 TnmSnmpFindNextNode	(TnmSnmp *session, TnmOid *oidPtr);
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpSetNodeBinding	(TnmSnmp *session, TnmOid *oidPtr,
 				     int event, char *command);
-EXTERN char*
+TNM_EXTERN char*
 TnmSnmpGetNodeBinding	(TnmSnmp *session, TnmOid *oidPtr,
 				     int event);
-EXTERN int
+TNM_EXTERN int
 TnmSnmpEvalNodeBinding	(TnmSnmp *session,
 				     TnmSnmpPdu *pdu, TnmSnmpNode *inst,
 				     int operation, char *value,
@@ -550,7 +550,7 @@ typedef struct TnmSnmpStats {
  *----------------------------------------------------------------
  */
 
-EXTERN TnmSnmpStats tnmSnmpStats;
+TNM_EXTERN TnmSnmpStats tnmSnmpStats;
 
 /*
  *----------------------------------------------------------------
@@ -558,32 +558,32 @@ EXTERN TnmSnmpStats tnmSnmpStats;
  *----------------------------------------------------------------
  */
 
-EXTERN TnmSnmp*
+TNM_EXTERN TnmSnmp*
 TnmSnmpCreateSession	(Tcl_Interp *interp, char type);
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpDeleteSession	(TnmSnmp *session);
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpEncode		(Tcl_Interp *interp, TnmSnmp *session,
 				     TnmSnmpPdu *pdu, TnmSnmpRequestProc *proc,
 				     ClientData clientData);
-EXTERN int
+TNM_EXTERN int
 TnmSnmpDecode		(Tcl_Interp *interp, 
 				     u_char *packet, int packetlen,
 				     struct sockaddr_in *from,
 				     TnmSnmp *session, int *reqid,
 				     int *status, int *index);
-EXTERN void
+TNM_EXTERN void
 TnmSnmpTimeoutProc	(ClientData clientData);
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpAgentInit	(Tcl_Interp *interp, 
 				     TnmSnmp *session);
-EXTERN int
+TNM_EXTERN int
 TnmSnmpAgentRequest	(Tcl_Interp *interp, TnmSnmp *session,
 				     TnmSnmpPdu *pdu);
-EXTERN int
+TNM_EXTERN int
 TnmSnmpEvalCallback	(Tcl_Interp *interp, TnmSnmp *session,
 				     TnmSnmpPdu *pdu,
 				     char *cmd, char *instance, char *oid, 
@@ -598,10 +598,10 @@ TnmSnmpEvalCallback	(Tcl_Interp *interp, TnmSnmp *session,
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpManagerOpen	(Tcl_Interp	*interp);
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpManagerClose	(void);
 
 /*
@@ -615,11 +615,11 @@ TnmSnmpManagerClose	(void);
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpListenerOpen	(Tcl_Interp *interp,
 				     TnmSnmp *session);
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpListenerClose	(TnmSnmp *session);
 
 /*
@@ -630,11 +630,11 @@ TnmSnmpListenerClose	(TnmSnmp *session);
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpResponderOpen	(Tcl_Interp *interp, 
 				     TnmSnmp *session);
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpResponderClose	(TnmSnmp *session);
 
 /*
@@ -645,10 +645,10 @@ TnmSnmpResponderClose	(TnmSnmp *session);
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpNmtrapdOpen	(Tcl_Interp *interp);
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpNmtrapdClose	(void);
 
 /*
@@ -661,19 +661,19 @@ TnmSnmpNmtrapdClose	(void);
 #define TNM_SNMP_SYNC	0x01
 #define TNM_SNMP_ASYNC	0x02
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpSend		(Tcl_Interp *interp,
 				     TnmSnmp *session,
 				     u_char *packet, int packetlen,
 				     struct sockaddr_in *to, int flags);
-EXTERN int
+TNM_EXTERN int
 TnmSnmpRecv		(Tcl_Interp *interp, 
 				     u_char *packet, int *packetlen,
 				     struct sockaddr_in *from, int flags);
-EXTERN int 
+TNM_EXTERN int 
 TnmSnmpWait		(int ms, int flags);
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpDelay		(TnmSnmp *session);
 
 /*
@@ -682,43 +682,43 @@ TnmSnmpDelay		(TnmSnmp *session);
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 TnmSnmpSysUpTime	(void);
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpMD5Digest	(u_char *packet, int packetlen,
 				     u_char *key, u_char *digest);
 
 #ifdef TNM_SNMPv3
-EXTERN void
+TNM_EXTERN void
 TnmSnmpComputeKeys	(TnmSnmp *session);
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpComputeDigest	();
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpAuthOutMsg	(int algorithm, Tcl_Obj *authKey,
 				     u_char *msg, int msgLen,
 				     u_char *msgAuthenticationParameters);
 #endif
 
 #ifdef TNM_SNMPv2U
-EXTERN void
+TNM_EXTERN void
 TnmSnmpUsecSetAgentID	(TnmSnmp *session);
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpUsecGetAgentID	(TnmSnmp *session);
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpUsecAuth	(TnmSnmp *session, 
 				     u_char *packet, int packetlen);
 #endif
 
-EXTERN void
+TNM_EXTERN void
 TnmSnmpDumpPacket	(u_char *packet, int len,
 				     struct sockaddr_in *from,
 				     struct sockaddr_in *to);
-EXTERN void
+TNM_EXTERN void
 TnmSnmpDumpPDU		(Tcl_Interp *interp, TnmSnmpPdu *pdu);
 
 #endif /* _TNMSNMP */

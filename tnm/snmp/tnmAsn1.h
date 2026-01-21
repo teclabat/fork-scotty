@@ -45,7 +45,7 @@
 #define ASN1_OPAQUE		( ASN1_APPLICATION | ASN1_PRIMITIVE | 0x04 )
 #define ASN1_COUNTER64		( ASN1_APPLICATION | ASN1_PRIMITIVE | 0x06 )
 
-EXTERN TnmTable tnmSnmpTypeTable[];
+TNM_EXTERN TnmTable tnmSnmpTypeTable[];
 
 /*
  *----------------------------------------------------------------
@@ -57,7 +57,7 @@ EXTERN TnmTable tnmSnmpTypeTable[];
 #define ASN1_NO_SUCH_INSTANCE	( ASN1_CONTEXT | ASN1_PRIMITIVE | 0x01 )
 #define ASN1_END_OF_MIB_VIEW	( ASN1_CONTEXT | ASN1_PRIMITIVE | 0x02 )
 
-EXTERN TnmTable tnmSnmpExceptionTable[];
+TNM_EXTERN TnmTable tnmSnmpExceptionTable[];
 
 #define TnmSnmpException(x) \
 	((x >= ASN1_NO_SUCH_OBJECT && x <= ASN1_END_OF_MIB_VIEW))
@@ -80,7 +80,7 @@ EXTERN TnmTable tnmSnmpExceptionTable[];
 
 #define ASN1_SNMP_GETRANGE	( ASN1_CONTEXT | ASN1_constRUCTED | 0x0f )
 
-EXTERN TnmTable tnmSnmpPDUTable[];
+TNM_EXTERN TnmTable tnmSnmpPDUTable[];
 
 #ifndef ASN1_SNMP_GETRANGE
 #define TnmSnmpGet(x) \
@@ -115,10 +115,10 @@ EXTERN TnmTable tnmSnmpPDUTable[];
 
 typedef u_int Tnm_Oid;
 
-EXTERN char*
+TNM_EXTERN char*
 TnmOidToStr		(Tnm_Oid *oid, int len);
 
-EXTERN Tnm_Oid*
+TNM_EXTERN Tnm_Oid*
 TnmStrToOid		(const char *str, int *len);
 
 /*
@@ -134,10 +134,10 @@ typedef struct TnmBer {
     char error[256];
 } TnmBer;
 
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerCreate		(u_char *packet, int packetlen);
 
-EXTERN void
+TNM_EXTERN void
 TnmBerDelete		(TnmBer *ber);
 
 /*
@@ -147,19 +147,19 @@ TnmBerDelete		(TnmBer *ber);
  *----------------------------------------------------------------
  */
 
-EXTERN char*
+TNM_EXTERN char*
 TnmBerGetError		(TnmBer *ber);
 
-EXTERN void
+TNM_EXTERN void
 TnmBerSetError		(TnmBer *ber, char *msg);
 
-EXTERN void
+TNM_EXTERN void
 TnmBerWrongValue	(TnmBer *ber, u_char tag);
 
-EXTERN void
+TNM_EXTERN void
 TnmBerWrongLength	(TnmBer *ber, u_char tag, int length);
 
-EXTERN void
+TNM_EXTERN void
 TnmBerWrongTag		(TnmBer *ber, u_char tag, u_char expected);
 
 /*
@@ -168,70 +168,70 @@ TnmBerWrongTag		(TnmBer *ber, u_char tag, u_char expected);
  *----------------------------------------------------------------
  */
 
-EXTERN int
+TNM_EXTERN int
 TnmBerDecDone		(TnmBer *ber);
 
-EXTERN int
+TNM_EXTERN int
 TnmBerSize		(TnmBer *ber);
 
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerDecPeek		(TnmBer *ber, u_char *byte);
 
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerEncByte		(TnmBer *ber, u_char byte);
 
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerDecByte		(TnmBer *ber, u_char *byte);
 
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerEncLength		(TnmBer *ber, u_char *position,
 				     int length);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerDecLength		(TnmBer *ber, int *length);
 
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerEncSequenceStart  (TnmBer *ber, u_char tag,
 				     u_char **token);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerEncSequenceEnd    (TnmBer *ber,
 				     u_char *token);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerDecSequenceStart  (TnmBer *ber, u_char tag,
 				     u_char **token, int *length);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerDecSequenceEnd    (TnmBer *ber,
                                      u_char *token, int length);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerEncInt		(TnmBer *ber, u_char tag,
 				     int value);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerDecInt		(TnmBer *ber, u_char tag,
 				     int *value);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerEncUnsigned64	(TnmBer *ber,
 				     double value);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerDecUnsigned64	(TnmBer *ber,
 				     TnmUnsigned64 *uPtr);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerEncOID		(TnmBer *ber,
 				     Tnm_Oid *oid, int oidlen);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerDecOID		(TnmBer *ber,
 				     Tnm_Oid *oid, int *oidlen);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerEncOctetString	(TnmBer *ber, u_char tag,
 				     char *octets, int len);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerDecOctetString	(TnmBer *ber, u_char tag,
 				     char **octets, int *len);
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerEncNull		(TnmBer *ber, u_char tag);
 
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerDecNull		(TnmBer *ber, u_char tag);
 
-EXTERN TnmBer*
+TNM_EXTERN TnmBer*
 TnmBerDecAny		(TnmBer *ber, char **octets, int *len);
 
 #endif /* _TNMASN1 */

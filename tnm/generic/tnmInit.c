@@ -69,7 +69,7 @@ static CmdInfo tnmCmds[] = {
 #endif
     { "Tnm::smx",	Tnm_SmxObjCmd,		 1 },
     { "Tnm::snmp",	Tnm_SnmpObjCmd,		 0 },
-    { "Tnm::sunrpc",	Tnm_SunrpcObjCmd,	 0 },
+    /* { "Tnm::sunrpc",	Tnm_SunrpcObjCmd,	 0 }, */ /* RPC support disabled */
     { "Tnm::syslog",	Tnm_SyslogObjCmd,	 0 },
     { "Tnm::udp",	Tnm_UdpObjCmd,		 0 },
     { (char *) NULL,	(Tcl_ObjCmdProc *) NULL, 0 }

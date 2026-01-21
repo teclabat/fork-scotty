@@ -19,15 +19,29 @@
 #ifndef USE_TCL_STUBS
 	/*
  * TclPro does not seem to have tclIntPlatDecls.h.
- */ 
-	EXTERN void TclWinConvertWSAError (DWORD errCode);
+ */
+	/* EXTERN void TclWinConvertWSAError (DWORD errCode); */
+	/* Provide our own implementation since TclWinConvertWSAError is internal */
+	static void TclWinConvertWSAError(DWORD errCode) {
+		/* Simple WSA error to errno conversion */
+		switch (errCode) {
+			case WSAEWOULDBLOCK: errno = EAGAIN; break;
+			case WSAEINTR: errno = EINTR; break;
+			case WSAEBADF: errno = EBADF; break;
+			case WSAEACCES: errno = EACCES; break;
+			case WSAEFAULT: errno = EFAULT; break;
+			case WSAEINVAL: errno = EINVAL; break;
+			case WSAEMFILE: errno = EMFILE; break;
+			default: errno = EIO; break;
+		}
+	}
 #else
 	/*
 	 * This internal header is needed for TclWinConvertWSAError() :-(
 	 */
 	#include <TclPort.h>
-#endif 
- 
+#endif
+
 /*
  * The following structure is used to keep track of Tcl channels
  * opened on sockets for the purpose of getting events from the Tcl
@@ -56,9 +70,9 @@ TnmSocket(int domain, int type, int protocol)
 }
 
 int
-TnmSocketBind(int s, struct sockaddr *name, int namelen)
+TnmSocketBind(int s, struct sockaddr *name, socklen_t namelen)
 {
-    int e = bind(s, name, namelen);
+    int e = bind(s, name, (int)namelen);
     if (e == SOCKET_ERROR) {
 	TclWinConvertWSAError(WSAGetLastError());
     }
@@ -66,9 +80,9 @@ TnmSocketBind(int s, struct sockaddr *name, int namelen)
 }
 
 int
-TnmSocketSendTo(int s, char *buf, int len, int flags, struct sockaddr *to, int tolen)
+TnmSocketSendTo(int s, unsigned char *buf, size_t len, int flags, struct sockaddr *to, socklen_t tolen)
 {
-    int n = sendto(s, buf, len, flags, to, tolen);
+    int n = sendto(s, (char *)buf, (int)len, flags, to, tolen);
     if (n == SOCKET_ERROR) {
 	TclWinConvertWSAError(WSAGetLastError());
     }
@@ -76,9 +90,10 @@ TnmSocketSendTo(int s, char *buf, int len, int flags, struct sockaddr *to, int t
 }
 
 int
-TnmSocketRecvFrom(int s, char *buf, int len, int flags, struct sockaddr *from, int *fromlen)
+TnmSocketRecvFrom(int s, unsigned char *buf, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen)
 {
-    int n = recvfrom(s, buf, len, flags, from, fromlen);
+    int fromlen_int = (int)*fromlen;
+    int n = recvfrom(s, (char *)buf, (int)len, flags, from, &fromlen_int);
 
     /*
      * At least the Windows NT 3.51 Windows Socket implementation
@@ -88,11 +103,12 @@ TnmSocketRecvFrom(int s, char *buf, int len, int flags, struct sockaddr *from, i
      * if we got an WSAEISCONN error.  */
 
     if (n == SOCKET_ERROR && WSAGetLastError() == WSAEISCONN) {
-	n = getpeername(s, from, fromlen);
+	n = getpeername(s, from, &fromlen_int);
 	if (n != SOCKET_ERROR) {
-	    n = recv(s, buf, len, flags);
+	    n = recv(s, (char *)buf, (int)len, flags);
 	}
     }
+    *fromlen = fromlen_int;
 
     if (n == SOCKET_ERROR) {
 	TclWinConvertWSAError(WSAGetLastError());

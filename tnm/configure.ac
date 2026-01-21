@@ -62,18 +62,18 @@ AC_CHECK_SIZEOF([unsigned long long])dnl
 
 
 #----------------------------------------------------------------------------
-#	Check if rpcgen is available. If not, use the files in 
-#	$srcdir/../compat/.
+#	rpcgen check disabled - Sun RPC support excluded from build
+#	(Original check for rpcgen and precompiled RPC stubs commented out)
 #----------------------------------------------------------------------------
 
-AC_CHECK_PROG([RPCGEN],[rpcgen],[rpcgen],[echo])
-if test "x${RPCGEN}" = "xecho"; then
-    AC_MSG_WARN([Failed to find rpcgen. Will use precompiled files.])
-    cp ${srcdir}/../compat/ether* .
-    cp ${srcdir}/../compat/mount* .
-    cp ${srcdir}/../compat/pcnfsd* .
-    cp ${srcdir}/../compat/rstat* .
-fi
+# AC_CHECK_PROG([RPCGEN],[rpcgen],[rpcgen],[echo])
+# if test "x${RPCGEN}" = "xecho"; then
+#     AC_MSG_WARN([Failed to find rpcgen. Will use precompiled files.])
+#     cp ${srcdir}/../compat/ether* .
+#     cp ${srcdir}/../compat/mount* .
+#     cp ${srcdir}/../compat/pcnfsd* .
+#     cp ${srcdir}/../compat/rstat* .
+# fi
 
 #----------------------------------------------------------------------------
 #	Check for the existence of various libraries.
@@ -322,11 +322,10 @@ TEA_ADD_SOURCES([
 		   generic/tnmJob.c 
 		   generic/tnmIned.c 
 		   generic/tnmSyslog.c 
-		   generic/tnmIcmp.c 
-		   generic/tnmDns.c 
-		   generic/tnmUdp.c 
-		   generic/tnmSunRpc.c 
-		   generic/tnmNtp.c 
+		   generic/tnmIcmp.c
+		   generic/tnmDns.c
+		   generic/tnmUdp.c
+		   generic/tnmNtp.c
 		   generic/tnmNetdb.c 
 		   generic/tnmMap.c 
 		   generic/tnmMapUtil.c 
@@ -362,16 +361,7 @@ TEA_ADD_SOURCES([
 	       ])
 TEA_ADD_HEADERS([])
 TEA_ADD_INCLUDES([${TIRPC_CFLAGS} -I. -Igeneric -Isnmp])
-TEA_ADD_LIBS([
-		mount_clnt.o 
-		mount_xdr.o 
-		ether_clnt.o 
-		ether_xdr.o 
-		rstat_clnt.o 
-		rstat_xdr.o 
-		pcnfsd_clnt.o 
-		pcnfsd_xdr.o
-	    ])
+TEA_ADD_LIBS([])
 TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
 # This would be nice to use, but the current setup hardcodes related
@@ -391,10 +381,11 @@ TEA_ADD_TCL_SOURCES([])
 #--------------------------------------------------------------------
 
 CLEANFILES="${CLEANFILES} nmicmpd nmtrapd"
-CLEANFILES="${CLEANFILES} ether_* ether.h"
-CLEANFILES="${CLEANFILES} mount_* mount.h"
-CLEANFILES="${CLEANFILES} pcnfsd_* pcnfsd.h"
-CLEANFILES="${CLEANFILES} rstat_* rstat.h"
+# RPC stub files not generated (Sun RPC support disabled)
+# CLEANFILES="${CLEANFILES} ether_* ether.h"
+# CLEANFILES="${CLEANFILES} mount_* mount.h"
+# CLEANFILES="${CLEANFILES} pcnfsd_* pcnfsd.h"
+# CLEANFILES="${CLEANFILES} rstat_* rstat.h"
 CLEANFILES="${CLEANFILES} autoscan.log"
 
 if test "x${TEA_PLATFORM}" = "xwindows"; then
@@ -405,6 +396,15 @@ if test "x${TEA_PLATFORM}" = "xwindows"; then
     else
         AC_MSG_NOTICE([missing wanted sourcefile win/winFile.c])
     fi
+    TEA_ADD_SOURCES([
+                    win/tnmWinInit.c
+                    win/tnmWinLog.c
+                    win/tnmWinSocket.c
+                    win/tnmWinIcmp.c
+                    compat/tnm_compat.c
+                   ])
+    TEA_ADD_LIBS([-lws2_32 -ltcl86])
+    SHLIB_LD="${SHLIB_LD} -Wl,--export-all-symbols"
     if test -d "$(${CYGPATH} ${srcdir}/win)"; then
         TEA_ADD_INCLUDES([-I\"$(${CYGPATH} ${srcdir}/win)\"])
     else
@@ -499,7 +499,7 @@ TEA_PROG_TCLSH
 AC_SUBST([TNM_VERSION])dnl
 AC_SUBST([TKI_VERSION])dnl
 
-AC_SUBST([RPCGEN])dnl
+# AC_SUBST([RPCGEN])dnl  # Not needed - Sun RPC support disabled
 AC_SUBST([NM_LIBS])dnl
 
 AC_SUBST([THREADS_LIBS])dnl

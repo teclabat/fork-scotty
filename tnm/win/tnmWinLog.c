@@ -44,7 +44,7 @@ int
 TnmWriteLogMessage(char *ident, int level, int facility, char *message)
 {
     HANDLE ed;
-    char *msgList[1];
+    const char *msgList[1];
     WORD type;
     WORD category = facility;
     DWORD id = getpid();
