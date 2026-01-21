@@ -101,7 +101,7 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 
 **Options**: `-address <host>`, `-port <n>`, `-myaddress <host>`, `-myport <n>`, `-read <cmd>`, `-write <cmd>`, `-tags <list>`
 
-**Notes**: 97% functional. Reliable UDP implementation on both platforms.
+**Notes**: 100% functional. Fixed socket creation bug where -myport option failed to initialize sin_family on Windows. All 36 UDP tests pass reliably on both platforms.
 
 ---
 
@@ -269,7 +269,7 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 | **Tnm::syslog** | ✅ 100% | ✅ 100% | System logging |
 | **Tnm::map** | ✅ 100% | ✅ 100% | Network topology maps |
 | **Tnm::icmp** | ✅ 100% | ✅ 100% | Ping, traceroute (mask/timestamp removed on Windows) |
-| **Tnm::udp** | ✅ 97% | ✅ 97% | UDP socket communication |
+| **Tnm::udp** | ✅ 100% | ✅ 100% | UDP socket communication |
 | **Tnm::job** | ✅ 91% | ✅ 91% | Scheduled background jobs |
 | **Tnm::netdb** | ✅ 100% | ✅ 100% | Network database queries (sunrpcs removed) |
 | **Tnm::snmp** | ✅ 100% | ✅ 100% | SNMP v1/v2c/v3 operations |
