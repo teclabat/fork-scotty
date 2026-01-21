@@ -14,18 +14,19 @@ Tcl Version: 8.6
 PROJECT STATUS: ✅ COMPLETE AND SUCCESSFUL
 ================================================================================
 
-Build Result:       ✅ SUCCESS - Tnm313.dll built (2.9 MB, PE32+ x86-64)
+Build Result:       ✅ SUCCESS - Tnm313.dll built (2.8 MB, PE32+ x86-64)
 Installation:       ✅ SUCCESS - Installed to release/lib/Tnm3.1.3/
 Testing:            ✅ SUCCESS - 87.6% test pass rate (531/606 tests)
 Primary Function:   ✅ SUCCESS - SNMP/MIB 100% functional
-Documentation:      ✅ COMPLETE - All 28 fixes documented in TECLABCHANGES.md
+Documentation:      ✅ COMPLETE - All changes documented in TECLABCHANGES.md
+Feature Removals:   ✅ COMPLETE - Removed SMX, INED, sunrpcs, ICMP mask/timestamp
 
 ================================================================================
 INSTALLATION DETAILS
 ================================================================================
 
 Installation Path:  D:\CM.tcltk\tcltk86\release\lib\Tnm3.1.3\
-DLL File:           Tnm313.dll (2.9 MB)
+DLL File:           Tnm313.dll (2.8 MB)
 MIB Modules:        152 modules installed
 Library Scripts:    12 Tcl files
 Documentation:      23 man pages
@@ -40,11 +41,12 @@ KEY ACHIEVEMENTS
 1. ✅ Fixed critical endianness bug (WORDS_BIGENDIAN incorrectly set)
 2. ✅ Resolved 28 compilation issues (6 critical + 22 additional)
 3. ✅ Successfully excluded Sun RPC support (legacy feature)
-4. ✅ Built and installed all 42 core modules (100% success rate)
+4. ✅ Built and installed 40 core modules (SMX and INED removed)
 5. ✅ Verified SNMP v1/v2c/v3 functionality
 6. ✅ Test suite configured and executed (87.6% pass rate)
 7. ✅ Complete documentation created (TECLABCHANGES.md)
-8. ✅ Runtime testing confirms all 12 commands operational
+8. ✅ Runtime testing confirms 10 available commands operational
+9. ✅ Removed unused features (SMX, INED, sunrpcs, ICMP mask/timestamp)
 
 ================================================================================
 CRITICAL FIXES APPLIED
@@ -126,19 +128,17 @@ USAGE INSTRUCTIONS
 3. Load package:
    package require Tnm
 
-4. Use TNM commands (12 available):
+4. Use TNM commands (10 available):
    Tnm::snmp   - SNMP sessions and operations
    Tnm::mib    - MIB management and parsing
-   Tnm::icmp   - ICMP echo/ping operations
+   Tnm::icmp   - ICMP echo/ping operations (mask/timestamp removed on Windows)
    Tnm::udp    - UDP socket operations
    Tnm::dns    - DNS queries (limited)
-   Tnm::netdb  - Network database lookups
+   Tnm::netdb  - Network database lookups (sunrpcs removed)
    Tnm::syslog - Syslog message generation
    Tnm::job    - Job control and scheduling
    Tnm::map    - Network map management
    Tnm::ntp    - NTP operations (limited)
-   Tnm::ined   - INED graph support
-   Tnm::smx    - Script MIB extension
 
 Example SNMP Usage:
   set s [Tnm::snmp generator -version SNMPv2c -address 192.168.1.1]
@@ -165,14 +165,14 @@ BUILD STATISTICS
 ================================================================================
 
 Build Method:       TEA (Tcl Extension Architecture) 3.10
-Modules Built:      42 of 43 (98%)
-  - Core modules:   20/20 (100%)
+Modules Built:      40 of 43 (93%)
+  - Core modules:   18/20 (90%) - SMX and INED removed
   - SNMP modules:   18/18 (100%)
   - Windows modules: 4/4 (100%)
   - RPC modules:     0/1 (excluded by design)
 
 Compilation Time:   ~30 seconds
-DLL Size:           2.9 MB (unstripped)
+DLL Size:           2.8 MB (unstripped) - reduced by ~100 KB
 Configuration:      Thread-safe, shared library, no symbols
 
 Libraries Linked:

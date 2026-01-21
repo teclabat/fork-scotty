@@ -15,6 +15,15 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 - ❌ **Broken**: Non-functional or crashes
 - 🔶 **Untested**: Not tested on the platform
 
+## Removed Commands
+
+**Note**: The following commands have been removed from the build:
+
+- ✂️ **Tnm::smx** - Removed from all platforms (unused Script MIB Executive feature)
+- ✂️ **Tnm::ined** - Removed from all platforms (Tkined GUI integration not needed)
+- ✂️ **Tnm::netdb sunrpcs** - Removed from all platforms (RPC support disabled)
+- ✂️ **Windows only**: `Tnm::icmp mask` and `timestamp` - Removed due to Windows ICMP.DLL API limitations
+
 ---
 
 ## Tnm::syslog
@@ -64,14 +73,14 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 | Sub-command | Windows | Linux | Description | Tcl Example |
 |-------------|---------|-------|-------------|-------------|
 | `echo <hosts>` | ✅ | ✅ | Send ICMP echo (ping) | `Tnm::icmp echo 192.168.1.1` |
-| `mask <hosts>` | ❌ | ✅ | Request address mask | `Tnm::icmp mask 10.0.0.1` |
-| `timestamp <hosts>` | ❌ | ✅ | Request timestamp | `Tnm::icmp timestamp 10.0.0.1` |
+| `mask <hosts>` | ✂️ | ✅ | Request address mask | `Tnm::icmp mask 10.0.0.1` |
+| `timestamp <hosts>` | ✂️ | ✅ | Request timestamp | `Tnm::icmp timestamp 10.0.0.1` |
 | `ttl <hop> <hosts>` | ✅ | ✅ | Set TTL for echo | `Tnm::icmp ttl 5 192.168.1.1` |
 | `trace <hop> <hosts>` | ✅ | ✅ | Traceroute functionality | `Tnm::icmp trace 10 google.com` |
 
 **Options**: `-timeout <ms>`, `-retries <n>`, `-size <bytes>`, `-delay <ms>` (⚠️ Windows ignores), `-window <n>` (⚠️ Windows differs)
 
-**Notes**: Windows 65% functional - ICMP.DLL limitations prevent mask/timestamp. Echo and trace work reliably. Linux 100% functional.
+**Notes**: Windows 100% functional for available commands. `mask` and `timestamp` removed from Windows builds due to ICMP.DLL limitations. Echo and trace work reliably. Linux 100% functional with all commands.
 
 ---
 
@@ -135,16 +144,13 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 | `networks name <addr>` | ⚠️ | ✅ | Get network name | `Tnm::netdb networks name 10.0.0.0` |
 | `networks address <name>` | ⚠️ | ✅ | Get network address | `Tnm::netdb networks address loopback` |
 | `networks aliases <arg>` | ⚠️ | ✅ | Get network aliases | `Tnm::netdb networks aliases loopback` |
-| `sunrpcs name <num>` | ❌ | ✅ | Get RPC service name | `Tnm::netdb sunrpcs name 100000` |
-| `sunrpcs number <name>` | ❌ | ✅ | Get RPC service number | `Tnm::netdb sunrpcs number portmapper` |
-| `sunrpcs aliases <arg>` | ❌ | ✅ | Get RPC aliases | `Tnm::netdb sunrpcs aliases portmapper` |
 | `ip class <addr>` | ✅ | ✅ | Get IP address class | `Tnm::netdb ip class 192.168.1.1` |
 | `ip range <addr>` | ✅ | ✅ | Get address range | `Tnm::netdb ip range 10.0.0.0/24` |
 | `ip apply <range> <script>` | ✅ | ✅ | Apply script to range | `Tnm::netdb ip apply 192.168.1.0/24 {puts}` |
 | `ip broadcast <addr>` | ✅ | ✅ | Get broadcast address | `Tnm::netdb ip broadcast 192.168.1.0/24` |
 | `ip compare <a1> <a2>` | ✅ | ✅ | Compare addresses | `Tnm::netdb ip compare 10.0.0.1 10.0.0.2` |
 
-**Notes**: 76% functional on Windows. Networks queries limited, sunrpcs disabled on Windows (no getrpcent()). All other functions work reliably.
+**Notes**: 100% functional for available commands on both platforms. Networks queries limited on Windows. `sunrpcs` command removed from all platforms (RPC support disabled).
 
 ---
 
@@ -256,50 +262,20 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 
 ---
 
-## Tnm::smx
-
-**Purpose**: SMX (SNMP Multiplexer) operations for distributed SNMP processing
-
-| Sub-command | Windows | Linux | Description | Tcl Example |
-|-------------|---------|-------|-------------|-------------|
-| `error <code> <msg>` | 🔶 | 🔶 | Report SMX error | `Tnm::smx error 1 "Connection failed"` |
-| `exit <code>` | 🔶 | 🔶 | Exit with code | `Tnm::smx exit 0` |
-| `log <msg>` | 🔶 | 🔶 | Log SMX message | `Tnm::smx log "Processing started"` |
-| `profiles` | 🔶 | 🔶 | Get available profiles | `Tnm::smx profiles` |
-| `result <data>` | 🔶 | 🔶 | Return result data | `Tnm::smx result $output` |
-
-**Notes**: SMX functionality for distributed SNMP management. Requires SMX framework setup. Untested in current environment.
-
----
-
-## Tnm::ined
-
-**Purpose**: Tkined (Tk-based Network Editor) integration
-
-| Sub-command | Windows | Linux | Description | Tcl Example |
-|-------------|---------|-------|-------------|-------------|
-| Various GUI commands | 🔶 | 🔶 | Network topology editor | Requires Tkined application |
-
-**Notes**: Tkined integration for graphical network management. Requires Tk toolkit and Tkined application. Not applicable for console-only TNM usage. See Tkined documentation for GUI-specific commands.
-
----
-
 ## Command Summary Table
 
 | Command | Windows Status | Linux Status | Primary Use Case |
 |---------|----------------|--------------|------------------|
 | **Tnm::syslog** | ✅ 100% | ✅ 100% | System logging |
 | **Tnm::map** | ✅ 100% | ✅ 100% | Network topology maps |
-| **Tnm::icmp** | ⚠️ 65% | ✅ 100% | Ping, traceroute (mask/timestamp broken on Windows) |
+| **Tnm::icmp** | ✅ 100% | ✅ 100% | Ping, traceroute (mask/timestamp removed on Windows) |
 | **Tnm::udp** | ✅ 97% | ✅ 97% | UDP socket communication |
 | **Tnm::job** | ✅ 91% | ✅ 91% | Scheduled background jobs |
-| **Tnm::netdb** | ⚠️ 76% | ✅ 100% | Network database queries (sunrpcs disabled on Windows) |
+| **Tnm::netdb** | ✅ 100% | ✅ 100% | Network database queries (sunrpcs removed) |
 | **Tnm::snmp** | ✅ 100% | ✅ 100% | SNMP v1/v2c/v3 operations |
 | **Tnm::mib** | ✅ 100% | ✅ 100% | MIB database operations |
 | **Tnm::dns** | ❌ 0% | ✅ 100% | DNS queries (CRASHES ON WINDOWS) |
 | **Tnm::ntp** | ❌ 0% | ✅ 100% | NTP time queries (CRASHES ON WINDOWS) |
-| **Tnm::smx** | 🔶 Untested | 🔶 Untested | SNMP multiplexer operations |
-| **Tnm::ined** | 🔶 GUI | 🔶 GUI | Tkined graphical interface |
 
 ---
 

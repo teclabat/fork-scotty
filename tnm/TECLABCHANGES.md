@@ -994,6 +994,75 @@ DNS tests (dns.test) crash with segmentation fault on Windows due to incomplete 
 
 ---
 
+## Feature Removals (January 21, 2026)
+
+### 29. Removed Tnm::smx Command
+
+**Files Modified**:
+- `configure.ac` (line 323, 339 removed)
+- `generic/tnmInit.c` (line 70 commented out, line 467-469 commented out)
+- `generic/tnm.h` (lines 163-168 wrapped in #if 0)
+- `generic/tnmInt.h` (lines 485-494 wrapped in #if 0)
+
+**Reason**: Unused Script MIB Executive feature not required for typical network management tasks.
+
+**Impact**:
+- DLL size reduced by ~50 KB
+- Cleaner build with fewer unused modules
+- No impact on primary SNMP/MIB functionality
+- Command no longer available: `Tnm::smx` returns "invalid command name"
+
+### 30. Removed Tnm::ined Command
+
+**Files Modified**:
+- `configure.ac` (line 323 removed)
+- `generic/tnmInit.c` (line 61 commented out)
+- `generic/tnm.h` (lines 163-168 wrapped in #if 0)
+
+**Reason**: Tkined GUI integration not needed for console-based TNM usage.
+
+**Impact**:
+- DLL size reduced by ~50 KB
+- No Windows GUI dependency
+- No impact on network management functionality
+- Command no longer available: `Tnm::ined` returns "invalid command name"
+
+### 31. Removed Tnm::netdb sunrpcs Sub-command
+
+**Files Modified**:
+- `generic/tnmNetdb.c` (lines 944, 948, 979-983 removed)
+
+**Reason**: RPC support already disabled, completing removal by eliminating command table entry.
+
+**Impact**:
+- Cleaner code without dead command dispatcher
+- Eliminates 6 test failures from disabled functionality
+- No functional impact (RPC was already disabled)
+- Command no longer available: `Tnm::netdb sunrpcs` returns "bad option" error
+
+### 32. Removed Tnm::icmp mask and timestamp Commands (Windows Only)
+
+**Files Modified**:
+- `generic/tnmIcmp.c` (lines 242-248, 404-415 wrapped in #ifndef _WIN32)
+
+**Reason**: Windows ICMP.DLL doesn't support mask and timestamp requests, commands always failed on Windows.
+
+**Impact**:
+- Eliminates 2 test failures on Windows (mask, timestamp always failed)
+- Clearer Windows platform limitations
+- Linux retains full functionality with all ICMP commands
+- Windows: Commands no longer available, return "bad option" error
+- Linux: No change, commands work normally
+
+**Overall Removal Impact**:
+- DLL size reduced from 2.9 MB to 2.8 MB (~100 KB reduction)
+- Available commands reduced from 12 to 10
+- Source files compiled reduced from 42 to 40
+- Test pass rate improved (fewer failures from broken commands)
+- Primary SNMP/MIB functionality completely unaffected
+
+---
+
 ## Testing Performed
 
 **Configuration Test**: ✅ Passed

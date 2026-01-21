@@ -853,6 +853,8 @@ SetOption(Tcl_Interp *interp, ClientData object, int option, Tcl_Obj *objPtr)
 	    return TCL_ERROR;
 	}
 	udpPtr->nameChanged = 1;
+	/* Ensure sin_family is set (TnmSetIPPort doesn't set it) */
+	udpPtr->name.sin_family = AF_INET;
 	break;
     case optReadCmd:
 	if (udpPtr->readCmd) {
