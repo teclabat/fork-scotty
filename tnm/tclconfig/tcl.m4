@@ -9,11 +9,7 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 
-AC_PREREQ(2.57)
-
-dnl TEA extensions pass us the version of TEA they think they
-dnl are compatible with (must be set in TEA_INIT below)
-dnl TEA_VERSION="3.10"
+AC_PREREQ([2.69])
 
 # Possible values for key variables defined:
 #
@@ -54,9 +50,9 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 	# we reset no_tcl in case something fails here
 	no_tcl=true
 	AC_ARG_WITH(tcl,
-	    AC_HELP_STRING([--with-tcl],
+	    AS_HELP_STRING([--with-tcl],
 		[directory containing tcl configuration (tclConfig.sh)]),
-	    with_tclconfig="${withval}")
+	    [with_tclconfig="${withval}"])
 	AC_MSG_CHECKING([for Tcl configuration])
 	AC_CACHE_VAL(ac_cv_c_tclconfig,[
 
@@ -108,7 +104,9 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 		for i in `ls -d ~/Library/Frameworks 2>/dev/null` \
 			`ls -d /Library/Frameworks 2>/dev/null` \
 			`ls -d /Network/Library/Frameworks 2>/dev/null` \
-			`ls -d /System/Library/Frameworks 2>/dev/null` \
+			`ls -d /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/Library/Frameworks/Tcl.framework 2>/dev/null` \
+			`ls -d /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/Network/Library/Frameworks/Tcl.framework 2>/dev/null` \
+			`ls -d /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tcl.framework 2>/dev/null` \
 			; do
 		    if test -f "$i/Tcl.framework/tclConfig.sh" ; then
 			ac_cv_c_tclconfig="`(cd $i/Tcl.framework; pwd)`"
@@ -135,8 +133,8 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 		for i in `ls -d ${libdir} 2>/dev/null` \
 			`ls -d ${exec_prefix}/lib 2>/dev/null` \
 			`ls -d ${prefix}/lib 2>/dev/null` \
-			`ls -d /usr/contrib/lib 2>/dev/null` \
 			`ls -d /usr/local/lib 2>/dev/null` \
+			`ls -d /usr/contrib/lib 2>/dev/null` \
 			`ls -d /usr/pkg/lib 2>/dev/null` \
 			`ls -d /usr/lib 2>/dev/null` \
 			`ls -d /usr/lib64 2>/dev/null` \
@@ -144,6 +142,8 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 			`ls -d /usr/lib/tcl8.5 2>/dev/null` \
 			`ls -d /usr/local/lib/tcl8.6 2>/dev/null` \
 			`ls -d /usr/local/lib/tcl8.5 2>/dev/null` \
+			`ls -d /usr/local/lib/tcl/tcl8.6 2>/dev/null` \
+			`ls -d /usr/local/lib/tcl/tcl8.5 2>/dev/null` \
 			; do
 		    if test -f "$i/tclConfig.sh" ; then
 			ac_cv_c_tclconfig="`(cd $i; pwd)`"
@@ -212,9 +212,9 @@ AC_DEFUN([TEA_PATH_TKCONFIG], [
 	# we reset no_tk in case something fails here
 	no_tk=true
 	AC_ARG_WITH(tk,
-	    AC_HELP_STRING([--with-tk],
+	    AS_HELP_STRING([--with-tk],
 		[directory containing tk configuration (tkConfig.sh)]),
-	    with_tkconfig="${withval}")
+	    [with_tkconfig="${withval}"])
 	AC_MSG_CHECKING([for Tk configuration])
 	AC_CACHE_VAL(ac_cv_c_tkconfig,[
 
@@ -266,7 +266,6 @@ AC_DEFUN([TEA_PATH_TKCONFIG], [
 		for i in `ls -d ~/Library/Frameworks 2>/dev/null` \
 			`ls -d /Library/Frameworks 2>/dev/null` \
 			`ls -d /Network/Library/Frameworks 2>/dev/null` \
-			`ls -d /System/Library/Frameworks 2>/dev/null` \
 			; do
 		    if test -f "$i/Tk.framework/tkConfig.sh" ; then
 			ac_cv_c_tkconfig="`(cd $i/Tk.framework; pwd)`"
@@ -282,12 +281,15 @@ AC_DEFUN([TEA_PATH_TKCONFIG], [
 			`ls -d ${prefix}/lib 2>/dev/null` \
 			`ls -d /usr/local/lib 2>/dev/null` \
 			`ls -d /usr/contrib/lib 2>/dev/null` \
-			`ls -d /usr/lib 2>/dev/null` \
-			`ls -d /usr/lib64 2>/dev/null` \
+			`ls -d /usr/pkg/lib 2>/dev/null` \
 			`ls -d /usr/lib/tk8.6 2>/dev/null` \
 			`ls -d /usr/lib/tk8.5 2>/dev/null` \
+			`ls -d /usr/lib 2>/dev/null` \
+			`ls -d /usr/lib64 2>/dev/null` \
 			`ls -d /usr/local/lib/tk8.6 2>/dev/null` \
 			`ls -d /usr/local/lib/tk8.5 2>/dev/null` \
+			`ls -d /usr/local/lib/tcl/tk8.6 2>/dev/null` \
+			`ls -d /usr/local/lib/tcl/tk8.5 2>/dev/null` \
 			; do
 		    if test -f "$i/tkConfig.sh" ; then
 			ac_cv_c_tkconfig="`(cd $i; pwd)`"
@@ -356,6 +358,8 @@ AC_DEFUN([TEA_PATH_TKCONFIG], [
 #		TCL_BIN_DIR
 #		TCL_SRC_DIR
 #		TCL_LIB_FILE
+#		TCL_ZIP_FILE
+#		TCL_ZIPFS_SUPPORT
 #------------------------------------------------------------------------
 
 AC_DEFUN([TEA_LOAD_TCLCONFIG], [
@@ -367,10 +371,6 @@ AC_DEFUN([TEA_LOAD_TCLCONFIG], [
     else
         AC_MSG_RESULT([could not find ${TCL_BIN_DIR}/tclConfig.sh])
     fi
-
-    # eval is required to do the TCL_DBGX substitution
-    eval "TCL_LIB_FILE=\"${TCL_LIB_FILE}\""
-    eval "TCL_STUB_LIB_FILE=\"${TCL_STUB_LIB_FILE}\""
 
     # If the TCL_BIN_DIR is the build directory (not the install directory),
     # then set the common variable name to the value of the build variables.
@@ -405,12 +405,6 @@ AC_DEFUN([TEA_LOAD_TCLCONFIG], [
 	esac
     fi
 
-    # eval is required to do the TCL_DBGX substitution
-    eval "TCL_LIB_FLAG=\"${TCL_LIB_FLAG}\""
-    eval "TCL_LIB_SPEC=\"${TCL_LIB_SPEC}\""
-    eval "TCL_STUB_LIB_FLAG=\"${TCL_STUB_LIB_FLAG}\""
-    eval "TCL_STUB_LIB_SPEC=\"${TCL_STUB_LIB_SPEC}\""
-
     AC_SUBST(TCL_VERSION)
     AC_SUBST(TCL_PATCH_LEVEL)
     AC_SUBST(TCL_BIN_DIR)
@@ -426,17 +420,18 @@ AC_DEFUN([TEA_LOAD_TCLCONFIG], [
 
     AC_MSG_CHECKING([platform])
     hold_cc=$CC; CC="$TCL_CC"
-    AC_TRY_COMPILE(,[
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
 	    #ifdef _WIN32
 		#error win32
 	    #endif
-	], [
-	    TEA_PLATFORM="unix"
+	]])],[
+	    # first test we've already retrieved platform (cross-compile), fallback to unix otherwise:
+	    TEA_PLATFORM="${TEA_PLATFORM-unix}"
 	    CYGPATH=echo
-	], [
+	],[
 	    TEA_PLATFORM="windows"
-	    AC_CHECK_PROG(CYGPATH, cygpath, cygpath -m, echo)	]
-    )
+	    AC_CHECK_PROG(CYGPATH, cygpath, cygpath -m, echo)
+    ])
     CC=$hold_cc
     AC_MSG_RESULT($TEA_PLATFORM)
 
@@ -485,10 +480,6 @@ AC_DEFUN([TEA_LOAD_TKCONFIG], [
         AC_MSG_RESULT([could not find ${TK_BIN_DIR}/tkConfig.sh])
     fi
 
-    # eval is required to do the TK_DBGX substitution
-    eval "TK_LIB_FILE=\"${TK_LIB_FILE}\""
-    eval "TK_STUB_LIB_FILE=\"${TK_STUB_LIB_FILE}\""
-
     # If the TK_BIN_DIR is the build directory (not the install directory),
     # then set the common variable name to the value of the build variables.
     # For example, the variable TK_LIB_SPEC will be set to the value
@@ -521,12 +512,6 @@ AC_DEFUN([TEA_LOAD_TKCONFIG], [
 		;;
 	esac
     fi
-
-    # eval is required to do the TK_DBGX substitution
-    eval "TK_LIB_FLAG=\"${TK_LIB_FLAG}\""
-    eval "TK_LIB_SPEC=\"${TK_LIB_SPEC}\""
-    eval "TK_STUB_LIB_FLAG=\"${TK_STUB_LIB_FLAG}\""
-    eval "TK_STUB_LIB_SPEC=\"${TK_STUB_LIB_SPEC}\""
 
     # TEA specific: Ensure windowingsystem is defined
     if test "${TEA_PLATFORM}" = "unix" ; then
@@ -584,14 +569,14 @@ AC_DEFUN([TEA_PROG_TCLSH], [
     if test -f "${TCL_BIN_DIR}/Makefile" ; then
         # tclConfig.sh is in Tcl build directory
         if test "${TEA_PLATFORM}" = "windows"; then
-          if test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}${EXEEXT}" ; then
-            TCLSH_PROG="${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}${EXEEXT}"
-          elif test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}s${EXEEXT}" ; then
-            TCLSH_PROG="${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}s${EXEEXT}"
-          elif test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}t${EXEEXT}" ; then
-            TCLSH_PROG="${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}t${EXEEXT}"
-          elif test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}st${EXEEXT}" ; then
-            TCLSH_PROG="${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}st${EXEEXT}"
+          if test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${EXEEXT}" ; then
+            TCLSH_PROG="${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${EXEEXT}"
+          elif test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}s${EXEEXT}" ; then
+            TCLSH_PROG="${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}s${EXEEXT}"
+          elif test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}t${EXEEXT}" ; then
+            TCLSH_PROG="${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}t${EXEEXT}"
+          elif test -f "${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}st${EXEEXT}" ; then
+            TCLSH_PROG="${TCL_BIN_DIR}/tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}st${EXEEXT}"
           fi
         else
             TCLSH_PROG="${TCL_BIN_DIR}/tclsh"
@@ -599,9 +584,9 @@ AC_DEFUN([TEA_PROG_TCLSH], [
     else
         # tclConfig.sh is in install location
         if test "${TEA_PLATFORM}" = "windows"; then
-            TCLSH_PROG="tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_DBGX}${EXEEXT}"
+            TCLSH_PROG="tclsh${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${EXEEXT}"
         else
-            TCLSH_PROG="tclsh${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_DBGX}"
+            TCLSH_PROG="tclsh${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}"
         fi
         list="`ls -d ${TCL_BIN_DIR}/../bin 2>/dev/null` \
               `ls -d ${TCL_BIN_DIR}/..     2>/dev/null` \
@@ -642,14 +627,14 @@ AC_DEFUN([TEA_PROG_WISH], [
     if test -f "${TK_BIN_DIR}/Makefile" ; then
         # tkConfig.sh is in Tk build directory
         if test "${TEA_PLATFORM}" = "windows"; then
-          if test -f "${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${TK_DBGX}${EXEEXT}" ; then
-            WISH_PROG="${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${TK_DBGX}${EXEEXT}"
-          elif test -f "${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${TK_DBGX}s${EXEEXT}" ; then
-            WISH_PROG="${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${TK_DBGX}$s{EXEEXT}"
-          elif test -f "${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${TK_DBGX}t${EXEEXT}" ; then
-            WISH_PROG="${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${TK_DBGX}t${EXEEXT}"
-          elif test -f "${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${TK_DBGX}st${EXEEXT}" ; then
-            WISH_PROG="${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${TK_DBGX}st${EXEEXT}"
+          if test -f "${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${EXEEXT}" ; then
+            WISH_PROG="${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${EXEEXT}"
+          elif test -f "${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}s${EXEEXT}" ; then
+            WISH_PROG="${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}$s{EXEEXT}"
+          elif test -f "${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}t${EXEEXT}" ; then
+            WISH_PROG="${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}t${EXEEXT}"
+          elif test -f "${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}st${EXEEXT}" ; then
+            WISH_PROG="${TK_BIN_DIR}/wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}st${EXEEXT}"
           fi
         else
             WISH_PROG="${TK_BIN_DIR}/wish"
@@ -657,9 +642,9 @@ AC_DEFUN([TEA_PROG_WISH], [
     else
         # tkConfig.sh is in install location
         if test "${TEA_PLATFORM}" = "windows"; then
-            WISH_PROG="wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${TK_DBGX}${EXEEXT}"
+            WISH_PROG="wish${TK_MAJOR_VERSION}${TK_MINOR_VERSION}${EXEEXT}"
         else
-            WISH_PROG="wish${TK_MAJOR_VERSION}.${TK_MINOR_VERSION}${TK_DBGX}"
+            WISH_PROG="wish${TK_MAJOR_VERSION}.${TK_MINOR_VERSION}"
         fi
         list="`ls -d ${TK_BIN_DIR}/../bin 2>/dev/null` \
               `ls -d ${TK_BIN_DIR}/..     2>/dev/null` \
@@ -705,7 +690,7 @@ AC_DEFUN([TEA_PROG_WISH], [
 AC_DEFUN([TEA_ENABLE_SHARED], [
     AC_MSG_CHECKING([how to build libraries])
     AC_ARG_ENABLE(shared,
-	AC_HELP_STRING([--enable-shared],
+	AS_HELP_STRING([--enable-shared],
 	    [build and link with shared libraries (default: on)]),
 	[shared_ok=$enableval], [shared_ok=yes])
 
@@ -717,7 +702,7 @@ AC_DEFUN([TEA_ENABLE_SHARED], [
     fi
 
     AC_ARG_ENABLE(stubs,
-	AC_HELP_STRING([--enable-stubs],
+	AS_HELP_STRING([--enable-stubs],
 	    [build and link with stub libraries. Always true for shared builds (default: on)]),
 	[stubs_ok=$enableval], [stubs_ok=yes])
 
@@ -789,8 +774,8 @@ AC_DEFUN([TEA_ENABLE_SHARED], [
 
 AC_DEFUN([TEA_ENABLE_THREADS], [
     AC_ARG_ENABLE(threads,
-	AC_HELP_STRING([--enable-threads],
-	    [build with threads]),
+	AS_HELP_STRING([--enable-threads],
+	    [build with threads (default: on)]),
 	[tcl_ok=$enableval], [tcl_ok=yes])
 
     if test "${enable_threads+set}" = set; then
@@ -874,14 +859,6 @@ AC_DEFUN([TEA_ENABLE_THREADS], [
     that IS thread-enabled.  It is recommended to use --enable-threads.])
 	    fi
 	    ;;
-	*)
-	    if test "${TCL_THREADS}" = "1"; then
-		AC_MSG_WARN([
-    --enable-threads requested, but building against a Tcl that is NOT
-    thread-enabled.  This is an OK configuration that will also run in
-    a thread-enabled core.])
-	    fi
-	    ;;
     esac
     AC_SUBST(TCL_THREADS)
 ])
@@ -911,8 +888,6 @@ AC_DEFUN([TEA_ENABLE_THREADS], [
 #				Sets to "$(CFLAGS_OPTIMIZE) -DNDEBUG" if false
 #		LDFLAGS_DEFAULT	Sets to $(LDFLAGS_DEBUG) if true
 #				Sets to $(LDFLAGS_OPTIMIZE) if false
-#		DBGX		Formerly used as debug library extension;
-#				always blank now.
 #------------------------------------------------------------------------
 
 AC_DEFUN([TEA_ENABLE_SYMBOLS], [
@@ -920,14 +895,14 @@ AC_DEFUN([TEA_ENABLE_SYMBOLS], [
     AC_REQUIRE([TEA_CONFIG_CFLAGS])
     AC_MSG_CHECKING([for build with symbols])
     AC_ARG_ENABLE(symbols,
-	AC_HELP_STRING([--enable-symbols],
+	AS_HELP_STRING([--enable-symbols],
 	    [build with debugging symbols (default: off)]),
 	[tcl_ok=$enableval], [tcl_ok=no])
-    DBGX=""
     if test "$tcl_ok" = "no"; then
 	CFLAGS_DEFAULT="${CFLAGS_OPTIMIZE} -DNDEBUG"
 	LDFLAGS_DEFAULT="${LDFLAGS_OPTIMIZE}"
 	AC_MSG_RESULT([no])
+	AC_DEFINE(TCL_CFG_OPTIMIZED, 1, [Is this an optimized build?])
     else
 	CFLAGS_DEFAULT="${CFLAGS_DEBUG}"
 	LDFLAGS_DEFAULT="${LDFLAGS_DEBUG}"
@@ -935,13 +910,8 @@ AC_DEFUN([TEA_ENABLE_SYMBOLS], [
 	    AC_MSG_RESULT([yes (standard debugging)])
 	fi
     fi
-    # TEA specific:
-    if test "${TEA_PLATFORM}" != "windows" ; then
-	LDFLAGS_DEFAULT="${LDFLAGS}"
-    fi
     AC_SUBST(CFLAGS_DEFAULT)
     AC_SUBST(LDFLAGS_DEFAULT)
-    AC_SUBST(TCL_DBGX)
 
     if test "$tcl_ok" = "mem" -o "$tcl_ok" = "all"; then
 	AC_DEFINE(TCL_MEM_DEBUG, 1, [Is memory debugging enabled?])
@@ -976,7 +946,7 @@ AC_DEFUN([TEA_ENABLE_SYMBOLS], [
 
 AC_DEFUN([TEA_ENABLE_LANGINFO], [
     AC_ARG_ENABLE(langinfo,
-	AC_HELP_STRING([--enable-langinfo],
+	AS_HELP_STRING([--enable-langinfo],
 	    [use nl_langinfo if possible to determine encoding at startup, otherwise use old heuristic (default: on)]),
 	[langinfo_ok=$enableval], [langinfo_ok=yes])
 
@@ -987,7 +957,7 @@ AC_DEFUN([TEA_ENABLE_LANGINFO], [
     AC_MSG_CHECKING([whether to use nl_langinfo])
     if test "$langinfo_ok" = "yes"; then
 	AC_CACHE_VAL(tcl_cv_langinfo_h, [
-	    AC_TRY_COMPILE([#include <langinfo.h>], [nl_langinfo(CODESET);],
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <langinfo.h>]], [[nl_langinfo(CODESET);]])],
 		    [tcl_cv_langinfo_h=yes],[tcl_cv_langinfo_h=no])])
 	AC_MSG_RESULT([$tcl_cv_langinfo_h])
 	if test $tcl_cv_langinfo_h = yes; then
@@ -1012,6 +982,7 @@ AC_DEFUN([TEA_ENABLE_LANGINFO], [
 #	Defines the following var:
 #
 #	system -	System/platform/version identification code.
+#
 #--------------------------------------------------------------------
 
 AC_DEFUN([TEA_CONFIG_SYSTEM], [
@@ -1027,6 +998,9 @@ AC_DEFUN([TEA_CONFIG_SYSTEM], [
 	    else
 		if test "`uname -s`" = "AIX" ; then
 		    tcl_cv_sys_version=AIX-`uname -v`.`uname -r`
+		fi
+		if test "`uname -s`" = "NetBSD" -a -f /etc/debian_version ; then
+		    tcl_cv_sys_version=NetBSD-Debian
 		fi
 	    fi
 	fi
@@ -1104,7 +1078,7 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 
     AC_MSG_CHECKING([if 64bit support is requested])
     AC_ARG_ENABLE(64bit,
-	AC_HELP_STRING([--enable-64bit],
+	AS_HELP_STRING([--enable-64bit],
 	    [enable 64bit support (default: off)]),
 	[do64bit=$enableval], [do64bit=no])
     AC_MSG_RESULT([$do64bit])
@@ -1113,7 +1087,7 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 
     AC_MSG_CHECKING([if 64bit Sparc VIS support is requested])
     AC_ARG_ENABLE(64bit-vis,
-	AC_HELP_STRING([--enable-64bit-vis],
+	AS_HELP_STRING([--enable-64bit-vis],
 	    [enable 64bit Sparc VIS support (default: off)]),
 	[do64bitVIS=$enableval], [do64bitVIS=no])
     AC_MSG_RESULT([$do64bitVIS])
@@ -1126,10 +1100,10 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
     AC_CACHE_CHECK([if compiler supports visibility "hidden"],
 	tcl_cv_cc_visibility_hidden, [
 	hold_cflags=$CFLAGS; CFLAGS="$CFLAGS -Werror"
-	AC_TRY_LINK([
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 	    extern __attribute__((__visibility__("hidden"))) void f(void);
-	    void f(void) {}], [f();], tcl_cv_cc_visibility_hidden=yes,
-	    tcl_cv_cc_visibility_hidden=no)
+	    void f(void) {}]], [[f();]])],[tcl_cv_cc_visibility_hidden=yes],
+	    [tcl_cv_cc_visibility_hidden=no])
 	CFLAGS=$hold_cflags])
     AS_IF([test $tcl_cv_cc_visibility_hidden = yes], [
 	AC_DEFINE(MODULE_SCOPE,
@@ -1142,21 +1116,10 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 
     AC_MSG_CHECKING([if rpath support is requested])
     AC_ARG_ENABLE(rpath,
-	AC_HELP_STRING([--disable-rpath],
+	AS_HELP_STRING([--disable-rpath],
 	    [disable rpath support (default: on)]),
 	[doRpath=$enableval], [doRpath=yes])
     AC_MSG_RESULT([$doRpath])
-
-    # TEA specific: Cross-compiling options for Windows/CE builds?
-
-    AS_IF([test "${TEA_PLATFORM}" = windows], [
-	AC_MSG_CHECKING([if Windows/CE build is requested])
-	AC_ARG_ENABLE(wince,
-	    AC_HELP_STRING([--enable-wince],
-		[enable Win/CE support (where applicable)]),
-	    [doWince=$enableval], [doWince=no])
-	AC_MSG_RESULT([$doWince])
-    ])
 
     # Set the variable "system" to hold the name and version number
     # for the system.
@@ -1186,7 +1149,7 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
     CFLAGS_DEBUG=-g
     AS_IF([test "$GCC" = yes], [
 	CFLAGS_OPTIMIZE=-O2
-	CFLAGS_WARNING="-Wall -Wformat=2"
+	CFLAGS_WARNING="-Wall"
     ], [
 	CFLAGS_OPTIMIZE=-O
 	CFLAGS_WARNING=""
@@ -1195,98 +1158,29 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
     STLIB_LD='${AR} cr'
     LD_LIBRARY_PATH_VAR="LD_LIBRARY_PATH"
     AS_IF([test "x$SHLIB_VERSION" = x],[SHLIB_VERSION=""],[SHLIB_VERSION=".$SHLIB_VERSION"])
+
+    # if the compiler is used for linking,
+    # choose the C++ compiler if CXX is enabled
+    if test x"$TEA_CXX" != "x"; then
+	CCLD=$CXX
+    else
+	CCLD=$CC
+    fi
+    AC_SUBST(CCLD)
+
     case $system in
 	# TEA specific:
 	windows)
-	    # This is a 2-stage check to make sure we have the 64-bit SDK
-	    # We have to know where the SDK is installed.
-	    # This magic is based on MS Platform SDK for Win2003 SP1 - hobbs
-	    # MACHINE is IX86 for LINK, but this is used by the manifest,
-	    # which requires x86|amd64|ia64.
 	    MACHINE="X86"
 	    if test "$do64bit" != "no" ; then
-		if test "x${MSSDK}x" = "xx" ; then
-		    MSSDK="C:/Progra~1/Microsoft Platform SDK"
-		fi
-		MSSDK=`echo "$MSSDK" | sed -e  's!\\\!/!g'`
-		PATH64=""
 		case "$do64bit" in
 		    amd64|x64|yes)
 			MACHINE="AMD64" ; # default to AMD64 64-bit build
-			PATH64="${MSSDK}/Bin/Win64/x86/AMD64"
 			;;
 		    ia64)
 			MACHINE="IA64"
-			PATH64="${MSSDK}/Bin/Win64"
 			;;
 		esac
-		if test "$GCC" != "yes" -a ! -d "${PATH64}" ; then
-		    AC_MSG_WARN([Could not find 64-bit $MACHINE SDK to enable 64bit mode])
-		    AC_MSG_WARN([Ensure latest Platform SDK is installed])
-		    do64bit="no"
-		else
-		    AC_MSG_RESULT([   Using 64-bit $MACHINE mode])
-		    do64bit_ok="yes"
-		fi
-	    fi
-
-	    if test "$doWince" != "no" ; then
-		if test "$do64bit" != "no" ; then
-		    AC_MSG_ERROR([Windows/CE and 64-bit builds incompatible])
-		fi
-		if test "$GCC" = "yes" ; then
-		    AC_MSG_ERROR([Windows/CE and GCC builds incompatible])
-		fi
-		TEA_PATH_CELIB
-		# Set defaults for common evc4/PPC2003 setup
-		# Currently Tcl requires 300+, possibly 420+ for sockets
-		CEVERSION=420; 		# could be 211 300 301 400 420 ...
-		TARGETCPU=ARMV4;	# could be ARMV4 ARM MIPS SH3 X86 ...
-		ARCH=ARM;		# could be ARM MIPS X86EM ...
-		PLATFORM="Pocket PC 2003"; # or "Pocket PC 2002"
-		if test "$doWince" != "yes"; then
-		    # If !yes then the user specified something
-		    # Reset ARCH to allow user to skip specifying it
-		    ARCH=
-		    eval `echo $doWince | awk -F, '{ \
-	    if (length([$]1)) { printf "CEVERSION=\"%s\"\n", [$]1; \
-	    if ([$]1 < 400)   { printf "PLATFORM=\"Pocket PC 2002\"\n" } }; \
-	    if (length([$]2)) { printf "TARGETCPU=\"%s\"\n", toupper([$]2) }; \
-	    if (length([$]3)) { printf "ARCH=\"%s\"\n", toupper([$]3) }; \
-	    if (length([$]4)) { printf "PLATFORM=\"%s\"\n", [$]4 }; \
-		    }'`
-		    if test "x${ARCH}" = "x" ; then
-			ARCH=$TARGETCPU;
-		    fi
-		fi
-		OSVERSION=WCE$CEVERSION;
-	    	if test "x${WCEROOT}" = "x" ; then
-			WCEROOT="C:/Program Files/Microsoft eMbedded C++ 4.0"
-		    if test ! -d "${WCEROOT}" ; then
-			WCEROOT="C:/Program Files/Microsoft eMbedded Tools"
-		    fi
-		fi
-		if test "x${SDKROOT}" = "x" ; then
-		    SDKROOT="C:/Program Files/Windows CE Tools"
-		    if test ! -d "${SDKROOT}" ; then
-			SDKROOT="C:/Windows CE Tools"
-		    fi
-		fi
-		WCEROOT=`echo "$WCEROOT" | sed -e 's!\\\!/!g'`
-		SDKROOT=`echo "$SDKROOT" | sed -e 's!\\\!/!g'`
-		if test ! -d "${SDKROOT}/${OSVERSION}/${PLATFORM}/Lib/${TARGETCPU}" \
-		    -o ! -d "${WCEROOT}/EVC/${OSVERSION}/bin"; then
-		    AC_MSG_ERROR([could not find PocketPC SDK or target compiler to enable WinCE mode [$CEVERSION,$TARGETCPU,$ARCH,$PLATFORM]])
-		    doWince="no"
-		else
-		    # We could PATH_NOSPACE these, but that's not important,
-		    # as long as we quote them when used.
-		    CEINCLUDE="${SDKROOT}/${OSVERSION}/${PLATFORM}/include"
-		    if test -d "${CEINCLUDE}/${TARGETCPU}" ; then
-			CEINCLUDE="${CEINCLUDE}/${TARGETCPU}"
-		    fi
-		    CELIBPATH="${SDKROOT}/${OSVERSION}/${PLATFORM}/Lib/${TARGETCPU}"
-    		fi
 	    fi
 
 	    if test "$GCC" != "yes" ; then
@@ -1305,43 +1199,15 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	        esac
 
                 if test "$do64bit" != "no" ; then
-		    # All this magic is necessary for the Win64 SDK RC1 - hobbs
-		    CC="\"${PATH64}/cl.exe\""
-		    CFLAGS="${CFLAGS} -I\"${MSSDK}/Include\" -I\"${MSSDK}/Include/crt\" -I\"${MSSDK}/Include/crt/sys\""
-		    RC="\"${MSSDK}/bin/rc.exe\""
-		    lflags="${lflags} -nologo -MACHINE:${MACHINE} -LIBPATH:\"${MSSDK}/Lib/${MACHINE}\""
-		    LINKBIN="\"${PATH64}/link.exe\""
+		    CC="cl.exe"
+		    RC="rc.exe"
+		    lflags="${lflags} -nologo -MACHINE:${MACHINE} "
+		    LINKBIN="link.exe"
 		    CFLAGS_DEBUG="-nologo -Zi -Od -W3 ${runtime}d"
 		    CFLAGS_OPTIMIZE="-nologo -O2 -W2 ${runtime}"
 		    # Avoid 'unresolved external symbol __security_cookie'
 		    # errors, c.f. http://support.microsoft.com/?id=894573
 		    TEA_ADD_LIBS([bufferoverflowU.lib])
-		elif test "$doWince" != "no" ; then
-		    CEBINROOT="${WCEROOT}/EVC/${OSVERSION}/bin"
-		    if test "${TARGETCPU}" = "X86"; then
-			CC="\"${CEBINROOT}/cl.exe\""
-		    else
-			CC="\"${CEBINROOT}/cl${ARCH}.exe\""
-		    fi
-		    CFLAGS="$CFLAGS -I\"${CELIB_DIR}/inc\" -I\"${CEINCLUDE}\""
-		    RC="\"${WCEROOT}/Common/EVC/bin/rc.exe\""
-		    arch=`echo ${ARCH} | awk '{print tolower([$]0)}'`
-		    defs="${ARCH} _${ARCH}_ ${arch} PALM_SIZE _MT _WINDOWS"
-		    if test "${SHARED_BUILD}" = "1" ; then
-			# Static CE builds require static celib as well
-		    	defs="${defs} _DLL"
-		    fi
-		    for i in $defs ; do
-			AC_DEFINE_UNQUOTED($i, 1, [WinCE def ]$i)
-		    done
-		    AC_DEFINE_UNQUOTED(_WIN32_WCE, $CEVERSION, [_WIN32_WCE version])
-		    AC_DEFINE_UNQUOTED(UNDER_CE, $CEVERSION, [UNDER_CE version])
-		    CFLAGS_DEBUG="-nologo -Zi -Od"
-		    CFLAGS_OPTIMIZE="-nologo -Ox"
-		    lversion=`echo ${CEVERSION} | sed -e 's/\(.\)\(..\)/\1\.\2/'`
-		    lflags="${lflags} -MACHINE:${ARCH} -LIBPATH:\"${CELIBPATH}\" -subsystem:windowsce,${lversion} -nologo"
-		    LINKBIN="\"${CEBINROOT}/link.exe\""
-		    AC_SUBST(CELIB_DIR)
 		else
 		    RC="rc"
 		    lflags="${lflags} -nologo"
@@ -1356,32 +1222,32 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 		AC_CHECK_TOOL(RC, windres)
 		CFLAGS_DEBUG="-g"
 		CFLAGS_OPTIMIZE="-O2 -fomit-frame-pointer"
-		SHLIB_LD='${CC} -shared'
+		SHLIB_LD='${CCLD} -shared'
 		UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
 		LDFLAGS_CONSOLE="-wl,--subsystem,console ${lflags}"
 		LDFLAGS_WINDOW="-wl,--subsystem,windows ${lflags}"
 
 		AC_CACHE_CHECK(for cross-compile version of gcc,
 			ac_cv_cross,
-			AC_TRY_COMPILE([
+			AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 			    #ifdef _WIN32
 				#error cross-compiler
 			    #endif
-			], [],
-			ac_cv_cross=yes,
-			ac_cv_cross=no)
+			]], [[]])],
+			[ac_cv_cross=yes],
+			[ac_cv_cross=no])
 		      )
 		      if test "$ac_cv_cross" = "yes"; then
 			case "$do64bit" in
 			    amd64|x64|yes)
-				CC="x86_64-w64-mingw32-gcc"
+				CC="x86_64-w64-mingw32-${CC}"
 				LD="x86_64-w64-mingw32-ld"
 				AR="x86_64-w64-mingw32-ar"
 				RANLIB="x86_64-w64-mingw32-ranlib"
 				RC="x86_64-w64-mingw32-windres"
 			    ;;
 			    *)
-				CC="i686-w64-mingw32-gcc"
+				CC="i686-w64-mingw32-${CC}"
 				LD="i686-w64-mingw32-ld"
 				AR="i686-w64-mingw32-ar"
 				RANLIB="i686-w64-mingw32-ranlib"
@@ -1403,13 +1269,8 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 		# This essentially turns it all on.
 		LDFLAGS_DEBUG="-debug -debugtype:cv"
 		LDFLAGS_OPTIMIZE="-release"
-		if test "$doWince" != "no" ; then
-		    LDFLAGS_CONSOLE="-link ${lflags}"
-		    LDFLAGS_WINDOW=${LDFLAGS_CONSOLE}
-		else
-		    LDFLAGS_CONSOLE="-link -subsystem:console ${lflags}"
-		    LDFLAGS_WINDOW="-link -subsystem:windows ${lflags}"
-		fi
+		LDFLAGS_CONSOLE="-link -subsystem:console ${lflags}"
+		LDFLAGS_WINDOW="-link -subsystem:windows ${lflags}"
 	    fi
 
 	    SHLIB_SUFFIX=".dll"
@@ -1418,7 +1279,7 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	    TCL_LIB_VERSIONS_OK=nodots
     	    ;;
 	AIX-*)
-	    AS_IF([test "${TCL_THREADS}" = "1" -a "$GCC" != "yes"], [
+	    AS_IF([test "$GCC" != "yes"], [
 		# AIX requires the _r compiler when gcc isn't being used
 		case "${CC}" in
 		    *_r|*_r\ *)
@@ -1455,26 +1316,26 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 		# AIX-5 uses ELF style dynamic libraries on IA-64, but not PPC
 		SHLIB_LD="/usr/ccs/bin/ld -G -z text"
 		AS_IF([test "$GCC" = yes], [
-		    CC_SEARCH_FLAGS='-Wl,-R,${LIB_RUNTIME_DIR}'
+		    CC_SEARCH_FLAGS='"-Wl,-R,${LIB_RUNTIME_DIR}"'
 		], [
-		    CC_SEARCH_FLAGS='-R${LIB_RUNTIME_DIR}'
+		    CC_SEARCH_FLAGS='"-R${LIB_RUNTIME_DIR}"'
 		])
-		LD_SEARCH_FLAGS='-R ${LIB_RUNTIME_DIR}'
+		LD_SEARCH_FLAGS='-R "${LIB_RUNTIME_DIR}"'
 	    ], [
 		AS_IF([test "$GCC" = yes], [
-		    SHLIB_LD='${CC} -shared -Wl,-bexpall'
+		    SHLIB_LD='${CCLD} -shared -Wl,-bexpall'
 		], [
 		    SHLIB_LD="/bin/ld -bhalt:4 -bM:SRE -bexpall -H512 -T512 -bnoentry"
 		    LDFLAGS="$LDFLAGS -brtl"
 		])
 		SHLIB_LD="${SHLIB_LD} ${SHLIB_LD_FLAGS}"
-		CC_SEARCH_FLAGS='-L${LIB_RUNTIME_DIR}'
+		CC_SEARCH_FLAGS='"-L${LIB_RUNTIME_DIR}"'
 		LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
 	    ])
 	    ;;
 	BeOS*)
 	    SHLIB_CFLAGS="-fPIC"
-	    SHLIB_LD='${CC} -nostart'
+	    SHLIB_LD='${CCLD} -nostart'
 	    SHLIB_SUFFIX=".so"
 
 	    #-----------------------------------------------------------
@@ -1484,9 +1345,16 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	    #-----------------------------------------------------------
 	    AC_CHECK_LIB(bind, inet_ntoa, [LIBS="$LIBS -lbind -lsocket"])
 	    ;;
+	BSD/OS-2.1*|BSD/OS-3*)
+	    SHLIB_CFLAGS=""
+	    SHLIB_LD="shlicc -r"
+	    SHLIB_SUFFIX=".so"
+	    CC_SEARCH_FLAGS=""
+	    LD_SEARCH_FLAGS=""
+	    ;;
 	BSD/OS-4.*)
 	    SHLIB_CFLAGS="-export-dynamic -fPIC"
-	    SHLIB_LD='${CC} -shared'
+	    SHLIB_LD='${CCLD} -shared'
 	    SHLIB_SUFFIX=".so"
 	    LDFLAGS="$LDFLAGS -export-dynamic"
 	    CC_SEARCH_FLAGS=""
@@ -1494,11 +1362,19 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	    ;;
 	CYGWIN_*)
 	    SHLIB_CFLAGS=""
-	    SHLIB_LD='${CC} -shared'
-	    SHLIB_LD_LIBS="${SHLIB_LD_LIBS} -Wl,--out-implib,\$[@].a"
+	    SHLIB_LD='${CCLD} -shared'
 	    SHLIB_SUFFIX=".dll"
+	    SHLIB_LD_LIBS="${SHLIB_LD_LIBS} -Wl,--out-implib,\$[@].a"
 	    EXEEXT=".exe"
 	    do64bit_ok=yes
+	    CC_SEARCH_FLAGS=""
+	    LD_SEARCH_FLAGS=""
+	    ;;
+	dgux*)
+	    SHLIB_CFLAGS="-K PIC"
+	    SHLIB_LD='${CCLD} -G'
+	    SHLIB_LD_LIBS=""
+	    SHLIB_SUFFIX=".so"
 	    CC_SEARCH_FLAGS=""
 	    LD_SEARCH_FLAGS=""
 	    ;;
@@ -1506,7 +1382,7 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	    LDFLAGS="$LDFLAGS -Wl,--export-dynamic"
 	    SHLIB_CFLAGS="-fPIC"
 	    SHLIB_SUFFIX=".so"
-	    SHLIB_LD='${CC} -shared ${CFLAGS} ${LDFLAGS}'
+	    SHLIB_LD='${CCLD} ${CFLAGS} ${LDFLAGS} -shared'
 	    AC_CHECK_LIB(network, inet_ntoa, [LIBS="$LIBS -lnetwork"])
 	    ;;
 	HP-UX-*.11.*)
@@ -1518,29 +1394,23 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 
 	    AS_IF([test "`uname -m`" = ia64], [
 		SHLIB_SUFFIX=".so"
-		# Use newer C++ library for C++ extensions
-		#if test "$GCC" != "yes" ; then
-		#   CPPFLAGS="-AA"
-		#fi
 	    ], [
 		SHLIB_SUFFIX=".sl"
 	    ])
 	    AC_CHECK_LIB(dld, shl_load, tcl_ok=yes, tcl_ok=no)
 	    AS_IF([test "$tcl_ok" = yes], [
+		SHLIB_CFLAGS="+z"
+		SHLIB_LD="ld -b"
 		LDFLAGS="$LDFLAGS -Wl,-E"
-		CC_SEARCH_FLAGS='-Wl,+s,+b,${LIB_RUNTIME_DIR}:.'
-		LD_SEARCH_FLAGS='+s +b ${LIB_RUNTIME_DIR}:.'
+		CC_SEARCH_FLAGS='"-Wl,+s,+b,${LIB_RUNTIME_DIR}:."'
+		LD_SEARCH_FLAGS='+s +b "${LIB_RUNTIME_DIR}:."'
 		LD_LIBRARY_PATH_VAR="SHLIB_PATH"
 	    ])
 	    AS_IF([test "$GCC" = yes], [
-		SHLIB_LD='${CC} -shared'
+		SHLIB_LD='${CCLD} -shared'
 		LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
 	    ], [
 		CFLAGS="$CFLAGS -z"
-		# Users may want PA-RISC 1.1/2.0 portable code - needs HP cc
-		#CFLAGS="$CFLAGS +DAportable"
-		SHLIB_CFLAGS="+z"
-		SHLIB_LD="ld -b"
 	    ])
 
 	    # Check to enable 64-bit flags for compiler/linker
@@ -1550,9 +1420,9 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 			hppa64*)
 			    # 64-bit gcc in use.  Fix flags for GNU ld.
 			    do64bit_ok=yes
-			    SHLIB_LD='${CC} -shared'
+			    SHLIB_LD='${CCLD} -shared'
 			    AS_IF([test $doRpath = yes], [
-				CC_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'])
+				CC_SEARCH_FLAGS='"-Wl,-rpath,${LIB_RUNTIME_DIR}"'])
 			    LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
 			    ;;
 			*)
@@ -1565,13 +1435,34 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 		    LDFLAGS_ARCH="+DD64"
 		])
 	    ]) ;;
+	HP-UX-*.08.*|HP-UX-*.09.*|HP-UX-*.10.*)
+	    SHLIB_SUFFIX=".sl"
+	    AC_CHECK_LIB(dld, shl_load, tcl_ok=yes, tcl_ok=no)
+	    AS_IF([test "$tcl_ok" = yes], [
+		SHLIB_CFLAGS="+z"
+		SHLIB_LD="ld -b"
+		SHLIB_LD_LIBS=""
+		LDFLAGS="$LDFLAGS -Wl,-E"
+		CC_SEARCH_FLAGS='"-Wl,+s,+b,${LIB_RUNTIME_DIR}:."'
+		LD_SEARCH_FLAGS='+s +b "${LIB_RUNTIME_DIR}:."'
+		LD_LIBRARY_PATH_VAR="SHLIB_PATH"
+	    ]) ;;
+	IRIX-5.*)
+	    SHLIB_CFLAGS=""
+	    SHLIB_LD="ld -shared -rdata_shared"
+	    SHLIB_SUFFIX=".so"
+	    AC_LIBOBJ(mkstemp)
+	    AS_IF([test $doRpath = yes], [
+		CC_SEARCH_FLAGS='"-Wl,-rpath,${LIB_RUNTIME_DIR}"'
+		LD_SEARCH_FLAGS='-rpath "${LIB_RUNTIME_DIR}"'])
+	    ;;
 	IRIX-6.*)
 	    SHLIB_CFLAGS=""
 	    SHLIB_LD="ld -n32 -shared -rdata_shared"
 	    SHLIB_SUFFIX=".so"
 	    AS_IF([test $doRpath = yes], [
-		CC_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'
-		LD_SEARCH_FLAGS='-rpath ${LIB_RUNTIME_DIR}'])
+		CC_SEARCH_FLAGS='"-Wl,-rpath,${LIB_RUNTIME_DIR}"'
+		LD_SEARCH_FLAGS='-rpath "${LIB_RUNTIME_DIR}"'])
 	    AS_IF([test "$GCC" = yes], [
 		CFLAGS="$CFLAGS -mabi=n32"
 		LDFLAGS="$LDFLAGS -mabi=n32"
@@ -1593,8 +1484,8 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	    SHLIB_LD="ld -n32 -shared -rdata_shared"
 	    SHLIB_SUFFIX=".so"
 	    AS_IF([test $doRpath = yes], [
-		CC_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'
-		LD_SEARCH_FLAGS='-rpath ${LIB_RUNTIME_DIR}'])
+		CC_SEARCH_FLAGS='"-Wl,-rpath,${LIB_RUNTIME_DIR}"'
+		LD_SEARCH_FLAGS='-rpath "${LIB_RUNTIME_DIR}"'])
 
 	    # Check to enable 64-bit flags for compiler/linker
 
@@ -1609,7 +1500,7 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	        ])
 	    ])
 	    ;;
-	Linux*|GNU*|NetBSD-Debian)
+	Linux*|GNU*|NetBSD-Debian|DragonFly-*|FreeBSD-*)
 	    SHLIB_CFLAGS="-fPIC"
 	    SHLIB_SUFFIX=".so"
 
@@ -1617,17 +1508,29 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	    CFLAGS_OPTIMIZE="-O2 -fomit-frame-pointer"
 
 	    # TEA specific: use LDFLAGS_DEFAULT instead of LDFLAGS
-	    SHLIB_LD='${CC} -shared ${CFLAGS} ${LDFLAGS_DEFAULT}'
+	    SHLIB_LD='${CCLD} ${CFLAGS} ${LDFLAGS_DEFAULT} -shared'
 	    LDFLAGS="$LDFLAGS -Wl,--export-dynamic"
+
+	    case $system in
+	    DragonFly-*|FreeBSD-*)
+		AS_IF([test "${TCL_THREADS}" = "1"], [
+		    # The -pthread needs to go in the LDFLAGS, not LIBS
+		    LIBS=`echo $LIBS | sed s/-pthread//`
+		    CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+		    LDFLAGS="$LDFLAGS $PTHREAD_LIBS"])
+	    ;;
+            esac
+
 	    AS_IF([test $doRpath = yes], [
-		CC_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'])
+		CC_SEARCH_FLAGS='"-Wl,-rpath,${LIB_RUNTIME_DIR}"'])
 	    LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
 	    AS_IF([test "`uname -m`" = "alpha"], [CFLAGS="$CFLAGS -mieee"])
 	    AS_IF([test $do64bit = yes], [
 		AC_CACHE_CHECK([if compiler accepts -m64 flag], tcl_cv_cc_m64, [
 		    hold_cflags=$CFLAGS
 		    CFLAGS="$CFLAGS -m64"
-		    AC_TRY_LINK(,, tcl_cv_cc_m64=yes, tcl_cv_cc_m64=no)
+		    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+			    [tcl_cv_cc_m64=yes],[tcl_cv_cc_m64=no])
 		    CFLAGS=$hold_cflags])
 		AS_IF([test $tcl_cv_cc_m64 = yes], [
 		    CFLAGS="$CFLAGS -m64"
@@ -1647,96 +1550,51 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	    SHLIB_CFLAGS="-fPIC"
 	    SHLIB_SUFFIX=".so"
 	    CFLAGS_OPTIMIZE=-02
-	    SHLIB_LD='${CC} -shared'
+	    SHLIB_LD='${CCLD} -shared'
 	    LD_FLAGS="-Wl,--export-dynamic"
 	    AS_IF([test $doRpath = yes], [
-		CC_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'
-		LD_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'])
+		CC_SEARCH_FLAGS='"-Wl,-rpath,${LIB_RUNTIME_DIR}"'
+		LD_SEARCH_FLAGS='"-Wl,-rpath,${LIB_RUNTIME_DIR}"'])
 	    ;;
 	OpenBSD-*)
 	    arch=`arch -s`
 	    case "$arch" in
-	    vax)
-		SHLIB_SUFFIX=""
-		SHARED_LIB_SUFFIX=""
-		LDFLAGS=""
+	    alpha|sparc64)
+		SHLIB_CFLAGS="-fPIC"
 		;;
 	    *)
-		case "$arch" in
-		alpha|sparc64)
-		    SHLIB_CFLAGS="-fPIC"
-		    ;;
-		*)
-		    SHLIB_CFLAGS="-fpic"
-		    ;;
-		esac
-		SHLIB_LD='${CC} -shared ${SHLIB_CFLAGS}'
-		SHLIB_SUFFIX=".so"
-		AS_IF([test $doRpath = yes], [
-		    CC_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'])
-		LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
-		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so${SHLIB_VERSION}'
-		LDFLAGS="-Wl,-export-dynamic"
+		SHLIB_CFLAGS="-fpic"
 		;;
 	    esac
-	    case "$arch" in
-	    vax)
-		CFLAGS_OPTIMIZE="-O1"
-		;;
-	    *)
-		CFLAGS_OPTIMIZE="-O2"
-		;;
-	    esac
-	    AS_IF([test "${TCL_THREADS}" = "1"], [
-		# On OpenBSD:	Compile with -pthread
-		#		Don't link with -lpthread
-		LIBS=`echo $LIBS | sed s/-lpthread//`
-		CFLAGS="$CFLAGS -pthread"
-	    ])
+	    SHLIB_LD='${CCLD} ${SHLIB_CFLAGS} -shared'
+	    SHLIB_SUFFIX=".so"
+	    AS_IF([test $doRpath = yes], [
+		CC_SEARCH_FLAGS='"-Wl,-rpath,${LIB_RUNTIME_DIR}"'])
+	    LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
+	    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so${SHLIB_VERSION}'
+	    LDFLAGS="$LDFLAGS -Wl,-export-dynamic"
+	    CFLAGS_OPTIMIZE="-O2"
+	    # On OpenBSD:	Compile with -pthread
+	    #		Don't link with -lpthread
+	    LIBS=`echo $LIBS | sed s/-lpthread//`
+	    CFLAGS="$CFLAGS -pthread"
 	    # OpenBSD doesn't do version numbers with dots.
 	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
 	    TCL_LIB_VERSIONS_OK=nodots
 	    ;;
-	Minix-*|NetBSD-*)
+	NetBSD-*)
 	    # NetBSD has ELF and can use 'cc -shared' to build shared libs
 	    SHLIB_CFLAGS="-fPIC"
-	    SHLIB_LD='${CC} -shared ${SHLIB_CFLAGS}'
+	    SHLIB_LD='${CCLD} ${SHLIB_CFLAGS} -shared'
 	    SHLIB_SUFFIX=".so"
 	    LDFLAGS="$LDFLAGS -export-dynamic"
 	    AS_IF([test $doRpath = yes], [
-		CC_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'])
+		CC_SEARCH_FLAGS='"-Wl,-rpath,${LIB_RUNTIME_DIR}"'])
 	    LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
-	    AS_IF([test "${TCL_THREADS}" = "1"], [
-		# The -pthread needs to go in the CFLAGS, not LIBS
-		LIBS=`echo $LIBS | sed s/-pthread//`
-		CFLAGS="$CFLAGS -pthread"
-	    	LDFLAGS="$LDFLAGS -pthread"
-	    ])
-	    ;;
-	FreeBSD-*)
-	    # This configuration from FreeBSD Ports.
-	    SHLIB_CFLAGS="-fPIC"
-	    SHLIB_LD="${CC} -shared"
-	    SHLIB_LD_LIBS="${SHLIB_LD_LIBS} -Wl,-soname,\$[@]"
-	    SHLIB_SUFFIX=".so"
-	    LDFLAGS=""
-	    AS_IF([test $doRpath = yes], [
-		CC_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'
-		LD_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'])
-	    AS_IF([test "${TCL_THREADS}" = "1"], [
-		# The -pthread needs to go in the LDFLAGS, not LIBS
-		LIBS=`echo $LIBS | sed s/-pthread//`
-		CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-		LDFLAGS="$LDFLAGS $PTHREAD_LIBS"])
-	    case $system in
-	    FreeBSD-3.*)
-		# Version numbers are dot-stripped by system policy.
-		TCL_TRIM_DOTS=`echo ${PACKAGE_VERSION} | tr -d .`
-		UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
-		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so.1'
-		TCL_LIB_VERSIONS_OK=nodots
-		;;
-	    esac
+	    # The -pthread needs to go in the CFLAGS, not LIBS
+	    LIBS=`echo $LIBS | sed s/-pthread//`
+	    CFLAGS="$CFLAGS -pthread"
+	    LDFLAGS="$LDFLAGS -pthread"
 	    ;;
 	Darwin-*)
 	    CFLAGS_OPTIMIZE="-Os"
@@ -1757,8 +1615,8 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 				tcl_cv_cc_arch_ppc64, [
 			    hold_cflags=$CFLAGS
 			    CFLAGS="$CFLAGS -arch ppc64 -mpowerpc64 -mcpu=G5"
-			    AC_TRY_LINK(,, tcl_cv_cc_arch_ppc64=yes,
-				    tcl_cv_cc_arch_ppc64=no)
+			    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+				    [tcl_cv_cc_arch_ppc64=yes],[tcl_cv_cc_arch_ppc64=no])
 			    CFLAGS=$hold_cflags])
 			AS_IF([test $tcl_cv_cc_arch_ppc64 = yes], [
 			    CFLAGS="$CFLAGS -arch ppc64 -mpowerpc64 -mcpu=G5"
@@ -1769,8 +1627,8 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 				tcl_cv_cc_arch_x86_64, [
 			    hold_cflags=$CFLAGS
 			    CFLAGS="$CFLAGS -arch x86_64"
-			    AC_TRY_LINK(,, tcl_cv_cc_arch_x86_64=yes,
-				    tcl_cv_cc_arch_x86_64=no)
+			    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+				    [tcl_cv_cc_arch_x86_64=yes],[tcl_cv_cc_arch_x86_64=no])
 			    CFLAGS=$hold_cflags])
 			AS_IF([test $tcl_cv_cc_arch_x86_64 = yes], [
 			    CFLAGS="$CFLAGS -arch x86_64"
@@ -1786,11 +1644,12 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 		    fat_32_64=yes])
 	    ])
 	    # TEA specific: use LDFLAGS_DEFAULT instead of LDFLAGS
-	    SHLIB_LD='${CC} -dynamiclib ${CFLAGS} ${LDFLAGS_DEFAULT}'
+	    SHLIB_LD='${CCLD} -dynamiclib ${CFLAGS} ${LDFLAGS_DEFAULT}'
 	    AC_CACHE_CHECK([if ld accepts -single_module flag], tcl_cv_ld_single_module, [
 		hold_ldflags=$LDFLAGS
 		LDFLAGS="$LDFLAGS -dynamiclib -Wl,-single_module"
-		AC_TRY_LINK(, [int i;], tcl_cv_ld_single_module=yes, tcl_cv_ld_single_module=no)
+		AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[int i;]])],
+			[tcl_cv_ld_single_module=yes],[tcl_cv_ld_single_module=no])
 		LDFLAGS=$hold_ldflags])
 	    AS_IF([test $tcl_cv_ld_single_module = yes], [
 		SHLIB_LD="${SHLIB_LD} -Wl,-single_module"
@@ -1799,17 +1658,13 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	    vers=`echo ${PACKAGE_VERSION} | sed -e 's/^\([[0-9]]\{1,5\}\)\(\(\.[[0-9]]\{1,3\}\)\{0,2\}\).*$/\1\2/p' -e d`
 	    SHLIB_LD="${SHLIB_LD} -current_version ${vers:-0} -compatibility_version ${vers:-0}"
 	    SHLIB_SUFFIX=".dylib"
-	    # Don't use -prebind when building for Mac OS X 10.4 or later only:
-	    AS_IF([test "`echo "${MACOSX_DEPLOYMENT_TARGET}" | awk -F '10\\.' '{print int([$]2)}'`" -lt 4 -a \
-		"`echo "${CPPFLAGS}" | awk -F '-mmacosx-version-min=10\\.' '{print int([$]2)}'`" -lt 4], [
-		LDFLAGS="$LDFLAGS -prebind"])
 	    LDFLAGS="$LDFLAGS -headerpad_max_install_names"
 	    AC_CACHE_CHECK([if ld accepts -search_paths_first flag],
 		    tcl_cv_ld_search_paths_first, [
 		hold_ldflags=$LDFLAGS
 		LDFLAGS="$LDFLAGS -Wl,-search_paths_first"
-		AC_TRY_LINK(, [int i;], tcl_cv_ld_search_paths_first=yes,
-			tcl_cv_ld_search_paths_first=no)
+		AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[int i;]])],
+			[tcl_cv_ld_search_paths_first=yes],[tcl_cv_ld_search_paths_first=no])
 		LDFLAGS=$hold_ldflags])
 	    AS_IF([test $tcl_cv_ld_search_paths_first = yes], [
 		LDFLAGS="$LDFLAGS -Wl,-search_paths_first"
@@ -1832,8 +1687,8 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 			done
 			CPPFLAGS="$CPPFLAGS -I/usr/X11R6/include"
 			LDFLAGS="$LDFLAGS -L/usr/X11R6/lib -lX11"
-			AC_TRY_LINK([#include <X11/Xlib.h>], [XrmInitialize();],
-			    tcl_cv_lib_x11_64=yes, tcl_cv_lib_x11_64=no)
+			AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <X11/Xlib.h>]], [[XrmInitialize();]])],
+			    [tcl_cv_lib_x11_64=yes],[tcl_cv_lib_x11_64=no])
 			for v in CFLAGS CPPFLAGS LDFLAGS; do
 			    eval $v'="$hold_'$v'"'
 			done])
@@ -1843,10 +1698,12 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 			for v in CFLAGS CPPFLAGS LDFLAGS; do
 			    eval 'hold_'$v'="$'$v'";'$v'="`echo "$'$v' "|sed -e "s/-arch ppc / /g" -e "s/-arch i386 / /g"`"'
 			done
-			CPPFLAGS="$CPPFLAGS -DUSE_TCL_STUBS=1 -DUSE_TK_STUBS=1 ${TCL_INCLUDES} ${TK_INCLUDES}"
+                        ## TODO stubs fails with library initialisation failure
+			## CPPFLAGS="$CPPFLAGS -DUSE_TCL_STUBS=1 -DUSE_TK_STUBS=1 ${TCL_INCLUDES} ${TK_INCLUDES}"
+                        CPPFLAGS="$CPPFLAGS ${TCL_INCLUDES} ${TK_INCLUDES}"
 			LDFLAGS="$LDFLAGS ${TCL_STUB_LIB_SPEC} ${TK_STUB_LIB_SPEC}"
-			AC_TRY_LINK([#include <tk.h>], [Tk_InitStubs(NULL, "", 0);],
-			    tcl_cv_lib_tk_64=yes, tcl_cv_lib_tk_64=no)
+			AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <tk.h>]], [[Tk_InitStubs(NULL, "", 0);]])],
+			    [tcl_cv_lib_tk_64=yes],[tcl_cv_lib_tk_64=no])
 			for v in CFLAGS CPPFLAGS LDFLAGS; do
 			    eval $v'="$hold_'$v'"'
 			done])
@@ -1875,21 +1732,19 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	    ])
 	    SHLIB_SUFFIX=".so"
 	    AS_IF([test $doRpath = yes], [
-		CC_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'
+		CC_SEARCH_FLAGS='"-Wl,-rpath,${LIB_RUNTIME_DIR}"'
 		LD_SEARCH_FLAGS='-rpath ${LIB_RUNTIME_DIR}'])
 	    AS_IF([test "$GCC" = yes], [CFLAGS="$CFLAGS -mieee"], [
 		CFLAGS="$CFLAGS -DHAVE_TZSET -std1 -ieee"])
 	    # see pthread_intro(3) for pthread support on osf1, k.furukawa
-	    AS_IF([test "${TCL_THREADS}" = 1], [
-		CFLAGS="$CFLAGS -DHAVE_PTHREAD_ATTR_SETSTACKSIZE"
-		CFLAGS="$CFLAGS -DTCL_THREAD_STACK_MIN=PTHREAD_STACK_MIN*64"
-		LIBS=`echo $LIBS | sed s/-lpthreads//`
-		AS_IF([test "$GCC" = yes], [
-		    LIBS="$LIBS -lpthread -lmach -lexc"
-		], [
-		    CFLAGS="$CFLAGS -pthread"
-		    LDFLAGS="$LDFLAGS -pthread"
-		])
+	    CFLAGS="$CFLAGS -DHAVE_PTHREAD_ATTR_SETSTACKSIZE"
+	    CFLAGS="$CFLAGS -DTCL_THREAD_STACK_MIN=PTHREAD_STACK_MIN*64"
+	    LIBS=`echo $LIBS | sed s/-lpthreads//`
+	    AS_IF([test "$GCC" = yes], [
+		LIBS="$LIBS -lpthread -lmach -lexc"
+	    ], [
+		CFLAGS="$CFLAGS -pthread"
+		LDFLAGS="$LDFLAGS -pthread"
 	    ])
 	    ;;
 	QNX-6*)
@@ -1929,12 +1784,12 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	    SHLIB_CFLAGS="-KPIC"
 	    SHLIB_SUFFIX=".so"
 	    AS_IF([test "$GCC" = yes], [
-		SHLIB_LD='${CC} -shared'
-		CC_SEARCH_FLAGS='-Wl,-R,${LIB_RUNTIME_DIR}'
+		SHLIB_LD='${CCLD} -shared'
+		CC_SEARCH_FLAGS='"-Wl,-R,${LIB_RUNTIME_DIR}"'
 		LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
 	    ], [
 		SHLIB_LD="/usr/ccs/bin/ld -G -z text"
-		CC_SEARCH_FLAGS='-R ${LIB_RUNTIME_DIR}'
+		CC_SEARCH_FLAGS='-R "${LIB_RUNTIME_DIR}"'
 		LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
 	    ])
 	    ;;
@@ -1999,8 +1854,8 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 
 	    SHLIB_SUFFIX=".so"
 	    AS_IF([test "$GCC" = yes], [
-		SHLIB_LD='${CC} -shared'
-		CC_SEARCH_FLAGS='-Wl,-R,${LIB_RUNTIME_DIR}'
+		SHLIB_LD='${CCLD} -shared'
+		CC_SEARCH_FLAGS='"-Wl,-R,${LIB_RUNTIME_DIR}"'
 		LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
 		AS_IF([test "$do64bit_ok" = yes], [
 		    AS_IF([test "$arch" = "sparcv9 sparc"], [
@@ -2023,17 +1878,17 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 		case $system in
 		    SunOS-5.[[1-9]][[0-9]]*)
 			# TEA specific: use LDFLAGS_DEFAULT instead of LDFLAGS
-			SHLIB_LD='${CC} -G -z text ${LDFLAGS_DEFAULT}';;
+			SHLIB_LD='${CCLD} -G -z text ${LDFLAGS_DEFAULT}';;
 		    *)
 			SHLIB_LD='/usr/ccs/bin/ld -G -z text';;
 		esac
-		CC_SEARCH_FLAGS='-Wl,-R,${LIB_RUNTIME_DIR}'
-		LD_SEARCH_FLAGS='-R ${LIB_RUNTIME_DIR}'
+		CC_SEARCH_FLAGS='"-Wl,-R,${LIB_RUNTIME_DIR}"'
+		LD_SEARCH_FLAGS='-R "${LIB_RUNTIME_DIR}"'
 	    ])
 	    ;;
 	UNIX_SV* | UnixWare-5*)
 	    SHLIB_CFLAGS="-KPIC"
-	    SHLIB_LD='${CC} -G'
+	    SHLIB_LD='${CCLD} -G'
 	    SHLIB_LD_LIBS=""
 	    SHLIB_SUFFIX=".so"
 	    # Some UNIX_SV* systems (unixware 1.1.2 for example) have linkers
@@ -2041,7 +1896,8 @@ AC_DEFUN([TEA_CONFIG_CFLAGS], [
 	    AC_CACHE_CHECK([for ld accepts -Bexport flag], tcl_cv_ld_Bexport, [
 		hold_ldflags=$LDFLAGS
 		LDFLAGS="$LDFLAGS -Wl,-Bexport"
-		AC_TRY_LINK(, [int i;], tcl_cv_ld_Bexport=yes, tcl_cv_ld_Bexport=no)
+		AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[int i;]])],
+			[tcl_cv_ld_Bexport=yes],[tcl_cv_ld_Bexport=no])
 	        LDFLAGS=$hold_ldflags])
 	    AS_IF([test $tcl_cv_ld_Bexport = yes], [
 		LDFLAGS="$LDFLAGS -Wl,-Bexport"
@@ -2073,9 +1929,9 @@ dnl # preprocessing tests use only CPPFLAGS.
 	case $system in
 	    AIX-*) ;;
 	    BSD/OS*) ;;
-	    CYGWIN_*|MINGW32_*) ;;
+	    CYGWIN_*|MINGW32_*|MINGW64_*|MSYS_*) ;;
 	    IRIX*) ;;
-	    NetBSD-*|FreeBSD-*|OpenBSD-*) ;;
+	    NetBSD-*|DragonFly-*|FreeBSD-*|OpenBSD-*) ;;
 	    Darwin-*) ;;
 	    SCO_SV-3.2*) ;;
 	    windows) ;;
@@ -2097,7 +1953,7 @@ dnl # preprocessing tests use only CPPFLAGS.
     if test "${GCC}" = "yes" -a ${SHLIB_SUFFIX} = ".dll"; then
 	AC_CACHE_CHECK(for SEH support in compiler,
 	    tcl_cv_seh,
-	AC_TRY_RUN([
+	AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
@@ -2112,10 +1968,10 @@ dnl # preprocessing tests use only CPPFLAGS.
 		}
 		return 1;
 	    }
-	],
-	    tcl_cv_seh=yes,
-	    tcl_cv_seh=no,
-	    tcl_cv_seh=no)
+	]])],
+	    [tcl_cv_seh=yes],
+	    [tcl_cv_seh=no],
+	    [tcl_cv_seh=no])
 	)
 	if test "$tcl_cv_seh" = "no" ; then
 	    AC_DEFINE(HAVE_NO_SEH, 1,
@@ -2130,15 +1986,15 @@ dnl # preprocessing tests use only CPPFLAGS.
 	#
 	AC_CACHE_CHECK(for EXCEPTION_DISPOSITION support in include files,
 	    tcl_cv_eh_disposition,
-	    AC_TRY_COMPILE([
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #	    define WIN32_LEAN_AND_MEAN
 #	    include <windows.h>
 #	    undef WIN32_LEAN_AND_MEAN
-	    ],[
+	    ]], [[
 		EXCEPTION_DISPOSITION x;
-	    ],
-		tcl_cv_eh_disposition=yes,
-		tcl_cv_eh_disposition=no)
+	    ]])],
+		[tcl_cv_eh_disposition=yes],
+		[tcl_cv_eh_disposition=no])
 	)
 	if test "$tcl_cv_eh_disposition" = "no" ; then
 	AC_DEFINE(EXCEPTION_DISPOSITION, int,
@@ -2151,18 +2007,18 @@ dnl # preprocessing tests use only CPPFLAGS.
 
 	AC_CACHE_CHECK(for winnt.h that ignores VOID define,
 	    tcl_cv_winnt_ignore_void,
-	    AC_TRY_COMPILE([
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #define VOID void
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
-	    ], [
+	    ]], [[
 		CHAR c;
 		SHORT s;
 		LONG l;
-	    ],
-        tcl_cv_winnt_ignore_void=yes,
-        tcl_cv_winnt_ignore_void=no)
+	    ]])],
+        [tcl_cv_winnt_ignore_void=yes],
+        [tcl_cv_winnt_ignore_void=no])
 	)
 	if test "$tcl_cv_winnt_ignore_void" = "yes" ; then
 	    AC_DEFINE(HAVE_WINNT_IGNORE_VOID, 1,
@@ -2176,22 +2032,25 @@ dnl # preprocessing tests use only CPPFLAGS.
 
 	AC_CACHE_CHECK(for cast to union support,
 	    tcl_cv_cast_to_union,
-	    AC_TRY_COMPILE([],
-	    [
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
 		  union foo { int i; double d; };
 		  union foo f = (union foo) (int) 0;
-	    ],
-	    tcl_cv_cast_to_union=yes,
-	    tcl_cv_cast_to_union=no)
+	    ]])],
+	    [tcl_cv_cast_to_union=yes],
+	    [tcl_cv_cast_to_union=no])
 	)
 	if test "$tcl_cv_cast_to_union" = "yes"; then
 	    AC_DEFINE(HAVE_CAST_TO_UNION, 1,
 		    [Defined when compiler supports casting to union type.])
 	fi
 
+	AC_CHECK_HEADER(stdbool.h, [AC_DEFINE(HAVE_STDBOOL_H, 1, [Do we have <stdbool.h>?])],)
+
     AC_SUBST(CFLAGS_DEBUG)
     AC_SUBST(CFLAGS_OPTIMIZE)
     AC_SUBST(CFLAGS_WARNING)
+    AC_SUBST(LDFLAGS_DEBUG)
+    AC_SUBST(LDFLAGS_OPTIMIZE)
 
     AC_SUBST(STLIB_LD)
     AC_SUBST(SHLIB_LD)
@@ -2231,7 +2090,7 @@ dnl # preprocessing tests use only CPPFLAGS.
 AC_DEFUN([TEA_SERIAL_PORT], [
     AC_CHECK_HEADERS(sys/modem.h)
     AC_CACHE_CHECK([termios vs. termio vs. sgtty], tcl_cv_api_serial, [
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <termios.h>
 
 int main() {
@@ -2242,9 +2101,9 @@ int main() {
 	return 0;
     }
     return 1;
-}], tcl_cv_api_serial=termios, tcl_cv_api_serial=no, tcl_cv_api_serial=no)
+}]])],[tcl_cv_api_serial=termios],[tcl_cv_api_serial=no],[tcl_cv_api_serial=no])
     if test $tcl_cv_api_serial = no ; then
-	AC_TRY_RUN([
+	AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <termio.h>
 
 int main() {
@@ -2254,10 +2113,10 @@ int main() {
 	return 0;
     }
     return 1;
-}], tcl_cv_api_serial=termio, tcl_cv_api_serial=no, tcl_cv_api_serial=no)
+}]])],[tcl_cv_api_serial=termio],[tcl_cv_api_serial=no],[tcl_cv_api_serial=no])
     fi
     if test $tcl_cv_api_serial = no ; then
-	AC_TRY_RUN([
+	AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <sgtty.h>
 
 int main() {
@@ -2268,10 +2127,10 @@ int main() {
 	return 0;
     }
     return 1;
-}], tcl_cv_api_serial=sgtty, tcl_cv_api_serial=no, tcl_cv_api_serial=no)
+}]])],[tcl_cv_api_serial=sgtty],[tcl_cv_api_serial=no],[tcl_cv_api_serial=no])
     fi
     if test $tcl_cv_api_serial = no ; then
-	AC_TRY_RUN([
+	AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <termios.h>
 #include <errno.h>
 
@@ -2284,10 +2143,10 @@ int main() {
 	return 0;
     }
     return 1;
-}], tcl_cv_api_serial=termios, tcl_cv_api_serial=no, tcl_cv_api_serial=no)
+}]])],[tcl_cv_api_serial=termios],[tcl_cv_api_serial=no],[tcl_cv_api_serial=no])
     fi
     if test $tcl_cv_api_serial = no; then
-	AC_TRY_RUN([
+	AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <termio.h>
 #include <errno.h>
 
@@ -2299,10 +2158,10 @@ int main() {
 	return 0;
     }
     return 1;
-    }], tcl_cv_api_serial=termio, tcl_cv_api_serial=no, tcl_cv_api_serial=no)
+    }]])],[tcl_cv_api_serial=termio],[tcl_cv_api_serial=no],[tcl_cv_api_serial=no])
     fi
     if test $tcl_cv_api_serial = no; then
-	AC_TRY_RUN([
+	AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <sgtty.h>
 #include <errno.h>
 
@@ -2315,104 +2174,13 @@ int main() {
 	return 0;
     }
     return 1;
-}], tcl_cv_api_serial=sgtty, tcl_cv_api_serial=none, tcl_cv_api_serial=none)
+}]])],[tcl_cv_api_serial=sgtty],[tcl_cv_api_serial=none],[tcl_cv_api_serial=none])
     fi])
     case $tcl_cv_api_serial in
 	termios) AC_DEFINE(USE_TERMIOS, 1, [Use the termios API for serial lines]);;
 	termio)  AC_DEFINE(USE_TERMIO, 1, [Use the termio API for serial lines]);;
 	sgtty)   AC_DEFINE(USE_SGTTY, 1, [Use the sgtty API for serial lines]);;
     esac
-])
-
-#--------------------------------------------------------------------
-# TEA_MISSING_POSIX_HEADERS
-#
-#	Supply substitutes for missing POSIX header files.  Special
-#	notes:
-#	    - stdlib.h doesn't define strtol, strtoul, or
-#	      strtod in some versions of SunOS
-#	    - some versions of string.h don't declare procedures such
-#	      as strstr
-#
-# Arguments:
-#	none
-#
-# Results:
-#
-#	Defines some of the following vars:
-#		NO_DIRENT_H
-#		NO_ERRNO_H
-#		NO_VALUES_H
-#		HAVE_LIMITS_H or NO_LIMITS_H
-#		NO_STDLIB_H
-#		NO_STRING_H
-#		NO_SYS_WAIT_H
-#		NO_DLFCN_H
-#		HAVE_SYS_PARAM_H
-#
-#		HAVE_STRING_H ?
-#
-# tkUnixPort.h checks for HAVE_LIMITS_H, so do both HAVE and
-# CHECK on limits.h
-#--------------------------------------------------------------------
-
-AC_DEFUN([TEA_MISSING_POSIX_HEADERS], [
-    AC_CACHE_CHECK([dirent.h], tcl_cv_dirent_h, [
-    AC_TRY_LINK([#include <sys/types.h>
-#include <dirent.h>], [
-#ifndef _POSIX_SOURCE
-#   ifdef __Lynx__
-	/*
-	 * Generate compilation error to make the test fail:  Lynx headers
-	 * are only valid if really in the POSIX environment.
-	 */
-
-	missing_procedure();
-#   endif
-#endif
-DIR *d;
-struct dirent *entryPtr;
-char *p;
-d = opendir("foobar");
-entryPtr = readdir(d);
-p = entryPtr->d_name;
-closedir(d);
-], tcl_cv_dirent_h=yes, tcl_cv_dirent_h=no)])
-
-    if test $tcl_cv_dirent_h = no; then
-	AC_DEFINE(NO_DIRENT_H, 1, [Do we have <dirent.h>?])
-    fi
-
-    # TEA specific:
-    AC_CHECK_HEADER(errno.h, , [AC_DEFINE(NO_ERRNO_H, 1, [Do we have <errno.h>?])])
-    AC_CHECK_HEADER(float.h, , [AC_DEFINE(NO_FLOAT_H, 1, [Do we have <float.h>?])])
-    AC_CHECK_HEADER(values.h, , [AC_DEFINE(NO_VALUES_H, 1, [Do we have <values.h>?])])
-    AC_CHECK_HEADER(limits.h,
-	[AC_DEFINE(HAVE_LIMITS_H, 1, [Do we have <limits.h>?])],
-	[AC_DEFINE(NO_LIMITS_H, 1, [Do we have <limits.h>?])])
-    AC_CHECK_HEADER(stdlib.h, tcl_ok=1, tcl_ok=0)
-    AC_EGREP_HEADER(strtol, stdlib.h, , tcl_ok=0)
-    AC_EGREP_HEADER(strtoul, stdlib.h, , tcl_ok=0)
-    AC_EGREP_HEADER(strtod, stdlib.h, , tcl_ok=0)
-    if test $tcl_ok = 0; then
-	AC_DEFINE(NO_STDLIB_H, 1, [Do we have <stdlib.h>?])
-    fi
-    AC_CHECK_HEADER(string.h, tcl_ok=1, tcl_ok=0)
-    AC_EGREP_HEADER(strstr, string.h, , tcl_ok=0)
-    AC_EGREP_HEADER(strerror, string.h, , tcl_ok=0)
-
-    # See also memmove check below for a place where NO_STRING_H can be
-    # set and why.
-
-    if test $tcl_ok = 0; then
-	AC_DEFINE(NO_STRING_H, 1, [Do we have <string.h>?])
-    fi
-
-    AC_CHECK_HEADER(sys/wait.h, , [AC_DEFINE(NO_SYS_WAIT_H, 1, [Do we have <sys/wait.h>?])])
-    AC_CHECK_HEADER(dlfcn.h, , [AC_DEFINE(NO_DLFCN_H, 1, [Do we have <dlfcn.h>?])])
-
-    # OS/390 lacks sys/param.h (and doesn't need it, by chance).
-    AC_HAVE_HEADERS(sys/param.h)
 ])
 
 #--------------------------------------------------------------------
@@ -2450,7 +2218,7 @@ AC_DEFUN([TEA_PATH_UNIX_X], [
     not_really_there=""
     if test "$no_x" = ""; then
 	if test "$x_includes" = ""; then
-	    AC_TRY_CPP([#include <X11/Xlib.h>], , not_really_there="yes")
+	    AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <X11/Xlib.h>]])],[],[not_really_there="yes"])
 	else
 	    if test ! -r $x_includes/X11/Xlib.h; then
 		not_really_there="yes"
@@ -2460,7 +2228,7 @@ AC_DEFUN([TEA_PATH_UNIX_X], [
     if test "$no_x" = "yes" -o "$not_really_there" = "yes"; then
 	AC_MSG_CHECKING([for X11 header files])
 	found_xincludes="no"
-	AC_TRY_CPP([#include <X11/Xlib.h>], found_xincludes="yes", found_xincludes="no")
+	AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <X11/Xlib.h>]])],[found_xincludes="yes"],[found_xincludes="no"])
 	if test "$found_xincludes" = "no"; then
 	    dirs="/usr/unsupported/include /usr/local/include /usr/X386/include /usr/X11R6/include /usr/X11R5/include /usr/include/X11R5 /usr/include/X11R4 /usr/openwin/include /usr/X11/include /usr/sww/include"
 	    for i in $dirs ; do
@@ -2566,6 +2334,7 @@ AC_DEFUN([TEA_BLOCKING_STYLE], [
 #		HAVE_TM_GMTOFF
 #		HAVE_TM_TZADJ
 #		HAVE_TIMEZONE_VAR
+#
 #--------------------------------------------------------------------
 
 AC_DEFUN([TEA_TIME_HANDLER], [
@@ -2573,18 +2342,20 @@ AC_DEFUN([TEA_TIME_HANDLER], [
     AC_HEADER_TIME
     AC_STRUCT_TIMEZONE
 
-    AC_CHECK_FUNCS(gmtime_r localtime_r)
+    AC_CHECK_FUNCS(gmtime_r localtime_r mktime)
 
     AC_CACHE_CHECK([tm_tzadj in struct tm], tcl_cv_member_tm_tzadj, [
-	AC_TRY_COMPILE([#include <time.h>], [struct tm tm; tm.tm_tzadj;],
-	    tcl_cv_member_tm_tzadj=yes, tcl_cv_member_tm_tzadj=no)])
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <time.h>]], [[struct tm tm; (void)tm.tm_tzadj;]])],
+	    [tcl_cv_member_tm_tzadj=yes],
+	    [tcl_cv_member_tm_tzadj=no])])
     if test $tcl_cv_member_tm_tzadj = yes ; then
 	AC_DEFINE(HAVE_TM_TZADJ, 1, [Should we use the tm_tzadj field of struct tm?])
     fi
 
     AC_CACHE_CHECK([tm_gmtoff in struct tm], tcl_cv_member_tm_gmtoff, [
-	AC_TRY_COMPILE([#include <time.h>], [struct tm tm; tm.tm_gmtoff;],
-	    tcl_cv_member_tm_gmtoff=yes, tcl_cv_member_tm_gmtoff=no)])
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <time.h>]], [[struct tm tm; (void)tm.tm_gmtoff;]])],
+	    [tcl_cv_member_tm_gmtoff=yes],
+	    [tcl_cv_member_tm_gmtoff=no])])
     if test $tcl_cv_member_tm_gmtoff = yes ; then
 	AC_DEFINE(HAVE_TM_GMTOFF, 1, [Should we use the tm_gmtoff field of struct tm?])
     fi
@@ -2594,11 +2365,11 @@ AC_DEFUN([TEA_TIME_HANDLER], [
     # (like convex) have timezone functions, etc.
     #
     AC_CACHE_CHECK([long timezone variable], tcl_cv_timezone_long, [
-	AC_TRY_COMPILE([#include <time.h>],
-	    [extern long timezone;
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <time.h>]],
+	[[extern long timezone;
 	    timezone += 1;
-	    exit (0);],
-	    tcl_cv_timezone_long=yes, tcl_cv_timezone_long=no)])
+	    exit (0);]])],
+	    [tcl_cv_timezone_long=yes], [tcl_cv_timezone_long=no])])
     if test $tcl_cv_timezone_long = yes ; then
 	AC_DEFINE(HAVE_TIMEZONE_VAR, 1, [Should we use the global timezone variable?])
     else
@@ -2606,11 +2377,11 @@ AC_DEFUN([TEA_TIME_HANDLER], [
 	# On some systems (eg IRIX 6.2), timezone is a time_t and not a long.
 	#
 	AC_CACHE_CHECK([time_t timezone variable], tcl_cv_timezone_time, [
-	    AC_TRY_COMPILE([#include <time.h>],
-		[extern time_t timezone;
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <time.h>]],
+	    [[extern time_t timezone;
 		timezone += 1;
-		exit (0);],
-		tcl_cv_timezone_time=yes, tcl_cv_timezone_time=no)])
+		exit (0);]])],
+		[tcl_cv_timezone_time=yes], [tcl_cv_timezone_time=no])])
 	if test $tcl_cv_timezone_time = yes ; then
 	    AC_DEFINE(HAVE_TIMEZONE_VAR, 1, [Should we use the global timezone variable?])
 	fi
@@ -2640,7 +2411,8 @@ AC_DEFUN([TEA_BUGGY_STRTOD], [
     AC_CHECK_FUNC(strtod, tcl_strtod=1, tcl_strtod=0)
     if test "$tcl_strtod" = 1; then
 	AC_CACHE_CHECK([for Solaris2.4/Tru64 strtod bugs], tcl_cv_strtod_buggy,[
-	    AC_TRY_RUN([
+	    AC_RUN_IFELSE([AC_LANG_SOURCE([[
+		#include <stdlib.h>
 		extern double strtod();
 		int main() {
 		    char *infString="Inf", *nanString="NaN", *spaceString=" ";
@@ -2659,8 +2431,8 @@ AC_DEFUN([TEA_BUGGY_STRTOD], [
 			exit(1);
 		    }
 		    exit(0);
-		}], tcl_cv_strtod_buggy=ok, tcl_cv_strtod_buggy=buggy,
-		    tcl_cv_strtod_buggy=buggy)])
+		}]])], [tcl_cv_strtod_buggy=ok], [tcl_cv_strtod_buggy=buggy],
+		    [tcl_cv_strtod_buggy=buggy])])
 	if test "$tcl_cv_strtod_buggy" = buggy; then
 	    AC_LIBOBJ([fixstrtod])
 	    USE_COMPAT=1
@@ -2673,38 +2445,30 @@ AC_DEFUN([TEA_BUGGY_STRTOD], [
 # TEA_TCL_LINK_LIBS
 #
 #	Search for the libraries needed to link the Tcl shell.
-#	Things like the math library (-lm) and socket stuff (-lsocket vs.
-#	-lnsl) are dealt with here.
+#	Things like the math library (-lm), socket stuff (-lsocket vs.
+#	-lnsl), zlib (-lz) and libtommath (-ltommath) are dealt with here.
 #
 # Arguments:
-#	Requires the following vars to be set in the Makefile:
-#		DL_LIBS (not in TEA, only needed in core)
-#		LIBS
-#		MATH_LIBS
+#	None.
 #
 # Results:
 #
-#	Substitutes the following vars:
-#		TCL_LIBS
-#		MATH_LIBS
-#
 #	Might append to the following vars:
 #		LIBS
+#		MATH_LIBS
 #
 #	Might define the following vars:
 #		HAVE_NET_ERRNO_H
+#
 #--------------------------------------------------------------------
 
 AC_DEFUN([TEA_TCL_LINK_LIBS], [
     #--------------------------------------------------------------------
     # On a few very rare systems, all of the libm.a stuff is
     # already in libc.a.  Set compiler flags accordingly.
-    # Also, Linux requires the "ieee" library for math to work
-    # right (and it must appear before "-lm").
     #--------------------------------------------------------------------
 
     AC_CHECK_FUNC(sin, MATH_LIBS="", MATH_LIBS="-lm")
-    AC_CHECK_LIB(ieee, main, [MATH_LIBS="-lieee $MATH_LIBS"])
 
     #--------------------------------------------------------------------
     # Interactive UNIX requires -linet instead of -lsocket, plus it
@@ -2746,13 +2510,10 @@ AC_DEFUN([TEA_TCL_LINK_LIBS], [
     fi
     AC_CHECK_FUNC(gethostbyname, , [AC_CHECK_LIB(nsl, gethostbyname,
 	    [LIBS="$LIBS -lnsl"])])
-
-    # TEA specific: Don't perform the eval of the libraries here because
-    # DL_LIBS won't be set until we call TEA_CONFIG_CFLAGS
-
-    TCL_LIBS='${DL_LIBS} ${LIBS} ${MATH_LIBS}'
-    AC_SUBST(TCL_LIBS)
-    AC_SUBST(MATH_LIBS)
+    AC_CHECK_FUNC(mp_log_u32, , [AC_CHECK_LIB(tommath, mp_log_u32,
+	    [LIBS="$LIBS -ltommath"])])
+    AC_CHECK_FUNC(deflateSetHeader, , [AC_CHECK_LIB(z, deflateSetHeader,
+	    [LIBS="$LIBS -lz"])])
 ])
 
 #--------------------------------------------------------------------
@@ -2770,15 +2531,16 @@ AC_DEFUN([TEA_TCL_LINK_LIBS], [
 #		_ISOC99_SOURCE
 #		_LARGEFILE64_SOURCE
 #		_LARGEFILE_SOURCE64
+#
 #--------------------------------------------------------------------
 
 AC_DEFUN([TEA_TCL_EARLY_FLAG],[
     AC_CACHE_VAL([tcl_cv_flag_]translit($1,[A-Z],[a-z]),
-	AC_TRY_COMPILE([$2], $3, [tcl_cv_flag_]translit($1,[A-Z],[a-z])=no,
-	    AC_TRY_COMPILE([[#define ]$1[ 1
-]$2], $3,
-		[tcl_cv_flag_]translit($1,[A-Z],[a-z])=yes,
-		[tcl_cv_flag_]translit($1,[A-Z],[a-z])=no)))
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[$2]], [[$3]])],
+	    [tcl_cv_flag_]translit($1,[A-Z],[a-z])=no,[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[[#define ]$1[ 1
+]$2]], [[$3]])],
+	[tcl_cv_flag_]translit($1,[A-Z],[a-z])=yes,
+	[tcl_cv_flag_]translit($1,[A-Z],[a-z])=no)]))
     if test ["x${tcl_cv_flag_]translit($1,[A-Z],[a-z])[}" = "xyes"] ; then
 	AC_DEFINE($1, 1, [Add the ]$1[ flag when building])
 	tcl_flags="$tcl_flags $1"
@@ -2814,9 +2576,10 @@ AC_DEFUN([TEA_TCL_EARLY_FLAGS],[
 #	Might define the following vars:
 #		TCL_WIDE_INT_IS_LONG
 #		TCL_WIDE_INT_TYPE
-#		HAVE_STRUCT_DIRENT64
+#		HAVE_STRUCT_DIRENT64, HAVE_DIR64
 #		HAVE_STRUCT_STAT64
 #		HAVE_TYPE_OFF64_T
+#
 #--------------------------------------------------------------------
 
 AC_DEFUN([TEA_TCL_64BIT_FLAGS], [
@@ -2824,17 +2587,17 @@ AC_DEFUN([TEA_TCL_64BIT_FLAGS], [
     AC_CACHE_VAL(tcl_cv_type_64bit,[
 	tcl_cv_type_64bit=none
 	# See if the compiler knows natively about __int64
-	AC_TRY_COMPILE(,[__int64 value = (__int64) 0;],
-	    tcl_type_64bit=__int64, tcl_type_64bit="long long")
-	# See if we should use long anyway  Note that we substitute in the
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[__int64 value = (__int64) 0;]])],
+	    [tcl_type_64bit=__int64],[tcl_type_64bit="long long"])
+	# See if we could use long anyway  Note that we substitute in the
 	# type that is our current guess for a 64-bit type inside this check
 	# program, so it should be modified only carefully...
-        AC_TRY_COMPILE(,[switch (0) {
-            case 1: case (sizeof(]${tcl_type_64bit}[)==sizeof(long)): ;
-        }],tcl_cv_type_64bit=${tcl_type_64bit})])
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[switch (0) {
+            case 1: case (sizeof(${tcl_type_64bit})==sizeof(long)): ;
+        }]])],[tcl_cv_type_64bit=${tcl_type_64bit}],[])])
     if test "${tcl_cv_type_64bit}" = none ; then
-	AC_DEFINE(TCL_WIDE_INT_IS_LONG, 1, [Are wide integers to be implemented with C 'long's?])
-	AC_MSG_RESULT([using long])
+	AC_DEFINE(TCL_WIDE_INT_IS_LONG, 1, [Do 'long' and 'long long' have the same size (64-bit)?])
+	AC_MSG_RESULT([yes])
     elif test "${tcl_cv_type_64bit}" = "__int64" \
 		-a "${TEA_PLATFORM}" = "windows" ; then
 	# TEA specific: We actually want to use the default tcl.h checks in
@@ -2847,17 +2610,26 @@ AC_DEFUN([TEA_TCL_64BIT_FLAGS], [
 
 	# Now check for auxiliary declarations
 	AC_CACHE_CHECK([for struct dirent64], tcl_cv_struct_dirent64,[
-	    AC_TRY_COMPILE([#include <sys/types.h>
-#include <dirent.h>],[struct dirent64 p;],
-		tcl_cv_struct_dirent64=yes,tcl_cv_struct_dirent64=no)])
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
+#include <dirent.h>]], [[struct dirent64 p;]])],
+		[tcl_cv_struct_dirent64=yes],[tcl_cv_struct_dirent64=no])])
 	if test "x${tcl_cv_struct_dirent64}" = "xyes" ; then
 	    AC_DEFINE(HAVE_STRUCT_DIRENT64, 1, [Is 'struct dirent64' in <sys/types.h>?])
 	fi
 
+	AC_CACHE_CHECK([for DIR64], tcl_cv_DIR64,[
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
+#include <dirent.h>]], [[struct dirent64 *p; DIR64 d = opendir64(".");
+            p = readdir64(d); rewinddir64(d); closedir64(d);]])],
+		[tcl_cv_DIR64=yes], [tcl_cv_DIR64=no])])
+	if test "x${tcl_cv_DIR64}" = "xyes" ; then
+	    AC_DEFINE(HAVE_DIR64, 1, [Is 'DIR64' in <sys/types.h>?])
+	fi
+
 	AC_CACHE_CHECK([for struct stat64], tcl_cv_struct_stat64,[
-	    AC_TRY_COMPILE([#include <sys/stat.h>],[struct stat64 p;
-],
-		tcl_cv_struct_stat64=yes,tcl_cv_struct_stat64=no)])
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/stat.h>]], [[struct stat64 p;
+]])],
+		[tcl_cv_struct_stat64=yes], [tcl_cv_struct_stat64=no])])
 	if test "x${tcl_cv_struct_stat64}" = "xyes" ; then
 	    AC_DEFINE(HAVE_STRUCT_STAT64, 1, [Is 'struct stat64' in <sys/stat.h>?])
 	fi
@@ -2865,9 +2637,9 @@ AC_DEFUN([TEA_TCL_64BIT_FLAGS], [
 	AC_CHECK_FUNCS(open64 lseek64)
 	AC_MSG_CHECKING([for off64_t])
 	AC_CACHE_VAL(tcl_cv_type_off64_t,[
-	    AC_TRY_COMPILE([#include <sys/types.h>],[off64_t offset;
-],
-		tcl_cv_type_off64_t=yes,tcl_cv_type_off64_t=no)])
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>]], [[off64_t offset;
+]])],
+		[tcl_cv_type_off64_t=yes], [tcl_cv_type_off64_t=no])])
 	dnl Define HAVE_TYPE_OFF64_T only when the off64_t type and the
 	dnl functions lseek64 and open64 are defined.
 	if test "x${tcl_cv_type_off64_t}" = "xyes" && \
@@ -2915,24 +2687,21 @@ AC_DEFUN([TEA_TCL_64BIT_FLAGS], [
 #	a compiler.
 #------------------------------------------------------------------------
 
-AC_DEFUN([TEA_INIT], [
-    # TEA extensions pass this us the version of TEA they think they
-    # are compatible with.
-    TEA_VERSION="3.10"
+AC_DEFUN([TEA_INIT_CXX], [
+    # request setup for C++ compilation
+    TEA_CXX="yes"
+    TEA_CXX_VERSION="$1"
+])
 
-    AC_MSG_CHECKING([for correct TEA configuration])
+AC_DEFUN([TEA_INIT], [
+    TEA_VERSION="3.13"
+
+    AC_MSG_CHECKING([TEA configuration])
     if test x"${PACKAGE_NAME}" = x ; then
 	AC_MSG_ERROR([
 The PACKAGE_NAME variable must be defined by your TEA configure.ac])
     fi
-    if test x"$1" = x ; then
-	AC_MSG_ERROR([
-TEA version not specified.])
-    elif test "$1" != "${TEA_VERSION}" ; then
-	AC_MSG_RESULT([warning: requested TEA version "$1", have "${TEA_VERSION}"])
-    else
-	AC_MSG_RESULT([ok (TEA ${TEA_VERSION})])
-    fi
+    AC_MSG_RESULT([ok (TEA ${TEA_VERSION})])
 
     # If the user did not set CFLAGS, set it now to keep macros
     # like AC_PROG_CC and AC_TRY_COMPILE from adding "-g -O2".
@@ -2941,7 +2710,7 @@ TEA version not specified.])
     fi
 
     case "`uname -s`" in
-	*win32*|*WIN32*|*MINGW32_*)
+	*win32*|*WIN32*|*MINGW32_*|*MINGW64_*|*MSYS_*)
 	    AC_CHECK_PROG(CYGPATH, cygpath, cygpath -m, echo)
 	    EXEEXT=".exe"
 	    TEA_PLATFORM="windows"
@@ -2982,6 +2751,8 @@ TEA version not specified.])
 
     # This package name must be replaced statically for AC_SUBST to work
     AC_SUBST(PKG_LIB_FILE)
+    AC_SUBST(PKG_LIB_FILE8)
+    AC_SUBST(PKG_LIB_FILE9)
     # Substitute STUB_LIB_FILE in case package creates a stub library too.
     AC_SUBST(PKG_STUB_LIB_FILE)
 
@@ -2994,6 +2765,10 @@ TEA version not specified.])
     AC_SUBST(PKG_INCLUDES)
     AC_SUBST(PKG_LIBS)
     AC_SUBST(PKG_CFLAGS)
+    AC_SUBST(SWIG_WRAP)
+
+    # Configure the installer.
+    TEA_INSTALLER
 ])
 
 #------------------------------------------------------------------------
@@ -3186,7 +2961,7 @@ AC_DEFUN([TEA_ADD_LIBS], [
     for i in $vars; do
 	if test "${TEA_PLATFORM}" = "windows" -a "$GCC" = "yes" ; then
 	    # Convert foo.lib to -lfoo for GCC.  No-op if not *.lib
-	    i=`echo "$i" | sed -e 's/^\([[^-]].*\)\.lib[$]/-l\1/i'`
+	    i=`echo "$i" | sed -e 's/^\([[^-]].*\)\.[[lL]][[iI]][[bB]][$]/-l\1/'`
 	fi
 	PKG_LIBS="$PKG_LIBS $i"
     done
@@ -3210,6 +2985,8 @@ AC_DEFUN([TEA_ADD_LIBS], [
 AC_DEFUN([TEA_ADD_CFLAGS], [
     PKG_CFLAGS="$PKG_CFLAGS $@"
     AC_SUBST(PKG_CFLAGS)
+    AC_SUBST(CCLD)
+    AC_SUBST(INSTALL_FLAGS)
 ])
 
 #------------------------------------------------------------------------
@@ -3226,6 +3003,76 @@ AC_DEFUN([TEA_ADD_CFLAGS], [
 #------------------------------------------------------------------------
 AC_DEFUN([TEA_ADD_CLEANFILES], [
     CLEANFILES="$CLEANFILES $@"
+])
+
+#------------------------------------------------------------------------
+# TEA_ADD_SWIGINTERFACE --
+#
+#	Specify one interface file which is processed by SWIG.
+#	It is not important to specify the directory, as long as it is
+#	in the generic, win or unix subdirectory of $(srcdir).
+#
+# Arguments:
+#	one or more file names
+#
+# Results:
+#
+#	Defines and substs the following vars:
+#		PKG_SOURCES
+#		PKG_OBJECTS
+#		SWIGINTERFACE
+#		SWIGOUTPUT
+#		SWIGOBJECT
+#------------------------------------------------------------------------
+AC_DEFUN([TEA_ADD_SWIGINTERFACE], [
+	# check for SWIG
+	AC_CHECK_PROG(SWIG_CHECK,swig,yes)
+	AS_IF([test x"$SWIG_CHECK" != x"yes"], [AC_MSG_ERROR([Swig is requred to compile this.])])
+	SWIG="swig"
+
+        if test "x$TEA_CXX" != "x"; then 
+            SWIG="$SWIG -c++"
+        fi
+	
+	# check for existence - allows for generic/win/unix VPATH
+	# To add more dirs here (like 'src'), you have to update VPATH
+	# in Makefile.in as well
+	
+	SWIGINTERFACE=${srcdir}/$1
+	if ! test -f "${SWIGINTERFACE}"; then
+	  # check in generic
+	  SWIGINTERFACE=${srcdir}/generic/$1
+	  if ! test -f "${SWIGINTERFACE}"; then
+	    # error
+	    AC_MSG_ERROR([could not find SWIG interface file '$1'])
+	  fi
+	fi  
+	PKG_SOURCES="$PKG_SOURCES $1"
+	# this assumes it is in a VPATH dir
+	SWIGBASE=${PACKAGE_NAME}_wrap
+	SWIGOUTPUT="${srcdir}/generic/${SWIGBASE}"
+        if test "x$TEA_CXX" != "x"; then 
+            SWIGOUTPUT="${SWIGOUTPUT}.cpp"
+        else 
+            SWIGOUTPUT="${SWIGOUTPUT}.c"
+        fi
+        
+	# handle user calling this before or after TEA_SETUP_COMPILER
+	if test x"${OBJEXT}" != x ; then
+	    SWIGOBJECT="${SWIGBASE}.${OBJEXT}"
+	else
+	    SWIGOBJECT="${SWIGBASE}.\${OBJEXT}"
+	fi
+	PKG_OBJECTS="$PKG_OBJECTS $SWIGOBJECT"
+	SWIG_WRAP="wrap"
+	TEA_ADD_CLEANFILES([$SWIGOUTPUT])
+    AC_SUBST(PKG_SOURCES)
+    AC_SUBST(PKG_OBJECTS)
+    AC_SUBST(SWIGOBJECT)
+    AC_SUBST(SWIGOUTPUT)
+    AC_SUBST(SWIGINTERFACE)
+    AC_SUBST(SWIG_WRAP)
+    AC_SUBST(SWIG)
 ])
 
 #------------------------------------------------------------------------
@@ -3265,6 +3112,1027 @@ AC_DEFUN([TEA_PREFIX], [
     fi
 ])
 
+# ===========================================================================
+#    https://www.gnu.org/software/autoconf-archive/ax_check_link_flag.html
+# ===========================================================================
+#
+# SYNOPSIS
+#
+#   AX_CHECK_LINK_FLAG(FLAG, [ACTION-SUCCESS], [ACTION-FAILURE], [EXTRA-FLAGS], [INPUT])
+#
+# DESCRIPTION
+#
+#   Check whether the given FLAG works with the linker or gives an error.
+#   (Warnings, however, are ignored)
+#
+#   ACTION-SUCCESS/ACTION-FAILURE are shell commands to execute on
+#   success/failure.
+#
+#   If EXTRA-FLAGS is defined, it is added to the linker's default flags
+#   when the check is done.  The check is thus made with the flags: "LDFLAGS
+#   EXTRA-FLAGS FLAG".  This can for example be used to force the linker to
+#   issue an error when a bad flag is given.
+#
+#   INPUT gives an alternative input source to AC_LINK_IFELSE.
+#
+#   NOTE: Implementation based on AX_CFLAGS_GCC_OPTION. Please keep this
+#   macro in sync with AX_CHECK_{PREPROC,COMPILE}_FLAG.
+#
+# LICENSE
+#
+#   Copyright (c) 2008 Guido U. Draheim <guidod@gmx.de>
+#   Copyright (c) 2011 Maarten Bosmans <mkbosmans@gmail.com>
+#
+#   Copying and distribution of this file, with or without modification, are
+#   permitted in any medium without royalty provided the copyright notice
+#   and this notice are preserved.  This file is offered as-is, without any
+#   warranty.
+
+#serial 6
+
+AC_DEFUN([AX_CHECK_LINK_FLAG],
+[AC_PREREQ(2.64)dnl for _AC_LANG_PREFIX and AS_VAR_IF
+AS_VAR_PUSHDEF([CACHEVAR],[ax_cv_check_ldflags_$4_$1])dnl
+AC_CACHE_CHECK([whether the linker accepts $1], CACHEVAR, [
+  ax_check_save_flags=$LDFLAGS
+  LDFLAGS="$LDFLAGS $4 $1"
+  AC_LINK_IFELSE([m4_default([$5],[AC_LANG_PROGRAM()])],
+    [AS_VAR_SET(CACHEVAR,[yes])],
+    [AS_VAR_SET(CACHEVAR,[no])])
+  LDFLAGS=$ax_check_save_flags])
+AS_VAR_IF(CACHEVAR,yes,
+  [m4_default([$2], :)],
+  [m4_default([$3], :)])
+AS_VAR_POPDEF([CACHEVAR])dnl
+])dnl AX_CHECK_LINK_FLAGS
+
+# use AX_CHECK_LINK_FLAG to add a linker flag if it is available
+AC_DEFUN([AX_ADDTO_LINK_FLAGS],
+[AX_CHECK_LINK_FLAG([$1], [LDFLAGS="$LDFLAGS $1"], [])
+])
+# ===========================================================================
+#  https://www.gnu.org/software/autoconf-archive/ax_cxx_compile_stdcxx.html
+# ===========================================================================
+#
+# SYNOPSIS
+#
+#   AX_CXX_COMPILE_STDCXX(VERSION, [ext|noext], [mandatory|optional])
+#
+# DESCRIPTION
+#
+#   Check for baseline language coverage in the compiler for the specified
+#   version of the C++ standard.  If necessary, add switches to CXX and
+#   CXXCPP to enable support.  VERSION may be '11' (for the C++11 standard)
+#   or '14' (for the C++14 standard).
+#
+#   The second argument, if specified, indicates whether you insist on an
+#   extended mode (e.g. -std=gnu++11) or a strict conformance mode (e.g.
+#   -std=c++11).  If neither is specified, you get whatever works, with
+#   preference for no added switch, and then for an extended mode.
+#
+#   The third argument, if specified 'mandatory' or if left unspecified,
+#   indicates that baseline support for the specified C++ standard is
+#   required and that the macro should error out if no mode with that
+#   support is found.  If specified 'optional', then configuration proceeds
+#   regardless, after defining HAVE_CXX${VERSION} if and only if a
+#   supporting mode is found.
+#
+# LICENSE
+#
+#   Copyright (c) 2008 Benjamin Kosnik <bkoz@redhat.com>
+#   Copyright (c) 2012 Zack Weinberg <zackw@panix.com>
+#   Copyright (c) 2013 Roy Stogner <roystgnr@ices.utexas.edu>
+#   Copyright (c) 2014, 2015 Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
+#   Copyright (c) 2015 Paul Norman <penorman@mac.com>
+#   Copyright (c) 2015 Moritz Klammler <moritz@klammler.eu>
+#   Copyright (c) 2016, 2018 Krzesimir Nowak <qdlacz@gmail.com>
+#   Copyright (c) 2019 Enji Cooper <yaneurabeya@gmail.com>
+#   Copyright (c) 2020 Jason Merrill <jason@redhat.com>
+#
+#   Copying and distribution of this file, with or without modification, are
+#   permitted in any medium without royalty provided the copyright notice
+#   and this notice are preserved.  This file is offered as-is, without any
+#   warranty.
+
+#serial 12
+
+dnl  This macro is based on the code from the AX_CXX_COMPILE_STDCXX_11 macro
+dnl  (serial version number 13).
+
+AC_DEFUN([AX_CXX_COMPILE_STDCXX], [dnl
+  m4_if([$1], [11], [ax_cxx_compile_alternatives="11 0x"],
+        [$1], [14], [ax_cxx_compile_alternatives="14 1y"],
+        [$1], [17], [ax_cxx_compile_alternatives="17 1z"],
+        [m4_fatal([invalid first argument `$1' to AX_CXX_COMPILE_STDCXX])])dnl
+  m4_if([$2], [], [],
+        [$2], [ext], [],
+        [$2], [noext], [],
+        [m4_fatal([invalid second argument `$2' to AX_CXX_COMPILE_STDCXX])])dnl
+  m4_if([$3], [], [ax_cxx_compile_cxx$1_required=true],
+        [$3], [mandatory], [ax_cxx_compile_cxx$1_required=true],
+        [$3], [optional], [ax_cxx_compile_cxx$1_required=false],
+        [m4_fatal([invalid third argument `$3' to AX_CXX_COMPILE_STDCXX])])
+  AC_LANG_PUSH([C++])dnl
+  ac_success=no
+
+  m4_if([$2], [], [dnl
+    AC_CACHE_CHECK(whether $CXX supports C++$1 features by default,
+		   ax_cv_cxx_compile_cxx$1,
+      [AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
+        [ax_cv_cxx_compile_cxx$1=yes],
+        [ax_cv_cxx_compile_cxx$1=no])])
+    if test x$ax_cv_cxx_compile_cxx$1 = xyes; then
+      ac_success=yes
+    fi])
+
+  m4_if([$2], [noext], [], [dnl
+  if test x$ac_success = xno; then
+    for alternative in ${ax_cxx_compile_alternatives}; do
+      switch="-std=gnu++${alternative}"
+      cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
+      AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch,
+                     $cachevar,
+        [ac_save_CXX="$CXX"
+         CXX="$CXX $switch"
+         AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
+          [eval $cachevar=yes],
+          [eval $cachevar=no])
+         CXX="$ac_save_CXX"])
+      if eval test x\$$cachevar = xyes; then
+        CXX="$CXX $switch"
+        if test -n "$CXXCPP" ; then
+          CXXCPP="$CXXCPP $switch"
+        fi
+        ac_success=yes
+        break
+      fi
+    done
+  fi])
+
+  m4_if([$2], [ext], [], [dnl
+  if test x$ac_success = xno; then
+    dnl HP's aCC needs +std=c++11 according to:
+    dnl http://h21007.www2.hp.com/portal/download/files/unprot/aCxx/PDF_Release_Notes/769149-001.pdf
+    dnl Cray's crayCC needs "-h std=c++11"
+    for alternative in ${ax_cxx_compile_alternatives}; do
+      for switch in -std=c++${alternative} +std=c++${alternative} "-h std=c++${alternative}"; do
+        cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
+        AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch,
+                       $cachevar,
+          [ac_save_CXX="$CXX"
+           CXX="$CXX $switch"
+           AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
+            [eval $cachevar=yes],
+            [eval $cachevar=no])
+           CXX="$ac_save_CXX"])
+        if eval test x\$$cachevar = xyes; then
+          CXX="$CXX $switch"
+          if test -n "$CXXCPP" ; then
+            CXXCPP="$CXXCPP $switch"
+          fi
+          ac_success=yes
+          break
+        fi
+      done
+      if test x$ac_success = xyes; then
+        break
+      fi
+    done
+  fi])
+  AC_LANG_POP([C++])
+  if test x$ax_cxx_compile_cxx$1_required = xtrue; then
+    if test x$ac_success = xno; then
+      AC_MSG_ERROR([*** A compiler with support for C++$1 language features is required.])
+    fi
+  fi
+  if test x$ac_success = xno; then
+    HAVE_CXX$1=0
+    AC_MSG_NOTICE([No compiler with C++$1 support was found])
+  else
+    HAVE_CXX$1=1
+    AC_DEFINE(HAVE_CXX$1,1,
+              [define if the compiler supports basic C++$1 syntax])
+  fi
+  AC_SUBST(HAVE_CXX$1)
+])
+
+
+dnl  Test body for checking C++11 support
+
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_11],
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_11
+)
+
+
+dnl  Test body for checking C++14 support
+
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_14],
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_11
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_14
+)
+
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_17],
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_11
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_14
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_17
+)
+
+dnl  Tests for new features in C++11
+
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_11], [[
+
+// If the compiler admits that it is not ready for C++11, why torture it?
+// Hopefully, this will speed up the test.
+
+#ifndef __cplusplus
+
+#error "This is not a C++ compiler"
+
+#elif __cplusplus < 201103L
+
+#error "This is not a C++11 compiler"
+
+#else
+
+namespace cxx11
+{
+
+  namespace test_static_assert
+  {
+
+    template <typename T>
+    struct check
+    {
+      static_assert(sizeof(int) <= sizeof(T), "not big enough");
+    };
+
+  }
+
+  namespace test_final_override
+  {
+
+    struct Base
+    {
+      virtual ~Base() {}
+      virtual void f() {}
+    };
+
+    struct Derived : public Base
+    {
+      virtual ~Derived() override {}
+      virtual void f() override {}
+    };
+
+  }
+
+  namespace test_double_right_angle_brackets
+  {
+
+    template < typename T >
+    struct check {};
+
+    typedef check<void> single_type;
+    typedef check<check<void>> double_type;
+    typedef check<check<check<void>>> triple_type;
+    typedef check<check<check<check<void>>>> quadruple_type;
+
+  }
+
+  namespace test_decltype
+  {
+
+    int
+    f()
+    {
+      int a = 1;
+      decltype(a) b = 2;
+      return a + b;
+    }
+
+  }
+
+  namespace test_type_deduction
+  {
+
+    template < typename T1, typename T2 >
+    struct is_same
+    {
+      static const bool value = false;
+    };
+
+    template < typename T >
+    struct is_same<T, T>
+    {
+      static const bool value = true;
+    };
+
+    template < typename T1, typename T2 >
+    auto
+    add(T1 a1, T2 a2) -> decltype(a1 + a2)
+    {
+      return a1 + a2;
+    }
+
+    int
+    test(const int c, volatile int v)
+    {
+      static_assert(is_same<int, decltype(0)>::value == true, "");
+      static_assert(is_same<int, decltype(c)>::value == false, "");
+      static_assert(is_same<int, decltype(v)>::value == false, "");
+      auto ac = c;
+      auto av = v;
+      auto sumi = ac + av + 'x';
+      auto sumf = ac + av + 1.0;
+      static_assert(is_same<int, decltype(ac)>::value == true, "");
+      static_assert(is_same<int, decltype(av)>::value == true, "");
+      static_assert(is_same<int, decltype(sumi)>::value == true, "");
+      static_assert(is_same<int, decltype(sumf)>::value == false, "");
+      static_assert(is_same<int, decltype(add(c, v))>::value == true, "");
+      return (sumf > 0.0) ? sumi : add(c, v);
+    }
+
+  }
+
+  namespace test_noexcept
+  {
+
+    int f() { return 0; }
+    int g() noexcept { return 0; }
+
+    static_assert(noexcept(f()) == false, "");
+    static_assert(noexcept(g()) == true, "");
+
+  }
+
+  namespace test_constexpr
+  {
+
+    template < typename CharT >
+    unsigned long constexpr
+    strlen_c_r(const CharT *const s, const unsigned long acc) noexcept
+    {
+      return *s ? strlen_c_r(s + 1, acc + 1) : acc;
+    }
+
+    template < typename CharT >
+    unsigned long constexpr
+    strlen_c(const CharT *const s) noexcept
+    {
+      return strlen_c_r(s, 0UL);
+    }
+
+    static_assert(strlen_c("") == 0UL, "");
+    static_assert(strlen_c("1") == 1UL, "");
+    static_assert(strlen_c("example") == 7UL, "");
+    static_assert(strlen_c("another\0example") == 7UL, "");
+
+  }
+
+  namespace test_rvalue_references
+  {
+
+    template < int N >
+    struct answer
+    {
+      static constexpr int value = N;
+    };
+
+    answer<1> f(int&)       { return answer<1>(); }
+    answer<2> f(const int&) { return answer<2>(); }
+    answer<3> f(int&&)      { return answer<3>(); }
+
+    void
+    test()
+    {
+      int i = 0;
+      const int c = 0;
+      static_assert(decltype(f(i))::value == 1, "");
+      static_assert(decltype(f(c))::value == 2, "");
+      static_assert(decltype(f(0))::value == 3, "");
+    }
+
+  }
+
+  namespace test_uniform_initialization
+  {
+
+    struct test
+    {
+      static const int zero {};
+      static const int one {1};
+    };
+
+    static_assert(test::zero == 0, "");
+    static_assert(test::one == 1, "");
+
+  }
+
+  namespace test_lambdas
+  {
+
+    void
+    test1()
+    {
+      auto lambda1 = [](){};
+      auto lambda2 = lambda1;
+      lambda1();
+      lambda2();
+    }
+
+    int
+    test2()
+    {
+      auto a = [](int i, int j){ return i + j; }(1, 2);
+      auto b = []() -> int { return '0'; }();
+      auto c = [=](){ return a + b; }();
+      auto d = [&](){ return c; }();
+      auto e = [a, &b](int x) mutable {
+        const auto identity = [](int y){ return y; };
+        for (auto i = 0; i < a; ++i)
+          a += b--;
+        return x + identity(a + b);
+      }(0);
+      return a + b + c + d + e;
+    }
+
+    int
+    test3()
+    {
+      const auto nullary = [](){ return 0; };
+      const auto unary = [](int x){ return x; };
+      using nullary_t = decltype(nullary);
+      using unary_t = decltype(unary);
+      const auto higher1st = [](nullary_t f){ return f(); };
+      const auto higher2nd = [unary](nullary_t f1){
+        return [unary, f1](unary_t f2){ return f2(unary(f1())); };
+      };
+      return higher1st(nullary) + higher2nd(nullary)(unary);
+    }
+
+  }
+
+  namespace test_variadic_templates
+  {
+
+    template <int...>
+    struct sum;
+
+    template <int N0, int... N1toN>
+    struct sum<N0, N1toN...>
+    {
+      static constexpr auto value = N0 + sum<N1toN...>::value;
+    };
+
+    template <>
+    struct sum<>
+    {
+      static constexpr auto value = 0;
+    };
+
+    static_assert(sum<>::value == 0, "");
+    static_assert(sum<1>::value == 1, "");
+    static_assert(sum<23>::value == 23, "");
+    static_assert(sum<1, 2>::value == 3, "");
+    static_assert(sum<5, 5, 11>::value == 21, "");
+    static_assert(sum<2, 3, 5, 7, 11, 13>::value == 41, "");
+
+  }
+
+  // http://stackoverflow.com/questions/13728184/template-aliases-and-sfinae
+  // Clang 3.1 fails with headers of libstd++ 4.8.3 when using std::function
+  // because of this.
+  namespace test_template_alias_sfinae
+  {
+
+    struct foo {};
+
+    template<typename T>
+    using member = typename T::member_type;
+
+    template<typename T>
+    void func(...) {}
+
+    template<typename T>
+    void func(member<T>*) {}
+
+    void test();
+
+    void test() { func<foo>(0); }
+
+  }
+
+}  // namespace cxx11
+
+#endif  // __cplusplus >= 201103L
+
+]])
+
+
+dnl  Tests for new features in C++14
+
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_14], [[
+
+// If the compiler admits that it is not ready for C++14, why torture it?
+// Hopefully, this will speed up the test.
+
+#ifndef __cplusplus
+
+#error "This is not a C++ compiler"
+
+#elif __cplusplus < 201402L
+
+#error "This is not a C++14 compiler"
+
+#else
+
+namespace cxx14
+{
+
+  namespace test_polymorphic_lambdas
+  {
+
+    int
+    test()
+    {
+      const auto lambda = [](auto&&... args){
+        const auto istiny = [](auto x){
+          return (sizeof(x) == 1UL) ? 1 : 0;
+        };
+        const int aretiny[] = { istiny(args)... };
+        return aretiny[0];
+      };
+      return lambda(1, 1L, 1.0f, '1');
+    }
+
+  }
+
+  namespace test_binary_literals
+  {
+
+    constexpr auto ivii = 0b0000000000101010;
+    static_assert(ivii == 42, "wrong value");
+
+  }
+
+  namespace test_generalized_constexpr
+  {
+
+    template < typename CharT >
+    constexpr unsigned long
+    strlen_c(const CharT *const s) noexcept
+    {
+      auto length = 0UL;
+      for (auto p = s; *p; ++p)
+        ++length;
+      return length;
+    }
+
+    static_assert(strlen_c("") == 0UL, "");
+    static_assert(strlen_c("x") == 1UL, "");
+    static_assert(strlen_c("test") == 4UL, "");
+    static_assert(strlen_c("another\0test") == 7UL, "");
+
+  }
+
+  namespace test_lambda_init_capture
+  {
+
+    int
+    test()
+    {
+      auto x = 0;
+      const auto lambda1 = [a = x](int b){ return a + b; };
+      const auto lambda2 = [a = lambda1(x)](){ return a; };
+      return lambda2();
+    }
+
+  }
+
+  namespace test_digit_separators
+  {
+
+    constexpr auto ten_million = 100'000'000;
+    static_assert(ten_million == 100000000, "");
+
+  }
+
+  namespace test_return_type_deduction
+  {
+
+    auto f(int& x) { return x; }
+    decltype(auto) g(int& x) { return x; }
+
+    template < typename T1, typename T2 >
+    struct is_same
+    {
+      static constexpr auto value = false;
+    };
+
+    template < typename T >
+    struct is_same<T, T>
+    {
+      static constexpr auto value = true;
+    };
+
+    int
+    test()
+    {
+      auto x = 0;
+      static_assert(is_same<int, decltype(f(x))>::value, "");
+      static_assert(is_same<int&, decltype(g(x))>::value, "");
+      return x;
+    }
+
+  }
+
+}  // namespace cxx14
+
+#endif  // __cplusplus >= 201402L
+
+]])
+
+
+dnl  Tests for new features in C++17
+
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_17], [[
+
+// If the compiler admits that it is not ready for C++17, why torture it?
+// Hopefully, this will speed up the test.
+
+#ifndef __cplusplus
+
+#error "This is not a C++ compiler"
+
+#elif __cplusplus < 201703L
+
+#error "This is not a C++17 compiler"
+
+#else
+
+#include <initializer_list>
+#include <utility>
+#include <type_traits>
+
+namespace cxx17
+{
+
+  namespace test_constexpr_lambdas
+  {
+
+    constexpr int foo = [](){return 42;}();
+
+  }
+
+  namespace test::nested_namespace::definitions
+  {
+
+  }
+
+  namespace test_fold_expression
+  {
+
+    template<typename... Args>
+    int multiply(Args... args)
+    {
+      return (args * ... * 1);
+    }
+
+    template<typename... Args>
+    bool all(Args... args)
+    {
+      return (args && ...);
+    }
+
+  }
+
+  namespace test_extended_static_assert
+  {
+
+    static_assert (true);
+
+  }
+
+  namespace test_auto_brace_init_list
+  {
+
+    auto foo = {5};
+    auto bar {5};
+
+    static_assert(std::is_same<std::initializer_list<int>, decltype(foo)>::value);
+    static_assert(std::is_same<int, decltype(bar)>::value);
+  }
+
+  namespace test_typename_in_template_template_parameter
+  {
+
+    template<template<typename> typename X> struct D;
+
+  }
+
+  namespace test_fallthrough_nodiscard_maybe_unused_attributes
+  {
+
+    int f1()
+    {
+      return 42;
+    }
+
+    [[nodiscard]] int f2()
+    {
+      [[maybe_unused]] auto unused = f1();
+
+      switch (f1())
+      {
+      case 17:
+        f1();
+        [[fallthrough]];
+      case 42:
+        f1();
+      }
+      return f1();
+    }
+
+  }
+
+  namespace test_extended_aggregate_initialization
+  {
+
+    struct base1
+    {
+      int b1, b2 = 42;
+    };
+
+    struct base2
+    {
+      base2() {
+        b3 = 42;
+      }
+      int b3;
+    };
+
+    struct derived : base1, base2
+    {
+        int d;
+    };
+
+    derived d1 {{1, 2}, {}, 4};  // full initialization
+    derived d2 {{}, {}, 4};      // value-initialized bases
+
+  }
+
+  namespace test_general_range_based_for_loop
+  {
+
+    struct iter
+    {
+      int i;
+
+      int& operator* ()
+      {
+        return i;
+      }
+
+      const int& operator* () const
+      {
+        return i;
+      }
+
+      iter& operator++()
+      {
+        ++i;
+        return *this;
+      }
+    };
+
+    struct sentinel
+    {
+      int i;
+    };
+
+    bool operator== (const iter& i, const sentinel& s)
+    {
+      return i.i == s.i;
+    }
+
+    bool operator!= (const iter& i, const sentinel& s)
+    {
+      return !(i == s);
+    }
+
+    struct range
+    {
+      iter begin() const
+      {
+        return {0};
+      }
+
+      sentinel end() const
+      {
+        return {5};
+      }
+    };
+
+    void f()
+    {
+      range r {};
+
+      for (auto i : r)
+      {
+        [[maybe_unused]] auto v = i;
+      }
+    }
+
+  }
+
+  namespace test_lambda_capture_asterisk_this_by_value
+  {
+
+    struct t
+    {
+      int i;
+      int foo()
+      {
+        return [*this]()
+        {
+          return i;
+        }();
+      }
+    };
+
+  }
+
+  namespace test_enum_class_construction
+  {
+
+    enum class byte : unsigned char
+    {};
+
+    byte foo {42};
+
+  }
+
+  namespace test_constexpr_if
+  {
+
+    template <bool cond>
+    int f ()
+    {
+      if constexpr(cond)
+      {
+        return 13;
+      }
+      else
+      {
+        return 42;
+      }
+    }
+
+  }
+
+  namespace test_selection_statement_with_initializer
+  {
+
+    int f()
+    {
+      return 13;
+    }
+
+    int f2()
+    {
+      if (auto i = f(); i > 0)
+      {
+        return 3;
+      }
+
+      switch (auto i = f(); i + 4)
+      {
+      case 17:
+        return 2;
+
+      default:
+        return 1;
+      }
+    }
+
+  }
+
+  namespace test_template_argument_deduction_for_class_templates
+  {
+
+    template <typename T1, typename T2>
+    struct pair
+    {
+      pair (T1 p1, T2 p2)
+        : m1 {p1},
+          m2 {p2}
+      {}
+
+      T1 m1;
+      T2 m2;
+    };
+
+    void f()
+    {
+      [[maybe_unused]] auto p = pair{13, 42u};
+    }
+
+  }
+
+  namespace test_non_type_auto_template_parameters
+  {
+
+    template <auto n>
+    struct B
+    {};
+
+    B<5> b1;
+    B<'a'> b2;
+
+  }
+
+  namespace test_structured_bindings
+  {
+
+    int arr[2] = { 1, 2 };
+    std::pair<int, int> pr = { 1, 2 };
+
+    auto f1() -> int(&)[2]
+    {
+      return arr;
+    }
+
+    auto f2() -> std::pair<int, int>&
+    {
+      return pr;
+    }
+
+    struct S
+    {
+      int x1 : 2;
+      volatile double y1;
+    };
+
+    S f3()
+    {
+      return {};
+    }
+
+    auto [ x1, y1 ] = f1();
+    auto& [ xr1, yr1 ] = f1();
+    auto [ x2, y2 ] = f2();
+    auto& [ xr2, yr2 ] = f2();
+    const auto [ x3, y3 ] = f3();
+
+  }
+
+  namespace test_exception_spec_type_system
+  {
+
+    struct Good {};
+    struct Bad {};
+
+    void g1() noexcept;
+    void g2();
+
+    template<typename T>
+    Bad
+    f(T*, T*);
+
+    template<typename T1, typename T2>
+    Good
+    f(T1*, T2*);
+
+    static_assert (std::is_same_v<Good, decltype(f(g1, g2))>);
+
+  }
+
+  namespace test_inline_variables
+  {
+
+    template<class T> void f(T)
+    {}
+
+    template<class T> inline T g(T)
+    {
+      return T{};
+    }
+
+    template<> inline void f<>(int)
+    {}
+
+    template<> int g<>(int)
+    {
+      return 5;
+    }
+
+  }
+
+}  // namespace cxx17
+
+#endif  // __cplusplus < 201703L
+
+]])
+
 #------------------------------------------------------------------------
 # TEA_SETUP_COMPILER_CC --
 #
@@ -3283,21 +4151,12 @@ AC_DEFUN([TEA_SETUP_COMPILER_CC], [
     # in this macro, they need to go into TEA_SETUP_COMPILER instead.
 
     AC_PROG_CC
+
+    if test "x$TEA_CXX" != "x"; then
+        AC_PROG_CXX
+    fi
+
     AC_PROG_CPP
-
-    INSTALL='$(SHELL) $(srcdir)/tclconfig/install-sh -c'
-    INSTALL_DATA_DIR='${INSTALL} -d -m 755'
-    INSTALL_DATA='${INSTALL} -m 644'
-    INSTALL_PROGRAM='${INSTALL}'
-    INSTALL_SCRIPT='${INSTALL}'
-    INSTALL_LIBRARY='${INSTALL_DATA}'
-
-    AC_SUBST(INSTALL)
-    AC_SUBST(INSTALL_DATA_DIR)
-    AC_SUBST(INSTALL_DATA)
-    AC_SUBST(INSTALL_PROGRAM)
-    AC_SUBST(INSTALL_SCRIPT)
-    AC_SUBST(INSTALL_LIBRARY)
 
     #--------------------------------------------------------------------
     # Checks to see if the make program sets the $MAKE variable.
@@ -3345,26 +4204,43 @@ AC_DEFUN([TEA_SETUP_COMPILER], [
 	AC_CACHE_CHECK([if the compiler understands -pipe],
 	    tcl_cv_cc_pipe, [
 	    hold_cflags=$CFLAGS; CFLAGS="$CFLAGS -pipe"
-	    AC_TRY_COMPILE(,, tcl_cv_cc_pipe=yes, tcl_cv_cc_pipe=no)
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[tcl_cv_cc_pipe=yes],[tcl_cv_cc_pipe=no])
 	    CFLAGS=$hold_cflags])
 	if test $tcl_cv_cc_pipe = yes; then
 	    CFLAGS="$CFLAGS -pipe"
 	fi
     fi
 
+    if test "x$TEA_CXX" != "x"; then
+	AC_LANG_PUSH([C++])
+	# 1. Find the flags for the requested standard version
+        if test "x$TEA_CXX_VERSION" != "x"; then
+            # AX_CXX_COMPILE_STDCXX is implemented with m4_if
+            # therefore distinguish in case
+            case "$TEA_CXX_VERSION" in
+                11) AX_CXX_COMPILE_STDCXX([11]) 
+                    ;;
+                14) AX_CXX_COMPILE_STDCXX([14]) ;;
+                17) AX_CXX_COMPILE_STDCXX([17]) ;;
+                *) echo "Unknown version of C++ $TEA_CXX_VERSION" ;;
+            esac
+        fi
+        
+        # 2. Try to link the C++ libraries statically
+	AX_ADDTO_LINK_FLAGS([-static-libgcc])
+	AX_ADDTO_LINK_FLAGS([-static-libstdc++])
+	# on Windows, add -static to the linkage (for some MinGW libraries)
+        # TODO stubs with -static fails with library initialisation failure
+	#if test "${TEA_PLATFORM}" = "windows"; then
+	#    AX_ADDTO_LINK_FLAGS([-static])
+	#fi
+	AC_LANG_POP([C++])
+    fi
     #--------------------------------------------------------------------
     # Common compiler flag setup
     #--------------------------------------------------------------------
 
     AC_C_BIGENDIAN
-    if test "${TEA_PLATFORM}" = "unix" ; then
-	TEA_TCL_LINK_LIBS
-	TEA_MISSING_POSIX_HEADERS
-	# Let the user call this, because if it triggers, they will
-	# need a compat/strtod.c that is correct.  Users can also
-	# use Tcl_GetDouble(FromObj) instead.
-	#TEA_BUGGY_STRTOD
-    fi
 ])
 
 #------------------------------------------------------------------------
@@ -3395,7 +4271,7 @@ AC_DEFUN([TEA_SETUP_COMPILER], [
 AC_DEFUN([TEA_MAKE_LIB], [
     if test "${TEA_PLATFORM}" = "windows" -a "$GCC" != "yes"; then
 	MAKE_STATIC_LIB="\${STLIB_LD} -out:\[$]@ \$(PKG_OBJECTS)"
-	MAKE_SHARED_LIB="\${SHLIB_LD} \${SHLIB_LD_LIBS} \${LDFLAGS_DEFAULT} -out:\[$]@ \$(PKG_OBJECTS)"
+	MAKE_SHARED_LIB="\${SHLIB_LD} \${LDFLAGS} \${LDFLAGS_DEFAULT} -out:\[$]@ \$(PKG_OBJECTS) \${SHLIB_LD_LIBS}"
 	AC_EGREP_CPP([manifest needed], [
 #if defined(_MSC_VER) && _MSC_VER >= 1400
 print("manifest needed")
@@ -3410,7 +4286,7 @@ print("manifest needed")
 	MAKE_STUB_LIB="\${STLIB_LD} -nodefaultlib -out:\[$]@ \$(PKG_STUB_OBJECTS)"
     else
 	MAKE_STATIC_LIB="\${STLIB_LD} \[$]@ \$(PKG_OBJECTS)"
-	MAKE_SHARED_LIB="\${SHLIB_LD} -o \[$]@ \$(PKG_OBJECTS) \${SHLIB_LD_LIBS}"
+	MAKE_SHARED_LIB="\${SHLIB_LD} \${LDFLAGS} \${LDFLAGS_DEFAULT} -o \[$]@ \$(PKG_OBJECTS) \${SHLIB_LD_LIBS}"
 	MAKE_STUB_LIB="\${STLIB_LD} \[$]@ \$(PKG_STUB_OBJECTS)"
     fi
 
@@ -3426,6 +4302,13 @@ print("manifest needed")
     # substituted. (@@@ Might not be necessary anymore)
     #--------------------------------------------------------------------
 
+    PACKAGE_LIB_PREFIX8="${PACKAGE_LIB_PREFIX}"
+    PACKAGE_LIB_PREFIX9="${PACKAGE_LIB_PREFIX}tcl9"
+    if test "${TCL_MAJOR_VERSION}" -gt 8 ; then
+	PACKAGE_LIB_PREFIX="${PACKAGE_LIB_PREFIX9}"
+    else
+	PACKAGE_LIB_PREFIX="${PACKAGE_LIB_PREFIX8}"
+    fi
     if test "${TEA_PLATFORM}" = "windows" ; then
 	if test "${SHARED_BUILD}" = "1" ; then
 	    # We force the unresolved linking of symbols that are really in
@@ -3437,12 +4320,16 @@ print("manifest needed")
 	    if test "$GCC" = "yes"; then
 		SHLIB_LD_LIBS="${SHLIB_LD_LIBS} -static-libgcc"
 	    fi
+	    eval eval "PKG_LIB_FILE8=${PACKAGE_LIB_PREFIX8}${PACKAGE_NAME}${SHARED_LIB_SUFFIX}"
+	    eval eval "PKG_LIB_FILE9=${PACKAGE_LIB_PREFIX9}${PACKAGE_NAME}${SHARED_LIB_SUFFIX}"
 	    eval eval "PKG_LIB_FILE=${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}${SHARED_LIB_SUFFIX}"
 	else
-	    eval eval "PKG_LIB_FILE=${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}${UNSHARED_LIB_SUFFIX}"
 	    if test "$GCC" = "yes"; then
-		PKG_LIB_FILE=lib${PKG_LIB_FILE}
+		PACKAGE_LIB_PREFIX=lib${PACKAGE_LIB_PREFIX}
 	    fi
+	    eval eval "PKG_LIB_FILE8=${PACKAGE_LIB_PREFIX8}${PACKAGE_NAME}${UNSHARED_LIB_SUFFIX}"
+	    eval eval "PKG_LIB_FILE9=${PACKAGE_LIB_PREFIX9}${PACKAGE_NAME}${UNSHARED_LIB_SUFFIX}"
+	    eval eval "PKG_LIB_FILE=${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}${UNSHARED_LIB_SUFFIX}"
 	fi
 	# Some packages build their own stubs libraries
 	eval eval "PKG_STUB_LIB_FILE=${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}stub${UNSHARED_LIB_SUFFIX}"
@@ -3459,13 +4346,17 @@ print("manifest needed")
 	    if test x"${TK_BIN_DIR}" != x ; then
 		SHLIB_LD_LIBS="${SHLIB_LD_LIBS} ${TK_STUB_LIB_SPEC}"
 	    fi
+	    eval eval "PKG_LIB_FILE8=lib${PACKAGE_LIB_PREFIX8}${PACKAGE_NAME}${SHARED_LIB_SUFFIX}"
+	    eval eval "PKG_LIB_FILE9=lib${PACKAGE_LIB_PREFIX9}${PACKAGE_NAME}${SHARED_LIB_SUFFIX}"
 	    eval eval "PKG_LIB_FILE=lib${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}${SHARED_LIB_SUFFIX}"
 	    RANLIB=:
 	else
+	    eval eval "PKG_LIB_FILE=lib${PACKAGE_LIB_PREFIX8}${PACKAGE_NAME}${UNSHARED_LIB_SUFFIX}"
+	    eval eval "PKG_LIB_FILE=lib${PACKAGE_LIB_PREFIX9}${PACKAGE_NAME}${UNSHARED_LIB_SUFFIX}"
 	    eval eval "PKG_LIB_FILE=lib${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}${UNSHARED_LIB_SUFFIX}"
 	fi
 	# Some packages build their own stubs libraries
-	eval eval "PKG_STUB_LIB_FILE=lib${PACKAGE_LIB_PREFIX}${PACKAGE_NAME}stub${UNSHARED_LIB_SUFFIX}"
+	eval eval "PKG_STUB_LIB_FILE=lib${PACKAGE_LIB_PREFIX8}${PACKAGE_NAME}stub${UNSHARED_LIB_SUFFIX}"
     fi
 
     # These are escaped so that only CFLAGS is picked up at configure time.
@@ -4010,6 +4901,7 @@ AC_DEFUN([TEA_PATH_CONFIG], [
 			`ls -d ${prefix}/lib 2>/dev/null` \
 			`ls -d /usr/local/lib 2>/dev/null` \
 			`ls -d /usr/contrib/lib 2>/dev/null` \
+			`ls -d /usr/pkg/lib 2>/dev/null` \
 			`ls -d /usr/lib 2>/dev/null` \
 			`ls -d /usr/lib64 2>/dev/null` \
 			; do
@@ -4151,11 +5043,11 @@ AC_DEFUN([TEA_EXPORT_CONFIG], [
     # pkglibdir must be a fully qualified path and (not ${exec_prefix}/lib)
     eval pkglibdir="[$]{libdir}/$1${PACKAGE_VERSION}"
     if test "${TCL_LIB_VERSIONS_OK}" = "ok"; then
-	eval $1_LIB_FLAG="-l$1${PACKAGE_VERSION}${DBGX}"
-	eval $1_STUB_LIB_FLAG="-l$1stub${PACKAGE_VERSION}${DBGX}"
+	eval $1_LIB_FLAG="-l$1${PACKAGE_VERSION}"
+	eval $1_STUB_LIB_FLAG="-l$1stub${PACKAGE_VERSION}"
     else
-	eval $1_LIB_FLAG="-l$1`echo ${PACKAGE_VERSION} | tr -d .`${DBGX}"
-	eval $1_STUB_LIB_FLAG="-l$1stub`echo ${PACKAGE_VERSION} | tr -d .`${DBGX}"
+	eval $1_LIB_FLAG="-l$1`echo ${PACKAGE_VERSION} | tr -d .`"
+	eval $1_STUB_LIB_FLAG="-l$1stub`echo ${PACKAGE_VERSION} | tr -d .`"
     fi
     $1_BUILD_LIB_SPEC="-L`$CYGPATH $(pwd)` ${$1_LIB_FLAG}"
     $1_LIB_SPEC="-L`$CYGPATH ${pkglibdir}` ${$1_LIB_FLAG}"
@@ -4178,71 +5070,151 @@ AC_DEFUN([TEA_EXPORT_CONFIG], [
 
 
 #------------------------------------------------------------------------
-# TEA_PATH_CELIB --
+# TEA_INSTALLER --
 #
-#	Locate Keuchel's celib emulation layer for targeting Win/CE
+#	Configure the installer.
 #
 # Arguments:
 #	none
 #
 # Results:
-#
-#	Adds the following arguments to configure:
-#		--with-celib=...
-#
-#	Defines the following vars:
-#		CELIB_DIR	Full path to the directory containing
-#				the include and platform lib files
+#	Substitutes the following vars:
+#		INSTALL
+#		INSTALL_DATA_DIR
+#		INSTALL_DATA
+#		INSTALL_PROGRAM
+#		INSTALL_SCRIPT
+#		INSTALL_LIBRARY
 #------------------------------------------------------------------------
 
-AC_DEFUN([TEA_PATH_CELIB], [
-    # First, look for one uninstalled.
-    # the alternative search directory is invoked by --with-celib
+AC_DEFUN([TEA_INSTALLER], [
+    INSTALL='$(SHELL) $(srcdir)/tclconfig/install-sh -c'
+    INSTALL_DATA_DIR='${INSTALL} -d -m 755'
+    INSTALL_DATA='${INSTALL} -m 644'
+    INSTALL_PROGRAM='${INSTALL} -m 755'
+    INSTALL_SCRIPT='${INSTALL} -m 755'
 
-    if test x"${no_celib}" = x ; then
-	# we reset no_celib in case something fails here
-	no_celib=true
-	AC_ARG_WITH(celib,[  --with-celib=DIR        use Windows/CE support library from DIR], with_celibconfig=${withval})
-	AC_MSG_CHECKING([for Windows/CE celib directory])
-	AC_CACHE_VAL(ac_cv_c_celibconfig,[
-	    # First check to see if --with-celibconfig was specified.
-	    if test x"${with_celibconfig}" != x ; then
-		if test -d "${with_celibconfig}/inc" ; then
-		    ac_cv_c_celibconfig=`(cd ${with_celibconfig}; pwd)`
-		else
-		    AC_MSG_ERROR([${with_celibconfig} directory doesn't contain inc directory])
-		fi
-	    fi
+    TEA_CONFIG_SYSTEM
+    case $system in
+	HP-UX-*) INSTALL_LIBRARY='${INSTALL} -m 755' ;;
+	      *) INSTALL_LIBRARY='${INSTALL} -m 644' ;;
+    esac
 
-	    # then check for a celib library
-	    if test x"${ac_cv_c_celibconfig}" = x ; then
-		for i in \
-			../celib-palm-3.0 \
-			../celib \
-			../../celib-palm-3.0 \
-			../../celib \
-			`ls -dr ../celib-*3.[[0-9]]* 2>/dev/null` \
-			${srcdir}/../celib-palm-3.0 \
-			${srcdir}/../celib \
-			`ls -dr ${srcdir}/../celib-*3.[[0-9]]* 2>/dev/null` \
-			; do
-		    if test -d "$i/inc" ; then
-			ac_cv_c_celibconfig=`(cd $i; pwd)`
-			break
-		    fi
-		done
-	    fi
-	])
-	if test x"${ac_cv_c_celibconfig}" = x ; then
-	    AC_MSG_ERROR([Cannot find celib support library directory])
-	else
-	    no_celib=
-	    CELIB_DIR=${ac_cv_c_celibconfig}
-	    CELIB_DIR=`echo "$CELIB_DIR" | sed -e 's!\\\!/!g'`
-	    AC_MSG_RESULT([found $CELIB_DIR])
-	fi
-    fi
+    AC_SUBST(INSTALL)
+    AC_SUBST(INSTALL_DATA_DIR)
+    AC_SUBST(INSTALL_DATA)
+    AC_SUBST(INSTALL_PROGRAM)
+    AC_SUBST(INSTALL_SCRIPT)
+    AC_SUBST(INSTALL_LIBRARY)
 ])
+
+###
+# Tip 430 - ZipFS Modifications
+###
+#------------------------------------------------------------------------
+# SC_ZIPFS_SUPPORT
+#	Locate a zip encoder installed on the system path, or none.
+#
+# Arguments:
+#	none
+#
+# Results:
+#	Substitutes the following vars:
+#		TCL_ZIP_FILE
+#		TCL_ZIPFS_SUPPORT
+#		TCL_ZIPFS_FLAG
+#		ZIP_PROG
+#------------------------------------------------------------------------
+
+#------------------------------------------------------------------------
+# SC_PROG_ZIP
+#	Locate a zip encoder installed on the system path, or none.
+#
+# Arguments:
+#	none
+#
+# Results:
+#	Substitutes the following vars:
+#		ZIP_PROG
+#       ZIP_PROG_OPTIONS
+#       ZIP_PROG_VFSSEARCH
+#       ZIP_INSTALL_OBJS
+#------------------------------------------------------------------------
+AC_DEFUN([TEA_ZIPFS_SUPPORT], [
+    AC_MSG_CHECKING([for zipfs support])
+    ZIP_PROG=""
+    ZIP_PROG_OPTIONS=""
+    ZIP_PROG_VFSSEARCH=""
+    INSTALL_MSGS=""
+    # If our native tclsh processes the "install" command line option
+    # we can use it to mint zip files
+    AS_IF([$TCLSH_PROG install],[
+      ZIP_PROG=${TCLSH_PROG}
+      ZIP_PROG_OPTIONS="install mkzip"
+      ZIP_PROG_VFSSEARCH="."
+      AC_MSG_RESULT([Can use Native Tclsh for Zip encoding])
+    ])
+    if test "x$ZIP_PROG" = "x" ; then
+        AC_CACHE_VAL(ac_cv_path_zip, [
+        search_path=`echo ${PATH} | sed -e 's/:/ /g'`
+        for dir in $search_path ; do
+            for j in `ls -r $dir/zip 2> /dev/null` \
+                `ls -r $dir/zip 2> /dev/null` ; do
+            if test x"$ac_cv_path_zip" = x ; then
+                if test -f "$j" ; then
+                ac_cv_path_zip=$j
+                break
+                fi
+            fi
+            done
+        done
+        ])
+        if test -f "$ac_cv_path_zip" ; then
+            ZIP_PROG="$ac_cv_path_zip "
+            AC_MSG_RESULT([$ZIP_PROG])
+            ZIP_PROG_OPTIONS="-rq"
+            ZIP_PROG_VFSSEARCH="."
+            AC_MSG_RESULT([Found INFO Zip in environment])
+            # Use standard arguments for zip
+        fi
+    fi
+    if test "x$ZIP_PROG" = "x" ; then
+	    # It is not an error if an installed version of Zip can't be located.
+        ZIP_PROG=""
+        ZIP_PROG_OPTIONS=""
+        ZIP_PROG_VFSSEARCH=""
+        TCL_ZIPFS_SUPPORT=0
+        TCL_ZIPFS_FLAG=
+    else
+        # ZIPFS Support
+       eval "TCL_ZIP_FILE=\"${TCL_ZIP_FILE}\""
+       if test ${TCL_ZIP_FILE} = "" ; then
+          TCL_ZIPFS_SUPPORT=0
+          TCL_ZIPFS_FLAG=
+          INSTALL_LIBRARIES=install-libraries
+          INSTALL_MSGS=install-msgs
+       else
+           if test ${SHARED_BUILD} = 1 ; then
+              TCL_ZIPFS_SUPPORT=1
+              INSTALL_LIBRARIES=install-libraries-zipfs-shared
+           else
+              TCL_ZIPFS_SUPPORT=2
+              INSTALL_LIBRARIES=install-libraries-zipfs-static
+           fi
+          TCL_ZIPFS_FLAG=-DTCL_ZIPFS_SUPPORT
+       fi
+    fi
+
+    AC_SUBST(TCL_ZIP_FILE)
+    AC_SUBST(TCL_ZIPFS_SUPPORT)
+    AC_SUBST(TCL_ZIPFS_FLAG)
+    AC_SUBST(ZIP_PROG)
+    AC_SUBST(ZIP_PROG_OPTIONS)
+    AC_SUBST(ZIP_PROG_VFSSEARCH)
+    AC_SUBST(INSTALL_LIBRARIES)
+    AC_SUBST(INSTALL_MSGS)
+])
+
 # Local Variables:
 # mode: autoconf
 # End:
