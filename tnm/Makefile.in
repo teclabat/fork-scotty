@@ -14,13 +14,12 @@
 
 #========================================================================
 # Add additional lines to handle any additional AC_SUBST cases that
-# have been added in a customized configure script.
+# have been added to the configure script.
 #========================================================================
 
-#SAMPLE_NEW_VAR	= @SAMPLE_NEW_VAR@
-
-# Used to version stamp several files
-TNM_VERSION =	@TNM_VERSION@
+PACKAGE_NAME		= @PACKAGE_NAME@
+PACKAGE_VERSION		= @PACKAGE_VERSION@
+TNM_VERSION         = @TNM_VERSION@
 
 # Used to pin calls to tclsh to the version used in the build.
 # TODO: with stubs build this should not be needed.
@@ -45,7 +44,6 @@ TKI_VERSION  =	@TKI_VERSION@
 
 PKG_SOURCES	= @PKG_SOURCES@
 PKG_OBJECTS	= @PKG_OBJECTS@
-
 PKG_STUB_SOURCES = @PKG_STUB_SOURCES@
 PKG_STUB_OBJECTS = @PKG_STUB_OBJECTS@
 
@@ -115,9 +113,20 @@ INSTALL_LIBRARY	= @INSTALL_LIBRARY@
 PACKAGE_NAME	= @PACKAGE_NAME@
 PACKAGE_VERSION	= @PACKAGE_VERSION@
 CC		= @CC@
+CXX		= @CXX@
+CCLD		= $(CXX)
 CFLAGS_DEFAULT	= @CFLAGS_DEFAULT@
 CFLAGS_WARNING	= @CFLAGS_WARNING@
+CFLAGS		= @CFLAGS@
+CPPFLAGS	= @CPPFLAGS@
+CXXFLAGS	= @CXXFLAGS@
+EXEEXT		= @EXEEXT@
 LDFLAGS_DEFAULT	= @LDFLAGS_DEFAULT@
+LDFLAGS		= @LDFLAGS@
+LDFLAGS_DEBUG	= @LDFLAGS_DEBUG@
+LDFLAGS_OPTIMIZE = @LDFLAGS_OPTIMIZE@
+LDFLAGS_CONSOLE	= @LDFLAGS_CONSOLE@
+LIBS		= @LIBS@
 MAKE_LIB	= @MAKE_LIB@
 MAKE_SHARED_LIB	= @MAKE_SHARED_LIB@
 MAKE_STATIC_LIB	= @MAKE_STATIC_LIB@
@@ -195,7 +204,8 @@ CPPFLAGS	= @CPPFLAGS@
 LIBS		= @PKG_LIBS@ @LIBS@
 AR		= @AR@
 CFLAGS		= @CFLAGS@
-COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS_DEFAULT) $(CFLAGS_WARNING) $(SHLIB_CFLAGS) $(CFLAGS)
+CXXCOMPILE	= $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS_DEFAULT) $(CFLAGS_WARNING) $(SHLIB_CFLAGS) $(CXXFLAGS)
 
 .SUFFIXES: .c .$(OBJEXT)
 
@@ -574,11 +584,14 @@ install-libraries: libraries tnm-install
 #========================================================================
 
 install-doc: doc
-	@$(INSTALL_DATA_DIR) $(DESTDIR)$(mandir)/mann
+	@$(INSTALL_DATA_DIR) "$(DESTDIR)$(mandir)/mann"
 	@echo "Installing documentation in $(DESTDIR)$(mandir)"
 	@list='$(srcdir)/doc/*.n'; for i in $$list; do \
+	    if test -f $$i; then \
 	    echo "Installing $$i"; \
-	    $(INSTALL_DATA) $$i $(DESTDIR)$(mandir)/mann ; \
+		rm -f "$(DESTDIR)$(mandir)/mann/`basename $$i`"; \
+		$(INSTALL_DATA) $$i "$(DESTDIR)$(mandir)/mann" ; \
+	    fi; \
 	done
 
 test: binaries libraries
@@ -647,7 +660,10 @@ $(PKG_STUB_LIB_FILE): $(PKG_STUB_OBJECTS)
 VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win:$(srcdir)/macosx:$(srcdir)/generic:$(srcdir)/snmp:$(srcdir)/compat
 
 .c.@OBJEXT@:
-	$(COMPILE) -c $< -o $@
+	$(COMPILE) -c `@CYGPATH@ $<` -o $@
+
+.cpp.@OBJEXT@:
+	$(CXXCOMPILE) -c `@CYGPATH@ $<` -o $@
 
 #========================================================================
 # Distribution creation
@@ -657,7 +673,7 @@ VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win:$(srcdir)/macos
 #COMPRESS	= tar cvf $(PKG_DIR).tar $(PKG_DIR); compress $(PKG_DIR).tar
 COMPRESS	= tar zcvf $(PKG_DIR).tar.gz $(PKG_DIR)
 DIST_ROOT	= /tmp/dist
-DIST_DIR	= $(DIST_ROOT)/$(PKG_DIR)
+DIST_DIR	= $(DIST_ROOT)/$(PACKAGE_NAME)$(PACKAGE_VERSION)
 
 dist-clean:
 	rm -rf $(DIST_DIR) $(DIST_ROOT)/$(PKG_DIR).tar.*
