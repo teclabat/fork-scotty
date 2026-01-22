@@ -87,7 +87,7 @@ IMPORTS
   -- Traceroute Control Table
 
  traceRouteCtlTable OBJECT-TYPE
-    SYNTAX      SEQUENCE OF TraceRouteCtlEntry
+    SYNTAX      SEQUENCE OF traceRouteCtlEntry
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
@@ -99,7 +99,7 @@ IMPORTS
    ::= { traceRouteObjects 2 }
 
  traceRouteCtlEntry OBJECT-TYPE
-    SYNTAX      TraceRouteCtlEntry
+    SYNTAX      traceRouteCtlEntry
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
@@ -118,7 +118,7 @@ IMPORTS
           }
     ::= { traceRouteCtlTable 1 }
 
- TraceRouteCtlEntry ::=
+ traceRouteCtlEntry ::=
     SEQUENCE {
       traceRouteCtlOwnerIndex         SnmpAdminString,
       traceRouteCtlTestName           SnmpAdminString,
@@ -619,7 +619,7 @@ IMPORTS
  -- Traceroute Results Table
 
  traceRouteResultsTable OBJECT-TYPE
-    SYNTAX      SEQUENCE OF TraceRouteResultsEntry
+    SYNTAX      SEQUENCE OF traceRouteResultsEntry
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
@@ -635,7 +635,7 @@ IMPORTS
 
 
  traceRouteResultsEntry OBJECT-TYPE
-    SYNTAX      TraceRouteResultsEntry
+    SYNTAX      traceRouteResultsEntry
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
@@ -650,7 +650,7 @@ IMPORTS
           }
     ::= { traceRouteResultsTable 1 }
 
- TraceRouteResultsEntry ::=
+ traceRouteResultsEntry ::=
     SEQUENCE {
       traceRouteResultsOperStatus       INTEGER,
       traceRouteResultsCurHopCount      Gauge32,
@@ -762,7 +762,7 @@ IMPORTS
  -- Trace Route Probe History Table
 
  traceRouteProbeHistoryTable OBJECT-TYPE
-    SYNTAX      SEQUENCE OF TraceRouteProbeHistoryEntry
+    SYNTAX      SEQUENCE OF traceRouteProbeHistoryEntry
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
@@ -777,7 +777,7 @@ IMPORTS
    ::= { traceRouteObjects 4 }
 
  traceRouteProbeHistoryEntry OBJECT-TYPE
-    SYNTAX      TraceRouteProbeHistoryEntry
+    SYNTAX      traceRouteProbeHistoryEntry
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
@@ -803,7 +803,7 @@ IMPORTS
           }
     ::= { traceRouteProbeHistoryTable 1 }
 
- TraceRouteProbeHistoryEntry ::=
+ traceRouteProbeHistoryEntry ::=
     SEQUENCE {
       traceRouteProbeHistoryIndex         Unsigned32,
       traceRouteProbeHistoryHopIndex      Unsigned32,
@@ -928,7 +928,7 @@ IMPORTS
  -- Traceroute Hop Results Table
 
  traceRouteHopsTable OBJECT-TYPE
-    SYNTAX      SEQUENCE OF TraceRouteHopsEntry
+    SYNTAX      SEQUENCE OF traceRouteHopsEntry
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
@@ -940,7 +940,7 @@ IMPORTS
     ::= { traceRouteObjects 5 }
 
  traceRouteHopsEntry OBJECT-TYPE
-    SYNTAX      TraceRouteHopsEntry
+    SYNTAX      traceRouteHopsEntry
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
@@ -958,7 +958,7 @@ IMPORTS
           }
     ::= { traceRouteHopsTable 1 }
 
- TraceRouteHopsEntry ::=
+ traceRouteHopsEntry ::=
     SEQUENCE {
         traceRouteHopsHopIndex         Unsigned32,
         traceRouteHopsIpTgtAddressType InetAddressType,

@@ -18,9 +18,9 @@ if {[lsearch [namespace children] ::tcltest] == -1} {
     namespace import ::tcltest::*
 }
 
-package require Tnm 3.0
+package require tnm 3.0
 catch {
-    namespace import Tnm::job
+    namespace import tnm::job
 }
 
 foreach job [job find] { $job destroy }
@@ -142,8 +142,8 @@ test job-4.1 {many jobs} {
 test job-5.1 {jobs and multiple Tcl interpreters} {
     interp create foo
     foo eval { 
-	package require Tnm
-	namespace import Tnm::job
+	package require tnm
+	namespace import tnm::job
 	job create
 	job create
 	job create

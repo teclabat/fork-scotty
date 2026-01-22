@@ -7,17 +7,17 @@
 '\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 '\" 
 .so man.macros
-.TH Tnm::snmp n "September 1998" Tnm "Tnm Tcl Extension"
+.TH tnm::snmp n "September 1998" tnm "tnm Tcl Extension"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
-Tnm::snmp \- Send SNMP messages to devices on the Internet.
+tnm::snmp \- Send SNMP messages to devices on the Internet.
 .BE
 
 .SH DESCRIPTION
-The Tnm Tcl extension includes an implementation of the Simple Network
+The tnm Tcl extension includes an implementation of the Simple Network
 Management Protocol (SNMP) which is used to monitor and control
-devices on the Internet. The Tnm extension supports SNMP version 1
+devices on the Internet. The tnm extension supports SNMP version 1
 (SNMPv1) as defined in RFC 1157, community based SNMP version 2
 (SNMPv2c) as defined in RFC 1901, RFC 1905, RFC 1906 as well as SNMP
 version 3 (SNMPv3) as defined in RFC 2272 and RFC 2274. The Tcl
@@ -33,7 +33,7 @@ authentication mechanism and parameters in use as well as some
 parameters that control the behaviour of the SNMP protocol engine
 itself.
 
-The Tnm extension supports four different SNMP session types that
+The tnm extension supports four different SNMP session types that
 correspond to SNMP applications as defined in the architecture for
 describing SNMP management frameworks (RFC 2271). A "generator" SNMP
 session is used to initiate SNMP get/getnext/getbulk or set requests
@@ -49,7 +49,7 @@ traps or informs. The combination of "responder" and "notifier" SNMP
 sessions is traditionally called an SNMP agent.
 
 The SNMP commands described in this manual page are often used in
-combination with the Tnm::mib(n) command, which allows to retrieve
+combination with the tnm::mib(n) command, which allows to retrieve
 information from Management Information Base (MIB) definitions. The
 implementation of the SNMP protocol engine also makes internal calls
 to the MIB module in order to resolve names or to apply conversions.
@@ -75,8 +75,8 @@ tree to a MIB object or MIB instance. The primitive Tcl string
 representation is the dotted notation, where sub-identifier are
 separated by dots. For example, the OBJECT IDENTIFIER for the MIB node
 labelled mib-2 has the Tcl string representation "1.3.6.1.2.1". The
-Tnm extension always returns sub-identifier as decimal
-numbers. However, the Tnm extension accepts sub-identifier which
+tnm extension always returns sub-identifier as decimal
+numbers. However, the tnm extension accepts sub-identifier which
 contain hexadecimal values. A hexadecimal sub-identifier is either
 preceeded by a colon instead of a dot or by the sequence "0x". For
 example, the OBJECT IDENTIFIER value "1.3.6.1:4:1.0x627" is
@@ -122,7 +122,7 @@ Counter64 values.
 .TP
 .B Opaque
 Opaque values were used in early versions of SNMP to exchange
-arbitrary ASN.1/BER encoded values. The SNMP engine of the Tnm
+arbitrary ASN.1/BER encoded values. The SNMP engine of the tnm
 extension also uses the Opaque data type to pass values with an
 unknown ASN.1/BER encoding to the script layer. This is especially
 useful if new tagged types are added to SNMP and agents ship those new
@@ -134,18 +134,18 @@ Note, Opaque is only supported for backwards compatibility and it
 should only be used in rare cases.
 
 .PP
-The Tnm extension returns values in the primitive string
+The tnm extension returns values in the primitive string
 representation if no other formatting rules apply. Formatting rules
 defined in MIB modules are applied automatically (see the
-documentation for the Tnm::mib command on how to load MIB
+documentation for the tnm::mib command on how to load MIB
 modules). This includes the interpretation if DISPLAY-HINTs as well as
 the conversion of integer values to the corresponding enumeration. For
 example, DisplayString values are automatically converted from the
 primitive OCTET STRING representation into a human readable ASCII
 string by applying the "225a" DISPLAY-HINT, and values of type
 TruthValue are returned as "true" or "false" instead of 1 and 2 (RFC
-1903). Explicit conversions are possible by using the Tnm::mib format
-and Tnm::mib scan commands as described in the Tnm::mib manual page.
+1903). Explicit conversions are possible by using the tnm::mib format
+and tnm::mib scan commands as described in the tnm::mib manual page.
 
 .SH SNMP VARBIND LISTS
 The SNMP protocol always operates on a list of MIB variables. This
@@ -181,7 +181,7 @@ much shorter varbind list has been used:
 .CE
 
 It is possible to replace OBJECT IDENTIFIER values with labels or
-names that resolve to an OBJECT IDENTIFIER value. (See the Tnm::mib
+names that resolve to an OBJECT IDENTIFIER value. (See the tnm::mib
 manual page for details about legal names.) This further simplifies
 the varbind list above to:
 
@@ -206,7 +206,7 @@ allows to use a list like
 .CE
 
 to change the value of the sysContact.0 MIB variable. Note, that the
-Tnm extension always returns fully specified varbind lists to avoid
+tnm extension always returns fully specified varbind lists to avoid
 ambiguities.
 
 SNMPv2c and SNMPv3 varbind lists may contain exceptions (noSuchObject,
@@ -352,7 +352,7 @@ congestion control like UDP.
 The \fB-window\fR option allows to define a window which limits the
 number of active asynchronous requests. This can be used to prevent
 fast scripts to flood an agent or an intermediate system with
-asynchronous messages.  The Tnm extension queues requests internally
+asynchronous messages.  The tnm extension queues requests internally
 so that no more than \fIsize\fR asynchronous requests are on the
 wire. Setting the size to 0 turns the windowing mechanism off. This
 option only applies for transports without congestion control like
@@ -1060,7 +1060,7 @@ $s instance TUBS-IBR-TNM-MIB!tnmHttpError.0 tnmHttpError
 
 $s bind TUBS-IBR-TNM-MIB!tnmHttpSource.0 set {
     set tnmHttpSource "%v"
-    set msg [SNMP_HttpSource $tnmHttpSource]
+    set msg [SNMP_httpSource $tnmHttpSource]
     if {$msg != ""} {
         set tnmHttpError $msg
         error inconsistentValue
@@ -1100,7 +1100,7 @@ The SNMPv3 implementation currently only supports noAuth/noPriv
 communication.
 
 .SH SEE ALSO
-scotty(1), Tnm(n), Tcl(n)
+scotty(1), tnm(n), Tcl(n)
 
 .SH AUTHORS
 Juergen Schoenwaelder <schoenw@ibr.cs.tu-bs.de>

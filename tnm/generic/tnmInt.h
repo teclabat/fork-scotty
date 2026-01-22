@@ -227,7 +227,7 @@ TNM_EXTERN void
 TnmSetIpAddressObj	(Tcl_Obj *objPtr, struct in_addr *ipaddr);
 
 TNM_EXTERN struct in_addr*
-TnmGetIpAddressFromObj	(Tcl_Interp *interp, Tcl_Obj *objPtr);
+TnmgetIpAddressFromObj	(Tcl_Interp *interp, Tcl_Obj *objPtr);
 
 /*
  *----------------------------------------------------------------

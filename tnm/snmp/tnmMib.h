@@ -244,7 +244,7 @@ TNM_EXTERN TnmTable tnmMibStatusTable[];
  */
 
 TNM_EXTERN char*tnmMibFileName;		/* Current MIB file name loaded. */
-TNM_EXTERN int tnm_MibLineNumber;		/* Current MIB file line number. */
+TNM_EXTERN int tnm_mibLineNumber;		/* Current MIB file line number. */
 TNM_EXTERN char*tnmMibModuleName;		/* Current MIB module name loaded. */
 TNM_EXTERN TnmMibNode *tnmMibTree;		/* The root of the MIB tree. */
 TNM_EXTERN TnmMibType *tnmMibTypeList;	/* List of textual conventions. */

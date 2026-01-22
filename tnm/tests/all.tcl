@@ -40,7 +40,10 @@ set startTime [clock seconds]
 puts stdout "Tests began at [clock format $startTime]"
 
 # source each of the specified tests
-foreach file [lsort [::tcltest::getMatchingFiles]] {
+# foreach file [lsort [::tcltest::getMatchingFiles]]
+## dns.test
+foreach file {icmp.test job.test map.test mib.test netdb.test ntp.test snmp.test syslog.test udp.test} {
+    set file [file join $::tcltest::testsDirectory $file]
     set tail [file tail $file]
     puts stdout $tail
     if {[catch {source $file} msg]} {

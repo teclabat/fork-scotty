@@ -8,7 +8,7 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 
-Tnm::mib load TUBS-IBR-PROC-MIB
+tnm::mib load TUBS-IBR-PROC-MIB
 
 ##
 ## The proc group contains a table of actually running processes.
@@ -17,13 +17,13 @@ Tnm::mib load TUBS-IBR-PROC-MIB
 ## to explicitly reload the proc table.
 ##
 
-proc SNMP_ProcInit {s} {
+proc SNMP_procInit {s} {
     set interp [$s cget -agent]
     $interp alias DateAndTime DateAndTime
-    if {! [catch SNMP_ProcPSAX]} {
-	$interp alias SNMP_GetPS SNMP_ProcPSAX
-    } elseif {! [catch SNMP_ProcPSE result]} {
-	$interp alias SNMP_GetPS SNMP_ProcPSE
+    if {! [catch SNMP_procPSAX]} {
+	$interp alias SNMP_GetPS SNMP_procPSAX
+    } elseif {! [catch SNMP_procPSE result]} {
+	$interp alias SNMP_GetPS SNMP_procPSE
     } else {
 	$interp alias SNMP_GetPS join ""
     }
@@ -45,11 +45,11 @@ proc SNMP_ProcInit {s} {
 
 ##
 ## Two implementations to read the process list for BSD and SYSV machines. 
-## SNMP_ProcInit above installs the right one simply by checking which
+## SNMP_procInit above installs the right one simply by checking which
 ## of these procs does not fail.
 ##
 
-proc SNMP_ProcPSAX {} {
+proc SNMP_procPSAX {} {
     set ps [open "| ps -axc"]
     gets $ps line
     while {![eof $ps]} {
@@ -64,7 +64,7 @@ proc SNMP_ProcPSAX {} {
     return [array get foo]
 }
 
-proc SNMP_ProcPSE {} {
+proc SNMP_procPSE {} {
     set ps [open "| ps -e"]
     gets $ps line
     while {![eof $ps]} {

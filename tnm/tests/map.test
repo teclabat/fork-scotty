@@ -18,9 +18,9 @@ if {[lsearch [namespace children] ::tcltest] == -1} {
     namespace import ::tcltest::*
 }
 
-package require Tnm 3.0
+package require tnm 3.0
 catch {
-    namespace import Tnm::map
+    namespace import tnm::map
 }
 
 test map-1.1 {map command} {

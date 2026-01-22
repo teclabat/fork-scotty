@@ -6,7 +6,7 @@
 '\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 '\" 
 .so man.macros
-.TH ined n "July 1997" Tnm "Tnm Tcl Extension"
+.TH ined n "July 1997" tnm "tnm Tcl Extension"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
@@ -14,11 +14,11 @@ ined \- Access and manipulate tkined objects.
 .BE
 
 .SH DESCRIPTION
-The \fBTnm\fR extension can be used to write applications for the
+The \fBtnm\fR extension can be used to write applications for the
 tkined(1) network editor. The \fBined\fR command described in this man
 page allows to access and manipulate the objects shown inside of the
 editor. The communication between the tkined(1) editor and the
-\fBTnm\fR process is encapsulated by the \fBined\fR command. The
+\fBtnm\fR process is encapsulated by the \fBined\fR command. The
 \fBined\fR command also allows to make use of some standard dialogs
 provided by the tkined(1) editor.
 
@@ -26,12 +26,12 @@ provided by the tkined(1) editor.
 The tkined(1) editor distinguishes between various object types.
 Every object has a unique identifier, called its id, which is used to
 access and manipulate this object. Exchanging the id between tkined(1)
-and the \fBTnm\fR extension would be sufficient to implement all of
+and the \fBtnm\fR extension would be sufficient to implement all of
 the commands below. However, this would not be very efficient because
 an application often needs to access a set of standard object
 attributes. To reduce communication costs, an external object
 representation of the various object types is used which allows to
-cache some information in the \fBTnm\fR extension.
+cache some information in the \fBtnm\fR extension.
 
 The external object format is a Tcl list. The first element in this
 list contains the object type and the second element the id of the
@@ -717,7 +717,7 @@ INTERPRETER objects should be named APPLICATION objects.
 LOG objects should be named OUTPUT objects.
 
 .SH SEE ALSO
-scotty(1), tkined(1), Tnm(n), Tcl(n), Tk(n)
+scotty(1), tkined(1), tnm(n), Tcl(n), Tk(n)
 
 .SH AUTHORS
 Juergen Schoenwaelder <schoenw@ibr.cs.tu-bs.de>

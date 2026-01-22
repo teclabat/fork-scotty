@@ -1356,7 +1356,7 @@ TnmMibPack(Tcl_Interp *interp, TnmOid *oidPtr, int objc, Tcl_Obj **objv, int imp
 	    TnmOidAppend(oidPtr, u32Value);
 	    break;
 	case ASN1_IPADDRESS:
-	    ipValue = TnmGetIpAddressFromObj(interp, valPtr);
+	    ipValue = TnmgetIpAddressFromObj(interp, valPtr);
 	    addr = htonl(ipValue->s_addr);
 	    TnmOidAppend(oidPtr, addr >> 24 & 0xff);
 	    TnmOidAppend(oidPtr, addr >> 16 & 0xff);

@@ -2,7 +2,7 @@
 # the next line restarts using tclsh -*- tcl -*- \
 exec tclsh "$0" "$@"
 
-package require Tnm 3.0
+package require tnm 3.0
 
 ##
 ## This functions is called whenever an SNMP trap is received.
@@ -11,21 +11,21 @@ package require Tnm 3.0
 proc traphandler {ip pdu args} {
     set msg "$pdu from $ip:"
     foreach vb $args {
-	append msg " [Tnm::mib name [lindex $vb 0]]=\"[lindex $vb 2]\""
+	append msg " [tnm::mib name [lindex $vb 0]]=\"[lindex $vb 2]\""
     }
     puts stdout $msg
-    Tnm::syslog warning $msg
+    tnm::syslog warning $msg
 }
 
 proc try_or_cry cmd {
     if {[catch $cmd msg]} { puts stderr "$cmd failed: $msg" }
 }
 
-try_or_cry { Tnm::snmp listener -version SNMPv1 }
-try_or_cry { Tnm::snmp listener -version SNMPv2c }
-try_or_cry { Tnm::snmp listener -version SNMPv3 }
+try_or_cry { tnm::snmp listener -version SNMPv1 }
+try_or_cry { tnm::snmp listener -version SNMPv2c }
+try_or_cry { tnm::snmp listener -version SNMPv3 }
 
-foreach s [Tnm::snmp find] {
+foreach s [tnm::snmp find] {
     $s bind trap "traphandler %A %T %V"
 }
 

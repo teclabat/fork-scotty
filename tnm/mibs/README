@@ -1,8 +1,8 @@
 The files in this directory contain Internet MIB definitions (MIB
 modules) extracted from RFC files. Below is a list describing the
 contents of these files. A machine readable index is provided by the
-TnmIetf package of this distribution. The following list is generated
-by calling the TnmIetf::PrintModuleList procedure:
+tnmIetf package of this distribution. The following list is generated
+by calling the tnmIetf::printModuleList procedure:
 
 RFC3055	[proposed]	PINT-MIB
 	Management Information Base for the PINT Services Architecture

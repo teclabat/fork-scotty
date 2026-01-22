@@ -18,7 +18,7 @@ syntax. The test suite now uses the tcltest framework.
 25/6/99 (feature change) Removed the -write option and renamed -read
 and -notify back to -community.
 
-8/6/99 (new feature) The Tnm::mib description command now accepts an
+8/6/99 (new feature) The tnm::mib description command now accepts an
 optional variable name for returning the result.
 
 8/6/99 (bug fix) Make sure that MIB files are not loaded twice so that
@@ -49,12 +49,12 @@ with regard to negative numbers.
 
 12/10/98 (new feature) Added the `mib pack' command option.
 
-9/10/98 (bug fix) Several minor bug fixes in the Tnm::mib command.
+9/10/98 (bug fix) Several minor bug fixes in the tnm::mib command.
 
-9/10/98 (new feature) Added a Tnm::mib member command. 
+9/10/98 (new feature) Added a tnm::mib member command. 
 
 17/9/98 (feature change) Changed the default value of tnm(cache)
-to ~/.tnm$tnm(version). Added an internal function TnmMkDir which
+to ~/.tnm$tnm(version). Added an internal function tnmMkDir which
 is used to create a path of directories.
 
 17/9/98 (bug fix) Added a version number to .idy files which is
@@ -64,7 +64,7 @@ versions of .idy files.
 15/9/98 (bug fix) Added additional tests to calls to inet_addr in
 order to accept the value 255.255.255.255.
 
-24/7/98 (new feature) Changed the output of the TnmSnmp library
+24/7/98 (new feature) Changed the output of the tnmSnmp library
 procedures to make it more readable.
 
 10/7/98 (new feature) Added the `mib info files' command option.
@@ -78,7 +78,7 @@ file in $tnm(library)/site/vendor/file.mib. (Suggestion and patch from
 Joe Rogers <joe@usf.edu>.)
 
 12/6/98 (new feature) Added the `mib unpack' command option. Changed
-the library functions in TnmSnmp.tcl to use this command and to
+the library functions in tnmSnmp.tcl to use this command and to
 optimize SNMP table accesses and table printing.
 
 4/4/98 (new feature) Added new commands to extract parts of a varbind
@@ -106,7 +106,7 @@ and privacy keys using MD5.
 deltas for isomorphic varbind lists. Allows to work around Tcl's 
 platform dependent arithmetics.
 
-28/3/98 (bug fix) Added TnmUnsigned32 and TnmUnsigned64 data types
+28/3/98 (bug fix) Added tnmUnsigned32 and tnmUnsigned64 data types
 and corresponding Tcl_Obj types.
 
 28/3/98 (new feature) Added an icon tree to the tnm distribution.
@@ -120,7 +120,7 @@ notification community string.
 
 27/2/98 (new feature) The MIB parser now recognizes VARIABLES clauses
 and OBJECTS clauses in TRAP-TYPE and NOTIFICATION-TYPE macros. Added
-a new Tnm::mib variables command to query the information.
+a new tnm::mib variables command to query the information.
 
 16/2/98 (bug fix) The MIB parser now maintains information about ASN.1
 type and value assignements.
@@ -155,8 +155,8 @@ have the resources to maintain this. We only have access to MS VC++.
 14/1/98 (bug fix) The MIB parser read all the DESCRIPTION clauses in a
 MODULE-IDENTITY macro. Changed the parser to only honor the first clause.
 
-14/1/98 (code cleanup) New or renamed library packages: TnmTerm, TnmSnmp,
-TnmIetf.
+14/1/98 (code cleanup) New or renamed library packages: tnmTerm, tnmSnmp,
+tnmIetf.
 
 4/1/98 (bug fix) Added an endOfWalk pseudo error code which is used to
 signal the end of asynchronous walks.
@@ -188,7 +188,7 @@ rfc2214.mib, rfc2232.mib, rfc2233.mib, rfc2238.mib, and rfc2239.mib.
 
 25/9/97 (new feature) Added a -tags option to map instances and a map
 find command to search for map instances. All "object-based" commands
-of the Tnm extension now support tags and a find option.
+of the tnm extension now support tags and a find option.
 
 24/9/97 (new feature) Added a -tags option to snmp sessions. Replaced
 the snmp info command with an snmp find command, which allows to
@@ -217,7 +217,7 @@ types.
 5/9/97 (new feature) Add a 'mib status' command to query the status of
 MIB defintions.
 
-30/8/97 (feature removed) Removed the http command from the Tnm extension.
+30/8/97 (feature removed) Removed the http command from the tnm extension.
 *** POTENTIAL INCOMPATIBILITY ***
 
 4/8/97 (code cleanup) The netdb command now uses Tcl_Obj's.
@@ -234,8 +234,8 @@ has been rewritten so that the body is only compiled once.
 28/7/97 (bug fix) Plugged a memory leak in the function InedGets() in
 tnmIned.c. Thanks to Martin Knoll <martin.knoll@tikom.co.at>.
 
-27/7/97 (code cleanup) Added new functions TnmMibLoad, TnmMibLoadCore
-and TnmMibLoadFile to load and initialize the internal MIB tree.
+27/7/97 (code cleanup) Added new functions tnmMibLoad, tnmMibLoadCore
+and tnmMibLoadFile to load and initialize the internal MIB tree.
 
 26/7/97 (code cleanup) Added a tnmOidObj object type which is used to
 map object identifier values between a string representation and the
@@ -246,8 +246,8 @@ format or in string format.
 
 19/7/97 (code cleanup) Converted the map command to use Tcl_Obj's.
 
-18/7/97 (feature change) All the exported commands of the Tnm
-extension are now registered in and exported from the ::Tnm
+18/7/97 (feature change) All the exported commands of the tnm
+extension are now registered in and exported from the ::tnm
 namespace. Scripts have to import these commands.
 *** POTENTIAL INCOMPATIBILITY ***
 
@@ -256,7 +256,7 @@ defining our own version in init.tcl.
 
 13/7/97 (code cleanup) Converted the job command to use Tcl_Obj's.
 
-6/7/97 (code cleanup) Added a new function TnmGetHandle which generates
+6/7/97 (code cleanup) Added a new function tnmGetHandle which generates
 Tcl command names for internal objects. It ensures that the new name
 is unique and not used.
 
@@ -265,7 +265,7 @@ returns the Tcl list index of the varbind which caused the error instead
 of the SNMP varbind index.
 *** POTENTIAL INCOMPATIBILITY ***
 
-5/7/97 (code cleanup) Added a new dynamic TnmOid data type which will
+5/7/97 (code cleanup) Added a new dynamic tnmOid data type which will
 replace the old API which used static buffers and caused some strange
 copying actions.
 
@@ -283,7 +283,7 @@ Removed xxx.mib and dvmrp.mib.
 no longer needed.
 *** POTENTIAL INCOMPATIBILITY ***
 
-11/6/97 (feature change) The default personal Tnm initialization file
+11/6/97 (feature change) The default personal tnm initialization file
 is now called ~/.tnmrc. The old name ~/.scottyrc is still supported
 if ~/.tnmrc does not exist, but it is not documented anymore.
 
@@ -319,10 +319,10 @@ now table-driven to make additions easier and less error prone.
 
 30/5/97 (bug fix) Fixed the parser code which recognizes DEFVAL clauses.
 Added some conversion code to convert ASN.1 OCTET STRING constants into
-Tnm octet string format.
+tnm octet string format.
 
-30/5/97 (code cleanup) Added two new internal functions (TnmBadOption
-and TnmWrongNumArgs) which simplifies error handling.
+30/5/97 (code cleanup) Added two new internal functions (tnmBadOption
+and tnmWrongNumArgs) which simplifies error handling.
 
 28/5/97 (bug fix) The MIB parser does not resolve AUGMENT clauses. We
 do it now in the query module, which is ugly but it works.
@@ -349,13 +349,13 @@ and to calculate the health of each item and there is a library of
 procedures that convert maps into a set of HTML files.
 
 2/5/97 (new feature) Added the global tnm(url) variable which points to
-the home of the Tnm extension on the World Wide Web.
+the home of the tnm extension on the World Wide Web.
 
 24/4/97 (new feature) Added the -exit and -error options to the job
 object command.
 
 11/4/97 (bug fix) Added a sanity check which detects if we rename a
-command while loading the Tnm package.
+command while loading the tnm package.
 
 8/4/97 (bug fix) Added a new function to generate SNMP request ids
 that are guaranteed to be unique.
@@ -365,7 +365,7 @@ non-target IP addresses for echo, timestamp and mask requests. This
 solves some problems with ICMP packets for broadcast addresses.
 
 6/3/97 (new feature) Added bind and raise command options to the
-network map system. Rewrote the TnmMonitor package to use these
+network map system. Rewrote the tnmMonitor package to use these
 commands to raise events. Changed the ifload example script to
 demonstrate this new feature.
 
@@ -391,13 +391,13 @@ responses.
 16/1/97 (bug fix) The clock of the SNMP agent now ticks in hundreds
 of seconds instead of seconds.
 
-8/1/97 (NT port) Add a proc Tnm_InetMail which allows to send email
+8/1/97 (NT port) Add a proc tnm_inetMail which allows to send email
 messages in a platform independent way.
 
 8/1/97 (code cleanup) Turned all the "useful" code in tnm/library into
-Tcl packages. Renamed all the Tcl procedures to use the Tnm prefix.
+Tcl packages. Renamed all the Tcl procedures to use the tnm prefix.
 
-7/1/97 (code cleanup) New package TnmInet (tnm/library/inet.tcl) which
+7/1/97 (code cleanup) New package tnmInet (tnm/library/inet.tcl) which
 contains some basic Internet test and query procedures. This package
 exports an interface that allows to use these procedures in various
 applications.
@@ -419,7 +419,7 @@ The interval must be a positive number of milliseconds.
 30/12/96 (bug fix) Fixed the SNMP -window option to honor the window
 size 0 as documented.
 
-30/12/96 (new feature) The UNIX version searches for the Tnm and
+30/12/96 (new feature) The UNIX version searches for the tnm and
 Tkined path using tcl_pkgPath if the build-in path does not match.
 
 2/12/96 (new feature) Added a new global tnm(tmp) variable which
@@ -482,7 +482,7 @@ geometry manager instead of the packer.
 
 29/10/96 (NT port) Replaced the nmicmpd implementation with a new
 version which allows to move more platform independent code into the
-core of the Tnm extension.
+core of the tnm extension.
 *** POTENTIAL INCOMPATIBILITY ***
 
 29/10/96 (code cleanup) Removed the configure check for librpcsvc
@@ -494,7 +494,7 @@ removed the tnm/ntping directory. Renamed the environment variables
 TNM_STRAPS and TNM_NTPING to TNM_NMTRAPD and TNM_NMICMPD respectively.
 *** POTENTIAL INCOMPATIBILITY ***
 
-28/10/96 (bug fix) The straps daemon now forks itself. Otherwise, Tnm
+28/10/96 (bug fix) The straps daemon now forks itself. Otherwise, tnm
 would wait for it to terminate when the Tcl process exits.
 
 26/10/96 (new feature) Added the map command which allows to
@@ -548,7 +548,7 @@ at http://set.gmd.de/RS/Mitarbeiter/gergeleit/oncrpc.html.
 2/10/96 (code cleanup) Replaced a call to callrpc() in tnmSunRpc.c
 with a call to clnt_call() for portability reasons.
 
-2/10/96 (code cleanup) Changed the Tnm_MibEnum structures to hold the
+2/10/96 (code cleanup) Changed the tnm_MibEnum structures to hold the
 integer value in an int instead of a char*. Note, this change affects
 the internal structure of compressed .idy files.
 
@@ -583,8 +583,8 @@ get rid of the ugly list argument.
 SNMP session options. Changed straps to listen on other ports than 162.
 This is not working yet.
 
-12/9/96 (bug fix) Added two new functions TnmValidateIpHostName() and
-TnmValidateIpAddress() which are used to perform strict syntactic
+12/9/96 (bug fix) Added two new functions tnmValidateIpHostName() and
+tnmValidateIpAddress() which are used to perform strict syntactic
 checks on IP host name and IP address arguments to work around bugs
 and security problems in some resolver libraries.
 
@@ -673,8 +673,8 @@ tnmSnmpTcl.c to use these new functions.
 measure SNMP round trip times and message sizes.
 
 29/7/96 (code cleanup) Added a new module tnmUtil.c which implements
-the TnmTable structure. Changed a couple of modules to use the new
-TnmTable type to convert string to tokens and back.
+the tnmTable structure. Changed a couple of modules to use the new
+tnmTable type to convert string to tokens and back.
 
 21/7/96 (bug fix) Removed support for the UInteger32 type which is
 no longer defined for SNMPv2.
@@ -700,8 +700,8 @@ agent (added a USEC test to the test suite).
 5/7/96 (bug fix) Fixed the cleanup of trap sockets when destroying
 SNMP sessions.
 
-14/6/96 (bug fix) Changed the name of the Tnm package from scotty
-to Tnm to make it consistent with the Tcl naming conventions.
+14/6/96 (bug fix) Changed the name of the tnm package from scotty
+to tnm to make it consistent with the Tcl naming conventions.
 
 ----------------- Released 2.1.0, 10/6/96 -----------------------
 
@@ -738,7 +738,7 @@ rules defined in RFC 1905.
 first parameter is usually the script name.
 *** POTENTIAL INCOMPATIBILITY ***
 
-20/5/96 (bug fix) Fixed the initialization in Tnm_SnmpDelay which
+20/5/96 (bug fix) Fixed the initialization in tnm_SnmpDelay which
 caused very long delays on some systems.
 
 20/5/96 (feature change) Object identifier are now rendered into a
@@ -944,7 +944,7 @@ was changed which was currently evaluated.
 11/9/95 (bug fix) Various fixes/cleanups. Multicasts now work at least
 on SunOS 4.1.3, FreeBSD 2.0.5 and a bit on Linux 1.3.25.
 
-10/9/95 (bug fix) Tnm_MibFindNode() returns the offset to the trailer
+10/9/95 (bug fix) tnm_MibFindNode() returns the offset to the trailer
 of the given name or object identifier, which is usually an instance
 identifier. This gives better performance and fixes the broken `mib
 name system.sysDescr.0' result.

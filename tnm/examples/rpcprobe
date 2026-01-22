@@ -5,9 +5,9 @@ exec tclsh "$0" "$@"
 # rpcprobe --
 #
 #	This example shows how one can probe all ONC rpc services
-#	registered on a target host by using the TnmInet library.
+#	registered on a target host by using the tnmInet library.
 #	For details how probing works, please read the implementation
-#	of the TnmInet package.
+#	of the tnmInet package.
 #
 # Copyright (c) 1995-1996 Technical University of Braunschweig.
 # Copyright (c) 1996-1997 University of Twente.
@@ -17,8 +17,8 @@ exec tclsh "$0" "$@"
 #
 # @(#) $Id: rpcprobe,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 
-package require Tnm 3.0
-package require TnmInet $tnm(version)
+package require tnm 3.0
+package require tnmInet $tnm(version)
 
 # Check the commandline and start probing.
 
@@ -29,12 +29,12 @@ if {$argc<1} {
 
 foreach host $argv {
     if [catch {
-	set ip [TnmInet::GetIpAddress $host]
-	set name [TnmInet::GetIpName $host]
+	set ip [tnmInet::getIpAddress $host]
+	set name [tnmInet::getIpName $host]
     } msg] {
 	puts stderr "rpcprobe: $msg"
 	continue
     }
     puts "\n$name \[$ip\]:"
-    puts [TnmInet::RpcServices $host]
+    puts [tnmInet::rpcServices $host]
 }

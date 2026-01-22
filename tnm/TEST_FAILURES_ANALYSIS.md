@@ -106,7 +106,7 @@ if (icmpPtr->type == TNM_ICMP_TYPE_MASK
 
 **Workaround:**
 - For mask: Use network configuration APIs
-- For timestamp: Use `Tnm::ntp` command
+- For timestamp: Use `tnm::ntp` command
 
 #### ICMP Delay Timing (3 failures):
 - `icmp-1.4.1`: Single host with 255ms delay
@@ -183,8 +183,8 @@ When creating a child Tcl interpreter with `interp create`, the Tnm package is n
 ```tcl
 interp create foo
 foo eval {
-    package require Tnm  # FAILS HERE
-    namespace import Tnm::job
+    package require tnm  # FAILS HERE
+    namespace import tnm::job
     job create
 }
 ```
@@ -433,8 +433,8 @@ int res_query(const char *dname, int class, int type,
 **Workaround:**
 - Use Tcl's built-in `socket` command for name resolution
 - Use Windows `nslookup` command via `exec`
-- Use `Tnm::netdb hosts` for basic lookups
-- Avoid `Tnm::dns` command entirely
+- Use `tnm::netdb hosts` for basic lookups
+- Avoid `tnm::dns` command entirely
 
 **Impact:** **MODERATE**
 - DNS functionality completely unavailable

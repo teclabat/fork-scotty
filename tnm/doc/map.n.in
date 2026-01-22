@@ -9,17 +9,17 @@
 '\" @(#) $Id: map.n,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 '\" 
 .so man.macros
-.TH Tnm::map n "December 1997" Tnm "Tnm Tcl Extension"
+.TH tnm::map n "December 1997" tnm "tnm Tcl Extension"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
-Tnm::map \- Manipulate network maps.
+tnm::map \- Manipulate network maps.
 .BE
 
 .SH DESCRIPTION
-The Tnm::map command allows to manipulate network maps. Network maps
+The tnm::map command allows to manipulate network maps. Network maps
 describe the topology of a network which is managed by applications
-based on the Tnm Tcl extension. A map is composed out of several
+based on the tnm Tcl extension. A map is composed out of several
 items.  Each item is of a specific type (e.g. node, network, port or
 link).  The type defines the operations a Tcl script can perform on an
 item.
@@ -67,7 +67,7 @@ persistent attribute names are:
 .CS
 :Contact
 Icmp:Timeout
-Tnm:Monitor:ifSpeed:1
+tnm:Monitor:ifSpeed:1
 .CE
 
 .PP 
@@ -83,7 +83,7 @@ from the code that handles the results. A test or monitoring function,
 which might be running periodically in the background, generates
 events that are either associated with a map item or with the map as a
 whole. Events have an event tag which is used to describe the event
-type (e.g. Tnm:Error:Snmp:noResponse). It is suggested to use the same
+type (e.g. tnm:Error:Snmp:noResponse). It is suggested to use the same
 naming conventions for event tags which are described above in the
 paragraph about persistent attribute names.
 
@@ -169,14 +169,14 @@ periodically.
 
 .SH MAP COMMANDS
 .TP
-.B Tnm::map create \fR[\fIoption value\fR ...]
-The \fBTnm::map create\fR command is used to create network
+.B tnm::map create \fR[\fIoption value\fR ...]
+The \fBtnm::map create\fR command is used to create network
 maps. The command returns a handle which can be used to manipulate the
 new map. A Tcl interpreter is able to control an arbitrary number of
 map instances.
 .TP
-.B Tnm::map info \fIsubject ?pattern?\fR
-The \fBTnm::map info\fR command retrieves information about the maps
+.B tnm::map info \fIsubject ?pattern?\fR
+The \fBtnm::map info\fR command retrieves information about the maps
 handled by the Tcl interpreter. The optional \fIpattern\fR is used to
 select a subset. The subject \fImaps\fR returns the list of existing
 maps. The \fIpattern\fR is matched against the map name. The subject
@@ -603,7 +603,7 @@ a particular item type.
 .TP
 .BI "-address " address
 The \fB-address\fR option defines the \fIaddress\fR of the item. No
-assumptions are made by the Tnm map implementation about the format
+assumptions are made by the tnm map implementation about the format
 and the semantics of the address. Scripts that interpret the value of
 a \fB-address\fR option should carefully check whether the format is
 acceptable.
@@ -650,7 +650,7 @@ by the map implementation.
 .TP
 .BI "-name " name
 The \fB-name\fR option defines the \fIname\fR of the item. No
-assumptions are made by the Tnm map implementation about the format
+assumptions are made by the tnm map implementation about the format
 and the semantics of the name. Scripts that interpret the value of a
 \fB-name\fR option should carefully check whether the format is
 acceptable.
@@ -734,7 +734,7 @@ yet documented. The current version also does a poor job to clearly
 describe which option and command is supported by which item type.
 
 .SH SEE ALSO
-scotty(1), Tnm(n), Tcl(n)
+scotty(1), tnm(n), Tcl(n)
 
 .SH AUTHORS
 Juergen Schoenwaelder <schoenw@ibr.cs.tu-bs.de>

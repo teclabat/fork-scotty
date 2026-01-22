@@ -5,38 +5,38 @@
 '\" See the file "license.terms" for information on usage and redistribution
 '\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 '\" 
-'\" @(#) $Id: TnmTerm.n,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
+'\" @(#) $Id: tnmTerm.n,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 '\" 
 .so man.macros
-.TH TnmTerm n "January 1998" Tnm "Tnm Tcl Extension"
+.TH tnmTerm n "January 1998" tnm "tnm Tcl Extension"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
-TnmTerm \- A Tcl/Tk package for simple output terminals
+tnmTerm \- A Tcl/Tk package for simple output terminals
 .BE
 
 .SH DESCRIPTION
 
-The TnmTerm package provides a set of Tcl/Tk command procedures used
+The tnmTerm package provides a set of Tcl/Tk command procedures used
 to create and display simple output terminals.
 
 .SH USING THE PACKAGE
 
-The TnmTerm package is loaded into a Tcl interpreter by using the
+The tnmTerm package is loaded into a Tcl interpreter by using the
 following sequence of Tcl commands:
 
 .CS
-package require Tnm
+package require tnm
 .br
-package require TnmTerm $tnm(version)
+package require tnmTerm $tnm(version)
 .CE
 
-All the TnmTerm commands live in the TnmTerm namespace. You can
+All the tnmTerm commands live in the tnmTerm namespace. You can
 import these commands into the current namespace by using the
 following Tcl command:
 
 .CS
-namespace import TnmTerm::*
+namespace import tnmTerm::*
 .CE
 
 It is however suggested to import commands explicitely or to use the
@@ -45,35 +45,35 @@ full name in scripts to avoid name clashes.
 .SH COMMANDS
 
 .TP
-.B TnmTerm::Open \fIpath\fR
-The \fBTnmTerm::Open\fR procedure creates a new output terminal.
+.B tnmTerm::open \fIpath\fR
+The \fBtnmTerm::open\fR procedure creates a new output terminal.
 The terminal is created with the given widget \fIpath\fR.
 
 .TP
-.B TnmTerm::Clear \fIpath\fR
-The \fBTnmTerm::Clear\fR procedure removes all the text from the
+.B tnmTerm::clear \fIpath\fR
+The \fBtnmTerm::clear\fR procedure removes all the text from the
 output terminal and positions the curser in the first line and
 first column.
 
 .TP
-.B TnmTerm::Write \fIpath\fR \fItext\fR
-The \fBTnmTerm::Write\fR procedure appends the \fItext\fR at the end
+.B tnmTerm::write \fIpath\fR \fItext\fR
+The \fBtnmTerm::write\fR procedure appends the \fItext\fR at the end
 of the text in the terminal window identified by \fIpath\fR.
 
 .TP
-.B TnmTerm::SetName \fIpath\fR \fIname\fR
-The \fBTnmTerm::SetName\fR procedure sets the name of the terminal
+.B tnmTerm::setName \fIpath\fR \fIname\fR
+The \fBtnmTerm::setName\fR procedure sets the name of the terminal
 window identified by \fIpath\fR. The \fIname\fR is displayed in the
 title bar of the window manager.
 
 .TP
-.B TnmTerm::SetIcon \fIpath\fR \fIbitmap\fR
-The \fBTnmTerm::SetIcon\fR procedure sets the bitmap icon displayed
+.B tnmTerm::setIcon \fIpath\fR \fIbitmap\fR
+The \fBtnmTerm::setIcon\fR procedure sets the bitmap icon displayed
 when the output terminal window identified by \fIpath\fR is iconified.
 
 .TP
-.B TnmTerm::ToggleFreeze \fIpath\fR
-The \fBTnmTerm::ToggleFreeze\fR procedure toggles the frozen state of
+.B tnmTerm::toggleFreeze \fIpath\fR
+The \fBtnmTerm::toggleFreeze\fR procedure toggles the frozen state of
 the output terminal window identified by \fIpath\fR on and off. New
 text written to the terminal window normally scrolls the window so
 that the text is visible. No automatic scrolling will take place in
@@ -81,8 +81,8 @@ the frozen state. The procedure returns a boolean indicating whether
 the terminal is currently in the frozen state or not.
 
 .TP
-.B TnmTerm::ToggleWrap \fIpath\fR
-The \fBTnmTerm::ToggleWrap\fR procedure toggles the line wrapping mode
+.B tnmTerm::toggleWrap \fIpath\fR
+The \fBtnmTerm::toggleWrap\fR procedure toggles the line wrapping mode
 of the output terminal window identified by \fIpath\fR. Normally, text
 lines that exceed the line length of the terminal window will not be
 shown completely. If the wrap mode is on, the long text lines will
@@ -91,48 +91,48 @@ window. The procedure returns a boolean indicating whether the
 terminal is currently in wrap mode or not.
 
 .TP
-.B TnmTerm::ToggleXScroll \fIpath\fR
-The \fBTnmTerm::ToggleYScroll\fR procedure toggles the visibility of
+.B tnmTerm::toggleXScroll \fIpath\fR
+The \fBtnmTerm::toggleYScroll\fR procedure toggles the visibility of
 the horizontal scrollbar attached to the output terminal window
 identified by \fIpath\fR. The procedure returns a boolean indicating
 whether the scrollbar is visible or not.
 
 .TP
-.B TnmTerm::ToggleYScroll \fIpath\fR
-The \fBTnmTerm::ToggleYScroll\fR procedure toggles the visibility of
+.B tnmTerm::toggleYScroll \fIpath\fR
+The \fBtnmTerm::toggleYScroll\fR procedure toggles the visibility of
 the vertical scrollbar attached to the output terminal window
 identified by \fIpath\fR. The procedure returns a boolean indicating
 whether the scrollbar is visible or not.
 
 .TP
-.B TnmTerm::Save \fIpath\fR
-The \fBTnmTerm::Save\fR procedure issues a dialog to save the
+.B tnmTerm::save \fIpath\fR
+The \fBtnmTerm::save\fR procedure issues a dialog to save the
 contents of the terminal window identified by \fIpath\fR into
 a text file.
 
 .TP
-.B TnmTerm::Load \fIpath\fR
-The \fBTnmTerm::Load\fR procedure issues a dialog to read a text
+.B tnmTerm::load \fIpath\fR
+The \fBtnmTerm::load\fR procedure issues a dialog to read a text
 file into the terminal window identified by \fIpath\fR.
 
 .TP
-.B TnmTerm::Print \fIpath\fR
-The \fBTnmTerm::Print\fR procedure issues a dialog to send the
+.B tnmTerm::print \fIpath\fR
+The \fBtnmTerm::print\fR procedure issues a dialog to send the
 contents of the terminal window identified by \fIpath\fR to a
 local printer.
 
 .TP
-.B TnmTerm::EMail \fIpath\fR
-The \fBTnmTerm::EMail\fR procedure issues a dialog to send the
+.B tnmTerm::email \fIpath\fR
+The \fBtnmTerm::email\fR procedure issues a dialog to send the
 contents of the terminal window identified by \fIpath\fR via email.
 
 .TP
-.B TnmTerm::Close \fIpath\fR
-The \fBTnmTerm::Close\fR procedure closes and destroys an 
+.B tnmTerm::close \fIpath\fR
+The \fBtnmTerm::close\fR procedure closes and destroys an 
 existing output terminal identified by \fIpath\fR.
 
 .SH SEE ALSO
-scotty(1), Tnm(n), Tcl(n)
+scotty(1), tnm(n), Tcl(n)
 
 .SH AUTHORS
 Juergen Schoenwaelder <schoenw@ibr.cs.tu-bs.de>

@@ -6,11 +6,11 @@
 '\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 '\" 
 .so man.macros
-.TH scotty 1 "July 1997" Tnm "Tnm Tcl Extension"
+.TH scotty 1 "July 1997" tnm "tnm Tcl Extension"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
-scotty \- A Tcl shell including the Tnm extensions.
+scotty \- A Tcl shell including the tnm extensions.
 .SH SYNOPSIS
 \fBscotty\fR ?\fIfileName arg arg ...\fR?
 .BE
@@ -21,7 +21,7 @@ scotty \- A Tcl shell including the Tnm extensions.
 \fBScotty\fR is a shell-like application that reads Tcl commands from
 its standard input or from a file and evaluates them similar to
 tclsh(1). The main difference between tclsh(1) and \fBscotty\fR is
-that scotty loads the Tnm(n) extension at startup time and that scotty
+that scotty loads the tnm(n) extension at startup time and that scotty
 runs in an event-driven mode while tclsh(1) needs a special command to
 enable the event loop. \fBScotty\fR evaluates the commands stored in
 the files \fB.tnmrc\fR or \fB.scottyrc\fR if the former not exists and
@@ -112,7 +112,7 @@ if \fBtcl_prompt2\fR isn't set then no prompt is output for
 incomplete commands.
 
 .SH SEE ALSO
-Tnm(n), Tcl(n), tclsh(1)
+tnm(n), Tcl(n), tclsh(1)
 
 .SH AUTHORS
 Juergen Schoenwaelder <schoenw@ibr.cs.tu-bs.de>

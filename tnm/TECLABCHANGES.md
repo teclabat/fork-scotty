@@ -9,7 +9,7 @@ January 19, 2026
 - **Architecture**: x86_64
 - **Tcl Version**: 8.6
 - **TNM Version**: 3.1.3
-- **Target**: Windows DLL (Tnm313.dll)
+- **Target**: Windows DLL (tnm313.dll)
 
 ## Overview
 This document describes all changes made to the TNM (Scotty) 3.1.3 source code to enable compilation with modern MinGW64 GCC 15.2.0 on Windows. The original code was designed for older compilers (Visual C++, older GCC) and required several compatibility fixes.
@@ -189,8 +189,8 @@ static inline const char* inet_ntop_compat(int af, const void *src, char *dst, i
 
 ### Successfully Configured
 - **Thread support**: Enabled (TCL_THREADS=1)
-- **Shared library**: Yes (Tnm313.dll)
-- **Stub library**: Yes (libTnmstub313.a)
+- **Shared library**: Yes (tnm313.dll)
+- **Stub library**: Yes (libtnmstub313.a)
 - **Build type**: Release with debug symbols (-g -O2)
 - **Compiler flags**: `-O2 -fomit-frame-pointer -DNDEBUG -Wall -Wformat=2`
 - **Zlib support**: Yes (HAVE_ZLIB_H=1, linked with -lz)
@@ -209,7 +209,7 @@ static inline const char* inet_ntop_compat(int af, const void *src, char *dst, i
 
 **Build Date**: January 20, 2026
 **Build Time**: 00:09 AM
-**DLL File**: Tnm313.dll
+**DLL File**: tnm313.dll
 **DLL Size**: 2.9 MB
 **Architecture**: PE32+ executable (x86-64)
 
@@ -361,7 +361,7 @@ warning: old-style function definition [-Wold-style-definition]
 
 ## Additional Compilation Fixes (Beyond Original 6 Critical Fixes)
 
-### 7. TnmMapItemType Parent Type Initialization
+### 7. tnmMapItemType Parent Type Initialization
 
 **Files Modified**:
 - `generic/tnmMapNode.c` (line 88)
@@ -376,7 +376,7 @@ warning: old-style function definition [-Wold-style-definition]
 **Fix**: Changed parentType initializers to NULL and set them at runtime:
 ```c
 // In tnmMapNode.c (and similar files):
-TnmMapItemType tnmNodeType = {
+tnmMapItemType tnmNodeType = {
     // ...
     NULL,  /* parentType set at runtime */
     // ...
@@ -402,7 +402,7 @@ tnmPortType.parentType = &tnmNodeType;
 **Fix**:
 - Removed tnmSunRpc.c from PKG_SOURCES and PKG_OBJECTS
 - Cleared PKG_LIBS of RPC object files
-- Commented out Tnm_SunrpcObjCmd from command table
+- Commented out tnm_SunrpcObjCmd from command table
 - Disabled sunrpcs command with error message
 - Excluded NetdbSunrpcs function with #if 0 / #endif
 
@@ -410,9 +410,9 @@ tnmPortType.parentType = &tnmNodeType;
 
 **Files Added to Build**:
 - `win/tnmWinInit.c` - Windows platform initialization
-- `win/tnmWinLog.c` - Windows event logging (TnmWriteLogMessage)
-- `win/tnmWinSocket.c` - Socket wrappers (TnmSocket, TnmSocketBind, etc.)
-- `win/tnmWinIcmp.c` - ICMP implementation (TnmIcmp)
+- `win/tnmWinLog.c` - Windows event logging (tnmWriteLogMessage)
+- `win/tnmWinSocket.c` - Socket wrappers (tnmSocket, tnmSocketBind, etc.)
+- `win/tnmWinIcmp.c` - ICMP implementation (tnmIcmp)
 
 **Problem**: Platform-specific code not included in configure-generated Makefile.
 
@@ -458,10 +458,10 @@ const char *msgList[1];
 **Fix**:
 ```c
 // BEFORE:
-int TnmSocketSendTo(int s, char *buf, int len, ...)
+int tnmSocketSendTo(int s, char *buf, int len, ...)
 
 // AFTER:
-int TnmSocketSendTo(int s, unsigned char *buf, size_t len, ...)
+int tnmSocketSendTo(int s, unsigned char *buf, size_t len, ...)
 ```
 
 ### 14. tnmWinIcmp.c Function Pointer Cast Fixes
@@ -554,7 +554,7 @@ int res_init(void) {
 
 Then replaced all EXTERN with TNM_EXTERN in TNM headers (not Tcl headers) and added -DBUILD_tnm to compilation flags.
 
-**Impact**: Critical fix enabling successful DLL linking. All 42 modules now link correctly into Tnm313.dll.
+**Impact**: Critical fix enabling successful DLL linking. All 42 modules now link correctly into tnm313.dll.
 
 ### 19. struct __stat64 Definition for MinGW64
 
@@ -627,14 +627,14 @@ struct __stat64 {
 **Fix**: Changed type structure declarations from EXTERN to plain extern:
 ```c
 // In generic/tnmMap.h:
-extern TnmMapItemType tnmNodeType;
-extern TnmMapItemType tnmPortType;
-extern TnmMapItemType tnmNetworkType;
-extern TnmMapItemType tnmLinkType;
-extern TnmMapItemType tnmGroupType;
+extern tnmMapItemType tnmNodeType;
+extern tnmMapItemType tnmPortType;
+extern tnmMapItemType tnmNetworkType;
+extern tnmMapItemType tnmLinkType;
+extern tnmMapItemType tnmGroupType;
 ```
 
-**Impact**: Allows static initialization of parentType pointers in TnmMapItemType structures.
+**Impact**: Allows static initialization of parentType pointers in tnmMapItemType structures.
 
 ### 22. Makefile CYGPATH Backtick Removal
 
@@ -751,7 +751,7 @@ SHLIB_LD="${SHLIB_LD} -Wl,--export-all-symbols"
    endif
    ```
 
-**Impact**: `make install` now works correctly on Windows, installing only Tnm313.dll and libraries without attempting to build Unix-specific utilities.
+**Impact**: `make install` now works correctly on Windows, installing only tnm313.dll and libraries without attempting to build Unix-specific utilities.
 
 ### 25. Disabled rpcgen and Sun RPC Build Rules
 
@@ -827,7 +827,7 @@ This completes the removal of Sun RPC from the build system.
 
 **Problem**: Build failed with error:
 ```
-make: *** No rule to make target 'tnm_compat.o', needed by 'Tnm313.dll'.  Stop.
+make: *** No rule to make target 'tnm_compat.o', needed by 'tnm313.dll'.  Stop.
 ```
 
 **Root Cause**: The `tnm_compat.c` file is in the `compat/` subdirectory and was added to the Windows build sources in configure.ac (line 404). However, the Makefile's VPATH variable didn't include `$(srcdir)/compat`, so make couldn't find the source file to compile it.
@@ -855,7 +855,7 @@ VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win:$(srcdir)/macos
 
 **Problem**: After `make install` on Windows, the message displayed:
 ```
-The Tnm extension installed two programs (nmicmpd, nmtrapd)
+The tnm extension installed two programs (nmicmpd, nmtrapd)
 which require root permissions to run.
 Type 'make sinstall' as root to make them setuid root.
 ```
@@ -870,7 +870,7 @@ This message is misleading on Windows because these Unix-specific utilities are 
 install: all install-binaries install-libraries install-doc tnm-install
 ifneq ($(strip $(EXEEXT)),.exe)
 	@echo ""
-	@echo "The Tnm extension installed two programs (nmicmpd, nmtrapd)"
+	@echo "The tnm extension installed two programs (nmicmpd, nmtrapd)"
 	@echo "which require root permissions to run."
 	@echo "Type 'make sinstall' as root to make them setuid root."
 	@echo ""
@@ -984,7 +984,7 @@ valgrindshell: binaries libraries
 
 **Complete Impact**:
 - `make test` now finds init.tcl and other library files correctly
-- Package loads successfully: `package require Tnm` works
+- Package loads successfully: `package require tnm` works
 - Test infrastructure is functional
 - Interactive shell (`make shell`) works correctly
 - Debug and profiling targets (gdb, valgrind) work correctly
@@ -996,7 +996,7 @@ DNS tests (dns.test) crash with segmentation fault on Windows due to incomplete 
 
 ## Feature Removals (January 21, 2026)
 
-### 29. Removed Tnm::smx Command
+### 29. Removed tnm::smx Command
 
 **Files Modified**:
 - `configure.ac` (line 323, 339 removed)
@@ -1010,9 +1010,9 @@ DNS tests (dns.test) crash with segmentation fault on Windows due to incomplete 
 - DLL size reduced by ~50 KB
 - Cleaner build with fewer unused modules
 - No impact on primary SNMP/MIB functionality
-- Command no longer available: `Tnm::smx` returns "invalid command name"
+- Command no longer available: `tnm::smx` returns "invalid command name"
 
-### 30. Removed Tnm::ined Command
+### 30. Removed tnm::ined Command
 
 **Files Modified**:
 - `configure.ac` (line 323 removed)
@@ -1025,9 +1025,9 @@ DNS tests (dns.test) crash with segmentation fault on Windows due to incomplete 
 - DLL size reduced by ~50 KB
 - No Windows GUI dependency
 - No impact on network management functionality
-- Command no longer available: `Tnm::ined` returns "invalid command name"
+- Command no longer available: `tnm::ined` returns "invalid command name"
 
-### 31. Removed Tnm::netdb sunrpcs Sub-command
+### 31. Removed tnm::netdb sunrpcs Sub-command
 
 **Files Modified**:
 - `generic/tnmNetdb.c` (lines 944, 948, 979-983 removed)
@@ -1038,9 +1038,9 @@ DNS tests (dns.test) crash with segmentation fault on Windows due to incomplete 
 - Cleaner code without dead command dispatcher
 - Eliminates 6 test failures from disabled functionality
 - No functional impact (RPC was already disabled)
-- Command no longer available: `Tnm::netdb sunrpcs` returns "bad option" error
+- Command no longer available: `tnm::netdb sunrpcs` returns "bad option" error
 
-### 32. Removed Tnm::icmp mask and timestamp Commands (Windows Only)
+### 32. Removed tnm::icmp mask and timestamp Commands (Windows Only)
 
 **Files Modified**:
 - `generic/tnmIcmp.c` (lines 242-248, 404-415 wrapped in #ifndef _WIN32)
@@ -1072,17 +1072,17 @@ DNS tests (dns.test) crash with segmentation fault on Windows due to incomplete 
 
 **Compilation Test**: ✅ Passed
 - All 42 source files compiled successfully
-- Tnm313.dll built (2.9 MB, PE32+ x86-64)
+- tnm313.dll built (2.9 MB, PE32+ x86-64)
 - All object files generated without errors
 
 **Installation Test**: ✅ Passed
 - `make install` completed successfully
-- DLL installed to release/lib/Tnm3.1.3/
+- DLL installed to release/lib/tnm3.1.3/
 - Library files installed correctly
 - No Unix-specific utilities attempted on Windows
 
 **Runtime Test**: ✅ Passed
-- Package loads: `package require Tnm` → 3.1.3
+- Package loads: `package require tnm` → 3.1.3
 - All 12 commands available (dns, icmp, snmp, udp, mib, etc.)
 - SNMP session creation works
 - Basic functionality verified
@@ -1161,7 +1161,7 @@ Tests executed (excluding DNS/NTP which crash due to stub resolver):
 - RPC module excluded by design
 
 **Build Artifacts**: ✅ Generated
-- Tnm313.dll (2.9 MB, PE32+ x86-64)
+- tnm313.dll (2.9 MB, PE32+ x86-64)
 - All object files (.o) generated successfully
 - Ready for installation
 
@@ -1185,9 +1185,9 @@ The compile-tnm.sh script will:
    ```
 4. Compile with make
 5. Install to:
-   - DLL: `$INSTALLDIR/lib/Tnm3.1.3/Tnm313.dll`
+   - DLL: `$INSTALLDIR/lib/tnm3.1.3/tnm313.dll`
    - Utilities: `$INSTALLDIR/bin/{nmicmpd,nmtrapd}.exe`
-   - Library scripts: `$INSTALLDIR/lib/Tnm3.1.3/library/`
+   - Library scripts: `$INSTALLDIR/lib/tnm3.1.3/library/`
    - License: `$LICENSEDIR/tnm.license`
 
 ---
@@ -1224,8 +1224,8 @@ This script:
 1. Copies sources from external/scotty/tnm to rcompile/tnm (excluding .git, tests backup)
 2. Runs autoconf/autoheader to regenerate configure script
 3. Runs configure with proper paths to Tcl
-4. Builds Tnm313.dll and utilities
-5. Installs to $INSTALLDIR/lib/Tnm3.1.3/
+4. Builds tnm313.dll and utilities
+5. Installs to $INSTALLDIR/lib/tnm3.1.3/
 6. Copies license files to $LICENSEDIR/
 
 ### Manual Build (For Development)
@@ -1259,16 +1259,16 @@ make install  # Install to configured prefix
 - ❌ **RPC**: Not available (legacy feature)
 
 ### Build Status: ✅ **COMPLETE AND SUCCESSFUL**
-### DLL Status: ✅ **Tnm313.dll built and linked successfully (2.8 MB, PE32+ x86-64)**
+### DLL Status: ✅ **tnm313.dll built and linked successfully (2.8 MB, PE32+ x86-64)**
 ### DLL Exports: ✅ **Tnm_Init verified present**
 ### Installation Status: ✅ **INSTALLED SUCCESSFULLY via compile-tnm.sh**
-### Installation Location: `D:\CM.tcltk\tcltk86\release\lib\Tnm3.1.3\`
+### Installation Location: `D:\CM.tcltk\tcltk86\release\lib\tnm3.1.3\`
 ### Runtime Testing: ✅ **Package loads and all 12 commands available**
 
 ### Installation Contents:
-- **DLL**: Tnm313.dll (2.9 MB)
+- **DLL**: tnm313.dll (2.9 MB)
 - **MIB Files**: 152 MIB modules (RFC-compliant and vendor-specific)
-- **Library Scripts**: 12 Tcl library files (init.tcl, TnmSnmp.tcl, etc.)
+- **Library Scripts**: 12 Tcl library files (init.tcl, tnmSnmp.tcl, etc.)
 - **SNMP Agents**: Example SNMP agent scripts (snmpd, snmpd-tnm.tcl, etc.)
 - **Documentation**: 23 man pages (.n format)
 - **License**: tnm.license in $LICENSEDIR
@@ -1286,15 +1286,15 @@ make install  # Install to configured prefix
 ### Usage Example:
 ```tcl
 # Set TNM_LIBRARY environment variable (required)
-set env(TNM_LIBRARY) "D:/CM.tcltk/tcltk86/release/lib/Tnm3.1.3"
+set env(TNM_LIBRARY) "D:/CM.tcltk/tcltk86/release/lib/tnm3.1.3"
 lappend auto_path "D:/CM.tcltk/tcltk86/release/lib"
 
 # Load package
-package require Tnm
-puts "TNM version: [package present Tnm]"
+package require tnm
+puts "TNM version: [package present tnm]"
 
 # Create SNMP session
-set session [Tnm::snmp generator -version SNMPv2c -address 192.168.1.1]
+set session [tnm::snmp generator -version SNMPv2c -address 192.168.1.1]
 
 # Use session for SNMP operations
 # ...
@@ -1346,7 +1346,7 @@ For issues related to these changes, refer to the TEClab build documentation or 
 **Installation Completed**: January 21, 2026 08:48 AM
 **TNM Version**: 3.1.3
 **Compiler**: GCC 15.2.0 (MinGW-w64)
-**Build Result**: ✅ SUCCESS - Tnm313.dll (2.9 MB)
+**Build Result**: ✅ SUCCESS - tnm313.dll (2.9 MB)
 **Installation Result**: ✅ SUCCESS - Fully installed and tested
 
 ### 33. Fixed UDP Socket Creation Bug (Windows)
@@ -1354,20 +1354,20 @@ For issues related to these changes, refer to the TEClab build documentation or 
 **Files Modified**:
 - `generic/tnmUdp.c` (line 856: added sin_family initialization)
 
-**Problem**: Creating UDP sockets with `-myport` option failed with "can not bind socket: I/O error" on Windows. Root cause: When `TnmSetIPPort()` sets the port number in the `sockaddr_in` structure, it does NOT initialize the `sin_family` field. On Windows, if `sin_family` is not set to `AF_INET`, the `bind()` system call fails.
+**Problem**: Creating UDP sockets with `-myport` option failed with "can not bind socket: I/O error" on Windows. Root cause: When `tnmSetIPPort()` sets the port number in the `sockaddr_in` structure, it does NOT initialize the `sin_family` field. On Windows, if `sin_family` is not set to `AF_INET`, the `bind()` system call fails.
 
 **Example of Failing Code**:
 ```tcl
 # This would fail intermittently:
-set sock [Tnm::udp create -address 127.0.0.1 -port 39123 -myport 28101]
+set sock [tnm::udp create -address 127.0.0.1 -port 39123 -myport 28101]
 # Error: can not bind socket: I/O error
 ```
 
 **Root Cause Analysis**:
-1. Socket creation calls `TnmSetConfig()` to process all options in order
-2. `-myport 28101` calls `TnmSetIPPort()` which sets `udpPtr->name.sin_port = htons(28101)`
-3. BUT `TnmSetIPPort()` does NOT set `udpPtr->name.sin_family`
-4. If `-myaddress` is specified, `TnmSetIPAddress()` DOES set `sin_family = AF_INET`
+1. Socket creation calls `tnmSetConfig()` to process all options in order
+2. `-myport 28101` calls `tnmSetIPPort()` which sets `udpPtr->name.sin_port = htons(28101)`
+3. BUT `tnmSetIPPort()` does NOT set `udpPtr->name.sin_family`
+4. If `-myaddress` is specified, `tnmSetIPAddress()` DOES set `sin_family = AF_INET`
 5. But if only `-myport` is used (without `-myaddress`), or if option processing order puts `-myport` last, `sin_family` remains uninitialized or incorrect
 6. Windows `bind()` strictly validates `sin_family` and fails if it's not `AF_INET`
 

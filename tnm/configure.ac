@@ -20,7 +20,7 @@ dnl	to configure the system for the local environment.
 # so that we create the export library with the dll.
 #-----------------------------------------------------------------------
 
-AC_INIT([Tnm],[3.1.3])dnl
+AC_INIT([tnm],[3.1.3])dnl
 
 #-----------------------------------------------------------------------
 # Scotty specific definitions and checks

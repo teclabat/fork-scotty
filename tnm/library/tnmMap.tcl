@@ -1,6 +1,6 @@
-# TnmMap.tcl --
+# tnmMap.tcl --
 #
-#	This file contains utilities to manipulate Tnm maps and 
+#	This file contains utilities to manipulate tnm maps and 
 #	map items. It also includes a set of standard monitoring
 #	procedures.
 #
@@ -11,19 +11,19 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# @(#) $Id: TnmMap.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
+# @(#) $Id: tnmMap.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 
-package require Tnm 3.1
-package require TnmInet 3.1
-package provide TnmMap 3.1.3
+package require tnm 3.1
+package require tnmInet 3.1
+package provide tnmMap 3.1.3
 
-namespace eval TnmMap {
-    namespace export GetIpAddress GetIpName GetSnmpSession
+namespace eval tnmMap {
+    namespace export getIpAddress getIpName getSnmpSession
 }
 
-# TnmMap::GetIpAddress --
+# tnmMap::getIpAddress --
 #
-#	Return an IP address of a Tnm map item.
+#	Return an IP address of a tnm map item.
 #	See the user documentation for details on what it does.
 #
 # Arguments:
@@ -32,20 +32,20 @@ namespace eval TnmMap {
 #	The IP address of the given node or an error if it is not
 #	possible to lookup an IP address.
 
-proc TnmMap::GetIpAddress {node} {
+proc tnmMap::getIpAddress {node} {
     set ip [lindex [$node cget -address] 0]
-    if {! [catch {Tnm::netdb ip class $ip}]} {
+    if {! [catch {tnm::netdb ip class $ip}]} {
 	return $ip
     }
     if [string length $ip] {
-	if [catch {TnmInet::GetIpAddress $ip} ip] {
+	if [catch {tnmInet::getIpAddress $ip} ip] {
 	    error $ip
 	}
 	return $ip
     }
     set name [lindex [$node cget -name] 0]
     if [string length $name] {
-	if [catch {TnmInet::GetIpAddress $name} ip] {
+	if [catch {tnmInet::getIpAddress $name} ip] {
             error $ip
         }
 	if {[string length [$node cget -address]] == 0} {
@@ -56,9 +56,9 @@ proc TnmMap::GetIpAddress {node} {
     error "failed to lookup IP address for \"$node\""
 }
 
-# TnmMap::GetIpName --
+# tnmMap::getIpName --
 #
-#	Return an IP name of a Tnm map item.
+#	Return an IP name of a tnm map item.
 #	See the user documentation for details on what it does.
 #
 # Arguments:
@@ -67,19 +67,19 @@ proc TnmMap::GetIpAddress {node} {
 #	The IP name of the given node or an error if it is not
 #	possible to lookup an IP name.
 
-proc TnmMap::GetIpName {node} {
+proc tnmMap::getIpName {node} {
     set name [lindex [$node cget -name] 0]
     if [string length $name] {
-	if [catch {Tnm::netdb ip class $name}] {
+	if [catch {tnm::netdb ip class $name}] {
 	    return $name
 	}
-	if {! [catch {TnmInet::GetIpName $name} name]} {
+	if {! [catch {tnmInet::getIpName $name} name]} {
 	    return $name
 	}
     }
     set ip [lindex [$node cget -address] 0]
     if [string length $ip] {
-	if [catch {TnmInet::GetIpName $ip} name] {
+	if [catch {tnmInet::getIpName $ip} name] {
             error $name
         }
 	if {[string length [$node cget -name]] == 0} {
@@ -90,9 +90,9 @@ proc TnmMap::GetIpName {node} {
     error "failed to lookup IP name for \"$node\""
 }
 
-# TnmMap::GetSnmpSession --
+# tnmMap::getSnmpSession --
 #
-#	Return an SNMP session for a Tnm map item.
+#	Return an SNMP session for a tnm map item.
 #	See the user documentation for details on what it does.
 #
 # Arguments:
@@ -101,27 +101,27 @@ proc TnmMap::GetIpName {node} {
 #	The SNMP session for the given node or an error if it is not
 #	possible to lookup an SNMP session.
 
-proc TnmMap::GetSnmpSession {node} {
+proc tnmMap::getSnmpSession {node} {
     set map [$node map]
-    set alias [$node attribute Tnm:Snmp:Alias]
+    set alias [$node attribute tnm:Snmp:Alias]
     if [string length $alias] {
 	if [catch {snmp generator -alias $alias} s] {
-	    error "invalid value \"$alias\" in Tnm:Snmp:Alias for \"$node\""
+	    error "invalid value \"$alias\" in tnm:Snmp:Alias for \"$node\""
 	}
 	return $s
     }
-    set config [$node attribute Tnm:Snmp:Config]
+    set config [$node attribute tnm:Snmp:Config]
     if [string length $config] {
-	if [catch {eval Tnm::snmp generator $config} s] {
-	    error "invalid value \"$config\" in Tnm:Snmp:Config for \"$node\""
+	if [catch {eval tnm::snmp generator $config} s] {
+	    error "invalid value \"$config\" in tnm:Snmp:Config for \"$node\""
 	}
 	return $s
     }
 
-    if [catch {TnmMap::GetIpAddress $node} ip] {
+    if [catch {tnmMap::getIpAddress $node} ip] {
 	error $ip
     }
-    if {[catch {Tnm::snmp generator -address $ip} s] == 0} {
+    if {[catch {tnm::snmp generator -address $ip} s] == 0} {
 	return $s
     }
 
@@ -129,7 +129,7 @@ proc TnmMap::GetSnmpSession {node} {
 }
 
 
-proc TnmMap::GetMessages {item} {
+proc tnmMap::getMessages {item} {
     set cnt 0
     set txt [format "%-20s %-12s %s" "Date & Time" Tag Text]
     foreach msg [$item info messages] {
@@ -144,7 +144,7 @@ proc TnmMap::GetMessages {item} {
     return
 }
 
-proc TnmMap::GetEvents {item} {
+proc tnmMap::getEvents {item} {
     set cnt 0
     set txt [format "%-20s %-12s %s" "Date & Time" Tag Arguments]
     foreach msg [$item info events] {
@@ -159,7 +159,7 @@ proc TnmMap::GetEvents {item} {
     return
 }
 
-proc TnmMapNotifyViaEmail {item {interval 1800}} {
+proc tnmMapNotifyViaEmail {item {interval 1800}} {
     set map [$item map]
     set to [$item attribute :Contact]
     if ![string length $to] {
@@ -180,17 +180,17 @@ proc TnmMapNotifyViaEmail {item {interval 1800}} {
     if ![string length $name] {
 	set name [$item cget -address]
     }
-    set subject "\[Tnm\]: $name ([$item health] %)"
+    set subject "\[tnm\]: $name ([$item health] %)"
     set body "\nMessages: (last [$item cget -expire] seconds)\n\n"
     foreach msg [$item info messages] {
 	set time [clock format [$msg time] -format {%T}]
 	append body [format "%s (%2d):\t %s\n" \
 		$time [$msg health] [$msg text]]
     }
-    TnmInet::SendMail $to $body $subject
+    tnmInet::sendMail $to $body $subject
 }
 
-# TnmMap::TraceRoute --
+# tnmMap::traceRoute --
 #
 #	Trace a route using the van Jacobsen algorithm.
 #	See the user documentation for details on what it does.
@@ -200,8 +200,8 @@ proc TnmMapNotifyViaEmail {item {interval 1800}} {
 # Results:
 #	None. However, several events are raised while tracing the route.
 
-proc TnmMap::TraceRoute {node {maxlength 32} {retries 3}} {
-    set dst [TnmMap::GetIpAddress $node]
+proc tnmMap::traceRoute {node {maxlength 32} {retries 3}} {
+    set dst [tnmMap::getIpAddress $node]
     for {set i 0} {$i < $retries} {incr i} { 
 	lappend icmparg $dst
     }
@@ -227,17 +227,17 @@ proc TnmMap::TraceRoute {node {maxlength 32} {retries 3}} {
             }
             if {[lsearch $names $name] < 0} { lappend names $name }
         }
-	$node raise TnmMap:TraceRoute:Value \
+	$node raise tnmMap:traceRoute:Value \
 		[format "%2d %-47s %s" $ttl [string range $names 0 46] $time]
     }
-    $node raise TnmMap:TraceRoute:Done
+    $node raise tnmMap:traceRoute:Done
     return
 }
 
 
 # Utilities to convert maps into a set of html files.
 
-proc TnmMap::Html {map root} {
+proc tnmMap::html {map root} {
     global tnm
     if {! [file isdirectory $root]} {
         file mkdir $root
@@ -249,7 +249,7 @@ proc TnmMap::Html {map root} {
     puts $f "<META HTTP-EQUIV=\"refresh\" CONTENT=\"120\">"
     puts $f "</HEAD>\n"
     puts $f "<BODY>"
-    puts $f [TnmMap::HtmlMap $map]
+    puts $f [tnmMap::htmlMap $map]
     puts $f "</BODY>\n</HTML>"
     close $f
     file rename -force $tmp $root/index.html
@@ -261,18 +261,18 @@ proc TnmMap::Html {map root} {
 	puts $f "<META HTTP-EQUIV=\"refresh\" CONTENT=\"120\">"
 	puts $f "</HEAD>\n"
 	puts $f "<BODY>"
-	puts $f [TnmMap::HtmlItem $item]
+	puts $f [tnmMap::htmlItem $item]
 	puts $f "</BODY>\n</HTML>"
 	close $f
 	file rename -force $tmp $root/$item.html
     }
 }
 
-proc TnmMap::HtmlMap {map} {
+proc tnmMap::htmlMap {map} {
     global tnm
-    set Attributes [TnmMap::HtmlAttributes $map]
-    foreach type [Tnm::map info types] {
-	set table($type) [TnmMap::HtmlItemSummary $map $type]
+    set Attributes [tnmMap::htmlAttributes $map]
+    foreach type [tnm::map info types] {
+	set table($type) [tnmMap::htmlItemSummary $map $type]
     }
 
     append html "<H1><A HREF=\"$tnm(url)\">"
@@ -293,7 +293,7 @@ proc TnmMap::HtmlMap {map} {
     }
     foreach type [array names table] {
 	if [string length $table($type)] {
-	    set part [TnmMap::HtmlCapitalize $type]s
+	    set part [tnmMap::htmlCapitalize $type]s
 	    append html " | <A HREF=\"#$part\">$part</A>"
 	}
     }
@@ -331,11 +331,11 @@ proc TnmMap::HtmlMap {map} {
     return $html
 }
 
-proc TnmMap::HtmlItem {item} {
+proc tnmMap::htmlItem {item} {
     global tnm
-    set Attributes [TnmMap::HtmlAttributes $item]
-    set Links [TnmMap::HtmlLinks $item]
-    set Messages [TnmMap::HtmlMessages $item]
+    set Attributes [tnmMap::htmlAttributes $item]
+    set Links [tnmMap::htmlLinks $item]
+    set Messages [tnmMap::htmlMessages $item]
 
     set name [$item cget -name]
     if {![string length $name]} {
@@ -347,7 +347,7 @@ proc TnmMap::HtmlItem {item} {
 
     append html "<H1><A HREF=\"$tnm(url)\">"
     append html "<IMG SRC=\"$tnm(url)/tkined.gif\" ALIGN=RIGHT ALT=\"\"></A>"
-    append html "[TnmMap::HtmlCapitalize [$item type]] Status Page ($name)</H1>\n"
+    append html "[tnmMap::htmlCapitalize [$item type]] Status Page ($name)</H1>\n"
     append html "<TABLE>\n"
     append html "<TR><TD><B>Now:</B>"
     append html "<TD><EM>[clock format [clock seconds]]</EM><BR>\n"
@@ -363,36 +363,36 @@ proc TnmMap::HtmlItem {item} {
     }
     append html "\]</B><HR><P>\n"
 
-    append html [TnmMap::HtmlDescription $item]
+    append html [tnmMap::htmlDescription $item]
     foreach part {Attributes Links Messages} {
 	append html [set $part]
     }
     return $html
 }
 
-proc TnmMap::HtmlItemSummary {map type} {
+proc tnmMap::htmlItemSummary {map type} {
     foreach item [$map find -type $type -sort health -order increasing] {
 	set health [lindex [$item health] 0]
-	append table "<TR BGCOLOR=\"[TnmMap::HtmlColor $health]\">\n"
+	append table "<TR BGCOLOR=\"[tnmMap::htmlColor $health]\">\n"
 	catch {
 	    append table \
-	    "<TD> <A HREF=\"$item.html\">[TnmMap::HtmlQuote [$item cget -name]]</A>\n"
+	    "<TD> <A HREF=\"$item.html\">[tnmMap::htmlQuote [$item cget -name]]</A>\n"
 	}
 	catch {
 	    append table \
-	    "<TD> <A HREF=\"$item.html\">[TnmMap::HtmlQuote [$item cget -address]]</A>\n"
+	    "<TD> <A HREF=\"$item.html\">[tnmMap::htmlQuote [$item cget -address]]</A>\n"
 	}
 	catch {
 	    append table \
-	    "<TD> [TnmMap::HtmlQuote [$item cget -tags]]\n"
+	    "<TD> [tnmMap::htmlQuote [$item cget -tags]]\n"
 	}
 	catch {
-	    append table "<TD ALIGN=RIGHT> [TnmMap::HtmlQuote $health]\n"
+	    append table "<TD ALIGN=RIGHT> [tnmMap::htmlQuote $health]\n"
 	}
     }
     if {![info exists table]} return
 
-    set name [TnmMap::HtmlCapitalize $type]s
+    set name [tnmMap::htmlCapitalize $type]s
     append html "<H2><A NAME=\"$name\">$name:</A></H2>\n"
     append html "<TABLE BORDER>\n"
     append html "<TR><TH>Name<TH>Address<TH>Tags<TH>Health\n"
@@ -401,10 +401,10 @@ proc TnmMap::HtmlItemSummary {map type} {
     return $html
 }
 
-proc TnmMap::HtmlDescription {item} {
+proc tnmMap::htmlDescription {item} {
     catch {
 	set health [lindex [$item health] 0]
-	set color [TnmMap::HtmlColor $health]
+	set color [tnmMap::htmlColor $health]
     }
     append html "<H2><A NAME=\"Description\">Description:</A></H2>\n"
     if [info exists color] {
@@ -414,19 +414,19 @@ proc TnmMap::HtmlDescription {item} {
     }
     catch {
 	append html "<TR><TD><B>Id:</B>"
-	append html "<TD>[TnmMap::HtmlQuote $item]\n"
+	append html "<TD>[tnmMap::htmlQuote $item]\n"
     }
     catch {
 	append html "<TR><TD><B>Name:</B>"
-	append html "<TD>[TnmMap::HtmlQuote [$item cget -name]]\n"
+	append html "<TD>[tnmMap::htmlQuote [$item cget -name]]\n"
     }
     catch {
 	append html "<TR><TD><B>Address:</B>"
-        append html "<TD>[TnmMap::HtmlQuote [$item cget -address]]\n"
+        append html "<TD>[tnmMap::htmlQuote [$item cget -address]]\n"
     }
     catch {
 	append html "<TR><TD><B>Tags:</B>"
-        append html "<TD>[TnmMap::HtmlQuote [$item cget -tags]]\n"
+        append html "<TD>[tnmMap::htmlQuote [$item cget -tags]]\n"
     }
     catch {
 	append html "<TR><TD><B>Source:</B><TD>[$item cget -src]\n"
@@ -455,7 +455,7 @@ proc TnmMap::HtmlDescription {item} {
     return $html
 }
 
-proc TnmMap::HtmlLinks {item} {
+proc tnmMap::htmlLinks {item} {
     if [catch {$item info links} links] return
     foreach link $links {
 	set dst [$link cget -src]
@@ -465,9 +465,9 @@ proc TnmMap::HtmlLinks {item} {
 	append table "<TR>"
 	append table "<TD><A HREF=\"$link.html\">$link</A>"
 	append table \
-		"<TD><A HREF=\"$dst.html\">[TnmMap::HtmlQuote [$dst cget -name]]</A>"
+		"<TD><A HREF=\"$dst.html\">[tnmMap::htmlQuote [$dst cget -name]]</A>"
 	append table \
-		"<TD><A HREF=\"$dst.html\">[TnmMap::HtmlQuote [$dst cget -address]]</A>\n"
+		"<TD><A HREF=\"$dst.html\">[tnmMap::htmlQuote [$dst cget -address]]</A>\n"
     }
     if {![info exists table]} return
 
@@ -479,12 +479,12 @@ proc TnmMap::HtmlLinks {item} {
     return $html
 }
 
-proc TnmMap::HtmlAttributes {item} {
+proc tnmMap::htmlAttributes {item} {
     foreach name [lsort [$item attribute]] {
-	if {! [regexp {(^:)|(^Tnm:)} $name]} continue
+	if {! [regexp {(^:)|(^tnm:)} $name]} continue
 	append table "<TR>"
-	append table "<TD NOWRAP><B>[TnmMap::HtmlQuote [string trim $name :]]</B>"
-	append table "<TD NOWRAP>[TnmMap::HtmlQuote [$item attribute $name]]\n"
+	append table "<TD NOWRAP><B>[tnmMap::htmlQuote [string trim $name :]]</B>"
+	append table "<TD NOWRAP>[tnmMap::htmlQuote [$item attribute $name]]\n"
     }
     if {![info exists table]} return
 
@@ -496,15 +496,15 @@ proc TnmMap::HtmlAttributes {item} {
     return $html
 }
 
-proc TnmMap::HtmlEvents {item} {
+proc tnmMap::htmlEvents {item} {
  
     foreach event [$item info events] {
 	set secs [$event time]
 	append table "<TR>"
 	append table "<TD NOWRAP> [clock format $secs -format {%d %B %Y}]\n"
 	append table "<TD NOWRAP> [clock format $secs -format {%T}]\n"
-	append table "<TD NOWRAP> [TnmMap::HtmlQuote [$event tag]]\n"
-	append table "<TD NOWRAP> [TnmMap::HtmlQuote [$event args]]\n"
+	append table "<TD NOWRAP> [tnmMap::htmlQuote [$event tag]]\n"
+	append table "<TD NOWRAP> [tnmMap::htmlQuote [$event args]]\n"
     }
     if {![info exists table]} return
 
@@ -516,17 +516,17 @@ proc TnmMap::HtmlEvents {item} {
     return $html
 }
 
-proc TnmMap::HtmlMessages {item} {
+proc tnmMap::htmlMessages {item} {
  
     foreach msg [$item info messages] {
 	set secs [$msg time]
-	set color [TnmMap::HtmlColor [expr [$msg health] + 80]]
+	set color [tnmMap::htmlColor [expr [$msg health] + 80]]
 	append table "<TR BGCOLOR=\"$color\">"
 	append table "<TD NOWRAP> [clock format $secs -format {%d %B %Y}]\n"
 	append table "<TD NOWRAP> [clock format $secs -format {%T}]\n"
-	append table "<TD NOWRAP> [TnmMap::HtmlQuote [$msg tag]]\n"
+	append table "<TD NOWRAP> [tnmMap::htmlQuote [$msg tag]]\n"
 	append table "<TD ALIGN=RIGHT> [$msg health]\n"
-	append table "<TD NOWRAP> [TnmMap::HtmlQuote [$msg text]]\n"
+	append table "<TD NOWRAP> [tnmMap::htmlQuote [$msg text]]\n"
     }
     if {![info exists table]} return
 
@@ -538,17 +538,17 @@ proc TnmMap::HtmlMessages {item} {
     return $html
 }
 
-proc TnmMap::HtmlColor {health} {
+proc tnmMap::htmlColor {health} {
     format #%2X%2X00 [expr 250 - $health] [expr 50 + ($health * 2)]
 }
 
-proc TnmMap::HtmlQuote {string} {
+proc tnmMap::htmlQuote {string} {
     regsub -all {&} $string {&amp;} string
     regsub -all {<} $string {\&lt;} string
     regsub -all {>} $string {\&gt;} string
     return "&nbsp;$string&nbsp;"
 }
 
-proc TnmMap::HtmlCapitalize {word} {
+proc tnmMap::htmlCapitalize {word} {
     return "[string toupper [string index $word 0]][string range $word 1 end]"
 }

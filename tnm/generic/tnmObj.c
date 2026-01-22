@@ -989,7 +989,7 @@ TnmSetIpAddressObj(Tcl_Obj *objPtr, struct in_addr *ipaddr)
 /*
  *----------------------------------------------------------------------
  *
- * TnmGetIpAddressFromObj --
+ * TnmgetIpAddressFromObj --
  *
  *	Attempt to return an TnmOctetString from the Tcl object
  *	"objPtr".  If the object is not already an tnmIpAddressType,
@@ -1008,7 +1008,7 @@ TnmSetIpAddressObj(Tcl_Obj *objPtr, struct in_addr *ipaddr)
  */
 
 struct in_addr*
-TnmGetIpAddressFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr)
+TnmgetIpAddressFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr)
 {
     int result;
 

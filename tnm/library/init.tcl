@@ -23,7 +23,7 @@ lappend auto_path $tnm(library)/library
 # contained in the Tnm namespace. They will provide their own export
 # list definitions.
 
-namespace eval Tnm {
+namespace eval tnm {
     namespace export dns icmp ined job map mib netdb ntp smx
     namespace export snmp sunrpc syslog udp
 }
@@ -31,9 +31,9 @@ namespace eval Tnm {
 # Alias definitions for SNMP sessions. You can add more local 
 # definitions in the $tnm(library)/site/init.tcl file.
 
-if {[info commands ::Tnm::snmp] == "::Tnm::snmp"} {
-    ::Tnm::snmp alias localhost	 "-address 127.0.0.1"
-    ::Tnm::snmp alias mcasttrap	 "-address 234.0.0.1 -port 162"
+if {[info commands ::tnm::snmp] == "::tnm::snmp"} {
+    ::tnm::snmp alias localhost	 "-address 127.0.0.1"
+    ::tnm::snmp alias mcasttrap	 "-address 234.0.0.1 -port 162"
 }
 
 # The global variable tnm(mibs:core) is used to hold the minimum set

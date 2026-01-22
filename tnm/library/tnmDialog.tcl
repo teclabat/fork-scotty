@@ -1,4 +1,4 @@
-# TnmDialog.tcl --
+# tnmDialog.tcl --
 #
 #	This file contains some useful dialogs that I use frequently
 #	to implement management scripts.
@@ -10,16 +10,16 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# @(#) $Id: TnmDialog.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
+# @(#) $Id: tnmDialog.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 
-package require Tnm 3.1
-package provide TnmDialog 3.1.3
+package require tnm 3.1
+package provide tnmDialog 3.1.3
 
-namespace eval TnmDialog {
-    namespace export Confirm
+namespace eval tnmDialog {
+    namespace export confirm
 }
 
-# TnmDialog::Center --
+# tnmDialog::center --
 #
 #	Compute the geometry of a dialog window so that it appears
 #	centered over a toplevel windows. Unfortunately, we can not
@@ -31,7 +31,7 @@ namespace eval TnmDialog {
 # Results:
 #	None.
 
-proc TnmDialog::Center {w {top ""}} {
+proc tnmDialog::center {w {top ""}} {
     global tcl_platform
 
     if {$top == ""} {
@@ -71,7 +71,7 @@ proc TnmDialog::Center {w {top ""}} {
     return
 }
 
-# TnmDialog::Wait --
+# tnmDialog::wait --
 #
 #	Wait until the dialog window is destroyed. This proc makes 
 #	sure that the grab and focus is re-installed properly.
@@ -81,7 +81,7 @@ proc TnmDialog::Center {w {top ""}} {
 # Results:
 #	None.
 
-proc TnmDialog::Wait w {
+proc tnmDialog::wait w {
     set oldFocus [focus]
     set oldGrab [grab current $w]
     if {$oldGrab != ""} {
@@ -102,7 +102,7 @@ proc TnmDialog::Wait w {
     return
 }
 
-# TnmDialog::Toplevel --
+# tnmDialog::toplevel --
 #
 #	Create a toplevel window that can be used to build dialogs.
 #
@@ -111,7 +111,7 @@ proc TnmDialog::Wait w {
 # Results:
 #	None.
 
-proc TnmDialog::Toplevel w {
+proc tnmDialog::toplevel w {
     catch {destroy $w}
     toplevel $w
     wm title $w [winfo name $w]
@@ -120,7 +120,7 @@ proc TnmDialog::Toplevel w {
     return
 }
 
-# TnmDialog::Text --
+# tnmDialog::text --
 #
 #	Every dialog window has some text at the top which describes
 #	the purpose of the dialog. This procedure is used to put this
@@ -134,7 +134,7 @@ proc TnmDialog::Toplevel w {
 # Results:
 #	None.
 
-proc TnmDialog::Text {w bitmap text} {
+proc tnmDialog::text {w bitmap text} {
     frame $w.top -relief raised -bd 1
     catch {
 	label $w.top.b -bitmap $bitmap
@@ -146,7 +146,7 @@ proc TnmDialog::Text {w bitmap text} {
     return
 }
 
-# TnmDialog::Buttons --
+# tnmDialog::buttons --
 #
 #	Dialogs have a list of buttons in the bottom. This procedure
 #	creates these buttons and makes the first one the default.
@@ -157,7 +157,7 @@ proc TnmDialog::Text {w bitmap text} {
 # Results:
 #	None.
 
-proc TnmDialog::Buttons {w buttons} {
+proc tnmDialog::buttons {w buttons} {
     frame $w.bot -relief raised -bd 1
     frame $w.bot.0 -relief sunken -border 1
     pack $w.bot.0 -side left -expand yes -padx 8 -pady 8
@@ -179,7 +179,7 @@ proc TnmDialog::Buttons {w buttons} {
     return
 }
 
-# TnmDialog::Confirm --
+# tnmDialog::confirm --
 #
 #	Display a message and let the user confirm the message by 
 #	klicking on one of several buttons.
@@ -192,17 +192,17 @@ proc TnmDialog::Buttons {w buttons} {
 # Results:
 #	Returns the name of the button selected by the user.
 
-proc TnmDialog::Confirm {w bitmap text buttons} {
+proc tnmDialog::confirm {w bitmap text buttons} {
     global result
-    TnmDialog::Toplevel $w
-    TnmDialog::Text $w $bitmap $text
-    TnmDialog::Buttons $w $buttons
-    TnmDialog::Center $w
-    TnmDialog::Wait $w
+    tnmDialog::toplevel $w
+    tnmDialog::text $w $bitmap $text
+    tnmDialog::buttons $w $buttons
+    tnmDialog::center $w
+    tnmDialog::wait $w
     return $result
 }
 
-# TnmDialog::Browse
+# tnmDialog::browse
 #
 #	Display a lengthy message and let the user confirm the 
 #	message by klicking on one of several buttons. This
@@ -216,10 +216,10 @@ proc TnmDialog::Confirm {w bitmap text buttons} {
 # Results:
 #	Returns the name of the button selected by the user.
 
-proc TnmDialog::Browse {w title text buttons} {
+proc tnmDialog::browse {w title text buttons} {
     global result
-    TnmDialog::Toplevel $w
-    TnmDialog::Text $w "" $title
+    tnmDialog::toplevel $w
+    tnmDialog::text $w "" $title
     frame $w.box -relief raised -bd 1
     scrollbar $w.box.scroll -command "$w.box.text yview" -relief sunken
     text $w.box.text -yscroll "$w.box.scroll set" -relief sunken
@@ -228,14 +228,14 @@ proc TnmDialog::Browse {w title text buttons} {
     pack $w.box.scroll -side right -fill y
     pack $w.box.text -fill both -expand true
     pack $w.box -expand true -fill both
-    TnmDialog::Buttons $w $buttons
-    TnmDialog::Center $w
-    TnmDialog::Wait $w
+    tnmDialog::buttons $w $buttons
+    tnmDialog::center $w
+    tnmDialog::wait $w
     return $result
 }
 
 
-# Tnm_DialogRequest --
+# tnm_DialogRequest --
 #
 # Request a simple line of input from the user.
 #
@@ -246,22 +246,22 @@ proc TnmDialog::Browse {w title text buttons} {
 # value -	The default value to be edited by the user.
 # buttons -	A list of buttons to show in the bottom of the dialog.
 
-proc Tnm_DialogRequest {w bitmap text value buttons} {
+proc tnm_dialogRequest {w bitmap text value buttons} {
     global result result$w
-    TnmDialog::Toplevel $w
-    TnmDialog::Text $w $bitmap $text
+    tnmDialog::toplevel $w
+    tnmDialog::text $w $bitmap $text
     entry $w.top.e -textvariable result$w
     set result$w $value
     bind $w.top.e <Return> "$w.bot.0.button invoke; break"
     pack $w.top.e -fill both -padx 3m -pady 3m
-    TnmDialog::Buttons $w $buttons
-    TnmDialog::Center $w
-    TnmDialog::Wait $w
+    tnmDialog::buttons $w $buttons
+    tnmDialog::center $w
+    tnmDialog::wait $w
     return [list $result [set result$w]]
 }
 
 
-# Tnm_DialogSelect --
+# tnm_DialogSelect --
 #
 # Select an element out of a list of elements using a listbox.
 #
@@ -272,10 +272,10 @@ proc Tnm_DialogRequest {w bitmap text value buttons} {
 # list -	The list of elements presented to the user.
 # buttons -	A list of buttons to show in the bottom of the dialog.
 
-proc Tnm_DialogSelect {w bitmap text list buttons} {
+proc tnm_dialogSelect {w bitmap text list buttons} {
     global result result$w
-    TnmDialog::Toplevel $w
-    TnmDialog::Text $w $bitmap $text
+    tnmDialog::toplevel $w
+    tnmDialog::text $w $bitmap $text
     frame $w.box -relief raised -bd 1
     scrollbar $w.box.scroll -command "$w.box.list yview" -relief sunken
     listbox $w.box.list -yscroll "$w.box.scroll set" -relief sunken
@@ -289,14 +289,14 @@ proc Tnm_DialogSelect {w bitmap text list buttons} {
     pack $w.box.scroll -side right -fill y
     pack $w.box.list -side left -expand true -fill both
     pack $w.box -expand true -fill both
-    TnmDialog::Buttons $w $buttons
-    TnmDialog::Center $w
-    TnmDialog::Wait $w
+    tnmDialog::buttons $w $buttons
+    tnmDialog::center $w
+    tnmDialog::wait $w
     return [list $result [set result$w]]
 }
 
 
-# Tnm_DialogConfigureSnmpSession --
+# tnm_DialogConfigureSnmpSession --
 #
 # This dialog allows to configure SNMP session (SNMPv1, SNMPv2c, 
 # SNMPv2u). This a special purpose dialog that may be used by 
@@ -306,12 +306,12 @@ proc Tnm_DialogSelect {w bitmap text list buttons} {
 # w -		The dialog window.
 # alias -	The snmp session alias to configure.
 
-proc Tnm_DialogConfigureSnmpSession {w alias} {
+proc tnm_dialogConfigureSnmpSession {w alias} {
     global result
     global value
     catch {unset value}
-    TnmDialog::Toplevel $w
-    TnmDialog::Text $w questhead "Configure SNMP session alias \"$alias\":"
+    tnmDialog::toplevel $w
+    tnmDialog::text $w questhead "Configure SNMP session alias \"$alias\":"
     set s [snmp generator -alias $alias]
     frame $w.s
     frame $w.s.fa
@@ -348,7 +348,7 @@ proc Tnm_DialogConfigureSnmpSession {w alias} {
 	}
 	default {
 	    destroy $w
-	    TnmDialog::Confirm $w error \
+	    tnmDialog::confirm $w error \
 		    "Unable to configure [$s cget -version] session!" dismiss
 	    return
 	    error "unable to configure historic SNMPv2CLASSIC"
@@ -379,9 +379,9 @@ proc Tnm_DialogConfigureSnmpSession {w alias} {
     pack $w.s.fa $w.s.fg -side left -padx 4 -pady 4 -fill x -expand true
     pack $w.s
 
-    TnmDialog::Buttons $w "accept cancel"
-    TnmDialog::Center $w
-    TnmDialog::Wait $w
+    tnmDialog::buttons $w "accept cancel"
+    tnmDialog::center $w
+    tnmDialog::wait $w
 
     $s configure -address $value(ea) -port $value(ep)
     switch [$s cget -version] {

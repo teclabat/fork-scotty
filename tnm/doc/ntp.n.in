@@ -6,30 +6,30 @@
 '\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 '\" 
 .so man.macros
-.TH Tnm::ntp n "December 1997" Tnm "Tnm Tcl Extension"
+.TH tnm::ntp n "December 1997" tnm "tnm Tcl Extension"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
-Tnm::ntp \- Retrieve NTP status information.
+tnm::ntp \- Retrieve NTP status information.
 .BE
 
 .SH DESCRIPTION
 The Network Time Protocol (NTP) (RFC 1119, RFC 1305) allows to
 synchronize computer clocks by exchanging NTP messages. The
-Tnm::ntp command allows to retrieve control variables from NTP
+tnm::ntp command allows to retrieve control variables from NTP
 peers.
 
 .SH NTP COMMAND
 .TP
-\fBTnm::ntp\fR [\fIoptions\fR]
-Invoking the \fBTnm::ntp\fR command with options but without any command
+\fBtnm::ntp\fR [\fIoptions\fR]
+Invoking the \fBtnm::ntp\fR command with options but without any command
 arguments allows to retrieve and change the default values. See the
 description of supported options below. Default values are bound
 to a Tcl interpreter which allows to have multiple Tcl interpreter
 with different defaults.
 .TP
-\fBTnm::ntp\fR [\fIoptions\fR] \fIhost\fR \fIarrayName\fR
-The \fBTnm::ntp\fR command sends a NTP version 3 mode 6 request to
+\fBtnm::ntp\fR [\fIoptions\fR] \fIhost\fR \fIarrayName\fR
+The \fBtnm::ntp\fR command sends a NTP version 3 mode 6 request to
 \fIhost\fR and writes status information into the Tcl array
 \fIarrayName\fR. After successful completion, the array will contain
 the following elements (RFC 1305):
@@ -102,7 +102,7 @@ The following options control how NTP requests are send and how the ntp
 command deals with lost NTP packets.
 .TP
 .BI "-timeout " time
-The \fB-timeout\fR option defines the time the Tnm::ntp command will
+The \fB-timeout\fR option defines the time the tnm::ntp command will
 wait for a response. The \fItime\fR is defined in seconds with a
 default of 2 seconds.
 .TP
@@ -112,7 +112,7 @@ retransmitted during the timeout interval. The default \fInumber\fR of
 retries is 2.
 
 .SH SEE ALSO
-scotty(1), Tnm(n), Tcl(n)
+scotty(1), tnm(n), Tcl(n)
 
 .SH AUTHORS
 Erik Schoenfelder <schoenfr@gaertner.de>

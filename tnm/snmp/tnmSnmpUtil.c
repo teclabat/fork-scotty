@@ -1636,7 +1636,7 @@ TnmSnmpNorm(Tcl_Interp *interp, Tcl_Obj *objPtr, int flags)
 	    break;
 	}
 	case ASN1_IPADDRESS: {
-            if (TnmGetIpAddressFromObj(interp, valueObjPtr) == NULL) {
+            if (TnmgetIpAddressFromObj(interp, valueObjPtr) == NULL) {
 		goto errorExit;
 	    }
 	    Tcl_InvalidateStringRep(valueObjPtr);

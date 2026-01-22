@@ -8,7 +8,7 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 
-Tnm::mib load tubs-nfs.mib
+tnm::mib load tubs-nfs.mib
 
 ##
 ## Create the scalars in the nfsstat group. A get request to
@@ -16,12 +16,12 @@ Tnm::mib load tubs-nfs.mib
 ## all values by calling nfsstat and parsing the output.
 ##
 
-proc SNMP_NfsGetStats {what} {
+proc SNMP_nfsGetStats {what} {
     switch $what {
 	client { set arg -cn }
 	server { set arg -sn }
 	default {
-	    error "unknown option $what given to SNMP_NfsGetStats"
+	    error "unknown option $what given to SNMP_nfsGetStats"
 	}
     }
     set nfsstat /usr/etc/nfsstat
@@ -50,19 +50,19 @@ proc SNMP_NfsGetStats {what} {
 ## server groups.
 ##
 
-proc SNMP_NfsInit {s} {
+proc SNMP_nfsInit {s} {
     set interp [$s cget -agent]
-    $interp alias SNMP_NfsGetStats SNMP_NfsGetStats
-    foreach n [Tnm::mib children nfsServer] {
+    $interp alias SNMP_nfsGetStats SNMP_nfsGetStats
+    foreach n [tnm::mib children nfsServer] {
 	$s instance nfsServer.$n.0 nfsServerStats($n) 0
     }
-    foreach n [Tnm::mib children nfsClient] {
+    foreach n [tnm::mib children nfsClient] {
 	$s instance nfsClient.$n.0 nfsClientStats($n) 0
     }
     $s bind nfsServerCalls get {
-	array set nfsServerStats [SNMP_NfsGetStats server]
+	array set nfsServerStats [SNMP_nfsGetStats server]
     }
     $s bind nfsClientCalls get {
-	array set nfsClientStats [SNMP_NfsGetStats client]
+	array set nfsClientStats [SNMP_nfsGetStats client]
     }
 }

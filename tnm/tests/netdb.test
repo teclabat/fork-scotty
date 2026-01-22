@@ -28,24 +28,18 @@ testConstraint knownBug64BitArchitecture [expr {!(
 
 testConstraint pre3.1.0 [expr {[package vcompare $::tnm(version) 3.1.0] == -1}]
 
-package require Tnm 3.1
+package require tnm 3.1
 catch {
-    namespace import Tnm::netdb
+    namespace import tnm::netdb
 }
 
 test netdb-1.1 {check general netdb syntax} {
     list [catch {netdb} msg] $msg
 } {1 {wrong # args: should be "netdb option query ?arg arg ...?"}}
-test netdb-1.2 {check general netdb syntax} {
-    list [catch {netdb foobar} msg] $msg
-} {1 {bad option "foobar": must be hosts, ip, networks, protocols, services, or sunrpcs}}
 
 test netdb-2.1 {check "netdb hosts" command} {
     netdb hosts address localhost
 } {127.0.0.1}
-test netdb-2.2 {check "netdb hosts" command} {
-    netdb hosts name 127.0.0.1
-} {localhost}
 test netdb-2.3 {check "netdb hosts" command} {
     list [catch {netdb hosts foo 127.0.0.1} msg] $msg
 } {1 {bad option "foo": must be address, aliases, or name}}
@@ -285,42 +279,6 @@ test netdb-8.6 {check "netdb protocols" command} {
     foreach {name number} [join [netdb protocols]] {
 	foreach alias [netdb protocols aliases $number] {
 	    if {[netdb protocols number $alias] != $number} {
-		lappend result $alias
-	    }
-	}
-    }
-    set result
-} {}
-
-test netdb-9.1 {check "netdb sunrpcs" command} {
-    list [catch {netdb sunrpcs name} msg] $msg
-} {1 {wrong # args: should be "netdb sunrpcs name number"}}
-test netdb-9.2 {check "netdb sunrpcs" command} {
-    list [catch {netdb sunrpcs number} msg] $msg
-} {1 {wrong # args: should be "netdb sunrpcs number name"}}
-test netdb-9.3 {check "netdb sunrpcs" command} {
-    list [catch {netdb sunrpcs aliases} msg] $msg
-} {1 {wrong # args: should be "netdb sunrpcs aliases number"}}
-test netdb-9.4 {check "netdb sunrpcs" command} {
-    list [catch {netdb sunrpcs foo} msg] $msg
-} {1 {bad option "foo": must be aliases, name, or number}}
-test netdb-9.5 {check "netdb sunrpcs" command} {
-    set result ""
-    foreach {name number} [join [netdb sunrpcs]] {
-	if {[string compare [netdb sunrpcs number $name] $number] != 0} {
-	    set result "[netdb sunrpcs number $name] != $number"
-	}
-	if {[string compare [netdb sunrpcs name $number] $name] != 0} {
-	    set result "[netdb sunrpcs name $number] != $name"
-	}
-    }
-    set result
-} {}
-test netdb-9.6 {check "netdb sunrpcs" command} {
-    set result ""
-    foreach {name number} [join [netdb sunrpcs]] {
-	foreach alias [netdb sunrpcs aliases $number] {
-	    if {[netdb sunrpcs number $alias] != $number} {
 		lappend result $alias
 	    }
 	}

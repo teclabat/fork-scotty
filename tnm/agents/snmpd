@@ -14,7 +14,7 @@ exec tclsh "$0" "$@"
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 
-package require Tnm 3.0
+package require tnm 3.0
 
 unset tnm(mibs)
 
@@ -35,7 +35,7 @@ proc bgerror { msg } {
 
 proc CreateAgent { version port {interp {}} } {
     global tnm
-    set s [Tnm::snmp responder -port $port]
+    set s [tnm::snmp responder -port $port]
     if {[catch {$s configure -version $version} msg]} {
 	$s destroy
 	error $msg
@@ -95,18 +95,18 @@ if [catch {CreateAgent SNMPv2c 1701 [CreateSafeInterp]} s] {
 set agentDir [file join $tnm(library) agents]
 if {[file exists $agentDir/snmpd-tnm.tcl]} {
     source $agentDir/snmpd-tnm.tcl
-    SNMP_TnmInit $s
-    SMMP_EvalInit $s
+    SNMP_tnmInit $s
+    SMMP_evalInit $s
 }
 
 if {[file exists $agentDir/snmpd-nfs.tcl]} {
     source $agentDir/snmpd-nfs.tcl
-    SNMP_NfsInit $s
+    SNMP_nfsInit $s
 }
 
 if {[file exists $agentDir/snmpd-proc.tcl]} {
     source $agentDir/snmpd-proc.tcl
-    SNMP_ProcInit $s
+    SNMP_procInit $s
 }
 
 if {[file exists $agentDir/snmpd-mlm.tcl]} {

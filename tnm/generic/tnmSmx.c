@@ -148,10 +148,10 @@ static Run*
 SmxGetRunFromInterp	(SmxControl *control, Tcl_Interp *interp);
 
 static void
-SmxDeleteRun		(SmxControl *control, unsigned runid);
+SmxdeleteRun		(SmxControl *control, unsigned runid);
 
 static void
-SmxAbortRun		(Tcl_Interp *interp, SmxControl *control,
+SmxabortRun		(Tcl_Interp *interp, SmxControl *control,
 				     Run *runPtr);
 static void
 SmxHello		(Tcl_Interp *interp, int id);
@@ -326,7 +326,7 @@ static Run* SmxGetRunFromInterp(SmxControl *control, Tcl_Interp *interp)
 /*
  *----------------------------------------------------------------------
  *
- * SmxDeleteRun --
+ * SmxdeleteRun --
  *
  *	This procedure deletes all Runs with the given runid from the
  *	internal list of concurrent runs.
@@ -341,7 +341,7 @@ static Run* SmxGetRunFromInterp(SmxControl *control, Tcl_Interp *interp)
  */
 
 static void
-SmxDeleteRun(SmxControl *control, unsigned runid)
+SmxdeleteRun(SmxControl *control, unsigned runid)
 {
     Run **rPtrPtr, *runPtr;
 
@@ -359,7 +359,7 @@ SmxDeleteRun(SmxControl *control, unsigned runid)
 /*
  *----------------------------------------------------------------------
  *
- * SmxAbortRun --
+ * SmxabortRun --
  *
  *	This procedure kills a running script. It heuristically tries
  *	to get the proper exit code by classifying the error message
@@ -376,7 +376,7 @@ SmxDeleteRun(SmxControl *control, unsigned runid)
 
 
 static void
-SmxAbortRun(Tcl_Interp *interp, SmxControl *control, Run *runPtr)
+SmxabortRun(Tcl_Interp *interp, SmxControl *control, Run *runPtr)
 {
     const char *msg;
     int i;
@@ -430,7 +430,7 @@ SmxAbortRun(Tcl_Interp *interp, SmxControl *control, Run *runPtr)
     SmxReply(control, TNM_SMX_NTFY_ERROR, 0, runPtr, msg, -1);
     SmxReply(control, TNM_SMX_NTFY_TERMINATION, 0, runPtr, NULL, 0);
     Tcl_DeleteInterp(runPtr->interp);
-    SmxDeleteRun(control, runPtr->runid);
+    SmxdeleteRun(control, runPtr->runid);
 }
 
 /*
@@ -557,7 +557,7 @@ static void SmxStart(Tcl_Interp *interp, int id, unsigned runid, char *script, c
      * not really work and I guess it is a fault in Tcl itself.
      */
     if (TnmInit(runPtr->interp, 1) != TCL_OK) {
-	SmxAbortRun(runPtr->interp, control, runPtr);
+	SmxabortRun(runPtr->interp, control, runPtr);
 	return;
     }
 
@@ -570,7 +570,7 @@ static void SmxStart(Tcl_Interp *interp, int id, unsigned runid, char *script, c
     Tcl_Preserve((ClientData) interp);
     code = Tcl_VarEval(interp, profile, " ", slaveName, (char *) NULL);
     if (code != TCL_OK) {
-	SmxAbortRun(interp, control, runPtr);
+	SmxabortRun(interp, control, runPtr);
 	Tcl_Release((ClientData) interp);
 	return;
     }
@@ -593,7 +593,7 @@ static void SmxStart(Tcl_Interp *interp, int id, unsigned runid, char *script, c
 	Tcl_Preserve((ClientData) runInterp);
 	code = Tcl_EvalFile(runInterp, script);
 	if (code == TCL_ERROR) {
-	    SmxAbortRun(runInterp, control, runPtr);
+	    SmxabortRun(runInterp, control, runPtr);
 	    /* runPtr is invalid now - so do not use it anymore */
 	}
 	Tcl_Release((ClientData) runInterp);
@@ -712,7 +712,7 @@ static void SmxAbort(Tcl_Interp *interp, int id, unsigned runid)
     runPtr->exitcode = TNM_SMX_EXIT_CODE_HALTED;
     runPtr->runstate = TNM_SMX_RUN_STATE_TERMINATED;
     Tcl_DeleteInterp(runPtr->interp);
-    SmxDeleteRun(control, runPtr->runid);
+    SmxdeleteRun(control, runPtr->runid);
     SmxReply(control, TNM_SMX_REPL_ABORT, id, runPtr, NULL, 0);
 }
 
@@ -1572,7 +1572,7 @@ Tnm_SmxObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *cons
 	    runPtr->exitcode = code;
 	    SmxReply(control, TNM_SMX_NTFY_TERMINATION, 0, runPtr, NULL, 0);
 	    Tcl_DeleteInterp(runPtr->interp);
-	    SmxDeleteRun(control, runPtr->runid);
+	    SmxdeleteRun(control, runPtr->runid);
 	} else {
 	    Tcl_Channel channel;
 	    char buffer[80];

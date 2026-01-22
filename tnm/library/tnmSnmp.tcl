@@ -1,4 +1,4 @@
-# TnmSnmp.tcl --
+# tnmSnmp.tcl --
 #
 #	This file implements useful utilities for programming SNMP
 #	based applications in Tcl. This code is extracted from
@@ -11,16 +11,16 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 
-package require Tnm 3.1
-package require TnmDialog 3.1
-package require TnmInet 3.1
-package provide TnmSnmp 3.1.3
+package require tnm 3.1
+package require tnmDialog 3.1
+package require tnmInet 3.1
+package provide tnmSnmp 3.1.3
 
-namespace eval TnmSnmp {
+namespace eval tnmSnmp {
     namespace export Walk
 }
 
-# TnmSnmpGetIp --
+# tnmSnmpGetIp --
 #
 #	Return the IP destination address of a SNMP session. We also
 #	define the writeln proc to a reasonable default if it is not
@@ -31,14 +31,14 @@ namespace eval TnmSnmp {
 # Results:
 #	The IP address for this SNMP session.
 
-proc TnmSnmpGetIp {s} {
+proc tnmSnmpGetIp {s} {
     if {[info proc writeln] == ""} {
 	proc writeln args { puts [join $args] }
     }
     return [$s cget -address]
 }
 
-# TnmSnmpGetHeader --
+# tnmSnmpGetHeader --
 #
 #	Return the header which is printed above any SNMP output.
 #
@@ -47,21 +47,21 @@ proc TnmSnmpGetIp {s} {
 # Results:
 #	The hearder.
 
-proc TnmSnmpGetHeader {s} {
+proc tnmSnmpGetHeader {s} {
     if {[info proc writeln] == ""} {
 	proc writeln args { puts [join $args] }
     }
     set ip [$s cget -address]
     set port [$s cget -port]
     set txt ""
-    if {! [catch {TnmInet::GetIpName $ip} host]} {
+    if {! [catch {tnmInet::getIpName $ip} host]} {
 	set txt "[lindex $host 0] "
     }
     append txt "\[$ip:$port\] \[[clock format [clock seconds]]\]:\n"
     return $txt
 }
 
-# TnmSnmpPrintOid --
+# tnmSnmpPrintOid --
 #
 #	Return the OID of a variable in a human readable format.
 #
@@ -70,19 +70,19 @@ proc TnmSnmpGetHeader {s} {
 # Results:
 #	The pretty printed representation of the OID.
 
-proc TnmSnmpPrintOid {oid} {
-    set status [catch {Tnm::mib unpack $oid} unpacked]
+proc tnmSnmpPrintOid {oid} {
+    set status [catch {tnm::mib unpack $oid} unpacked]
     if {$status} {
-	return [Tnm::mib name $oid]
+	return [tnm::mib name $oid]
     }
-    set result [Tnm::mib label $oid]
+    set result [tnm::mib label $oid]
     foreach v $unpacked {
 	append result "\[$v\]"
     }
     return $result
 }
 
-# TnmSnmp::Walk --
+# tnmSnmp::walk --
 #
 #	Walk through a MIB tree and format the results into a human
 #	readable format.
@@ -93,16 +93,16 @@ proc TnmSnmpPrintOid {oid} {
 # Results:
 #	The walk result contained in a multi-line text.
 
-proc TnmSnmp::Walk {s subtree} {
+proc tnmSnmp::walk {s subtree} {
 
-    set txt [TnmSnmpGetHeader $s]
+    set txt [tnmSnmpGetHeader $s]
 
     set maxl 0
     if {[catch {
 	set n 0
 	$s walk vbl $subtree {
 	    foreach vb $vbl {
-		set name($n) [TnmSnmpPrintOid [lindex $vb 0]]
+		set name($n) [tnmSnmpPrintOid [lindex $vb 0]]
 		set value($n) [lindex $vb 2]
 		if {$maxl < [string length $name($n)]} {
 		    set maxl [string length $name($n)]
@@ -122,7 +122,7 @@ proc TnmSnmp::Walk {s subtree} {
 }
 
 
-# TnmSnmp::Scalars --
+# tnmSnmp::scalars --
 #
 #	Retrieve all scalar variables of a MIB group and store the
 #	values in a Tcl array.
@@ -134,7 +134,7 @@ proc TnmSnmp::Walk {s subtree} {
 # Results:
 #	The ordered list of scalars.
 
-proc TnmSnmp::Scalars {s group name} {
+proc tnmSnmp::scalars {s group name} {
 
     upvar $name value
     catch {unset value}
@@ -144,7 +144,7 @@ proc TnmSnmp::Scalars {s group name} {
 
     set value(foo) bar
     unset value(foo)
-    if {[Tnm::mib syntax $group] != ""} return
+    if {[tnm::mib syntax $group] != ""} return
 
     set exception(noSuchObject)   1
     set exception(noSuchInstance) 1
@@ -154,8 +154,8 @@ proc TnmSnmp::Scalars {s group name} {
     # sucessors (to avoid embedded tables).
 
     set varlist ""
-    foreach var [Tnm::mib children [Tnm::mib oid $group]] {
-	if {[Tnm::mib access $var] != "not-accessible"} {
+    foreach var [tnm::mib children [tnm::mib oid $group]] {
+	if {[tnm::mib access $var] != "not-accessible"} {
 	    lappend varlist "$var.0"
 	}
     }
@@ -226,7 +226,7 @@ proc TnmSnmp::Scalars {s group name} {
 	set syn [lindex $vb 1]
 	set val [lindex $vb 2]
 	if {[info exists exception($syn)]} continue
-	set name [Tnm::mib name $oid]
+	set name [tnm::mib name $oid]
 	set value($name) $val
 	lappend result $name
     }
@@ -234,7 +234,7 @@ proc TnmSnmp::Scalars {s group name} {
 }
 
 
-# TnmSnmp::ShowScalars --
+# tnmSnmp::showScalars --
 #
 #	Show all scalar variables of a MIB group.
 #
@@ -244,11 +244,11 @@ proc TnmSnmp::Scalars {s group name} {
 # Results:
 #	The scalars represented in human readable multi-line text.
 
-proc TnmSnmp::ShowScalars {s group} {
+proc tnmSnmp::showScalars {s group} {
 
-    set txt [TnmSnmpGetHeader $s]
+    set txt [tnmSnmpGetHeader $s]
 
-    if {[catch {TnmSnmp::Scalars $s $group values} msg]} {
+    if {[catch {tnmSnmp::scalars $s $group values} msg]} {
 	append txt "$msg\n"
 	return $txt
     }
@@ -260,7 +260,7 @@ proc TnmSnmp::ShowScalars {s group} {
 
     set maxl 0
     foreach name $msg {
-	set printed($name) [TnmSnmpPrintOid $name]
+	set printed($name) [tnmSnmpPrintOid $name]
 	set length [string length $printed($name)]
 	if {$maxl < $length} {
 	    set maxl $length
@@ -275,7 +275,7 @@ proc TnmSnmp::ShowScalars {s group} {
 }
 
 
-# TnmSnmp::Table --
+# tnmSnmp::table --
 #
 #	Retrieve a table from an SNMP agent and store the values
 #	in a Tcl array.
@@ -288,7 +288,7 @@ proc TnmSnmp::ShowScalars {s group} {
 # Results:
 #	The ordered list of instance identifiers.
 
-proc TnmSnmp::Table {s table name} {
+proc tnmSnmp::table {s table name} {
 
     upvar $name value
     catch {unset value}
@@ -299,11 +299,11 @@ proc TnmSnmp::Table {s table name} {
     set value(foo) bar
     unset value(foo)
 
-    set table [Tnm::mib oid $table]
-    if {[Tnm::mib syntax $table] == "SEQUENCE"} {
-	set table [Tnm::mib parent $table]
+    set table [tnm::mib oid $table]
+    if {[tnm::mib syntax $table] == "SEQUENCE"} {
+	set table [tnm::mib parent $table]
     }
-    if {[Tnm::mib syntax $table] != "SEQUENCE OF"} return
+    if {[tnm::mib syntax $table] != "SEQUENCE OF"} return
 
     set exception(noSuchObject)   1
     set exception(noSuchInstance) 1
@@ -314,15 +314,15 @@ proc TnmSnmp::Table {s table name} {
     # table.
 
     set cols ""
-    set index [Tnm::mib index $table]
+    set index [tnm::mib index $table]
     foreach name $index {
-	set idx([Tnm::mib oid $name]) $name
+	set idx([tnm::mib oid $name]) $name
     }
-    foreach var [Tnm::mib children [Tnm::mib children $table]] {
+    foreach var [tnm::mib children [tnm::mib children $table]] {
 	if [info exists idx($var)] {
 	    continue
 	}
-	if {[Tnm::mib access $var] != "not-accessible"} {
+	if {[tnm::mib access $var] != "not-accessible"} {
 	    lappend cols $var
 	}
     }
@@ -348,14 +348,14 @@ proc TnmSnmp::Table {s table name} {
 	set order ""
 	if [catch {
 	    $s walk vbl $attempt {
-		set oid [Tnm::snmp oid $vbl 0]
-		set inst [lindex [Tnm::mib split $oid] 1]
+		set oid [tnm::snmp oid $vbl 0]
+		set inst [lindex [tnm::mib split $oid] 1]
 		if {[lsearch $order $inst] < 0} {
 		    lappend order $inst
 		}
 		
-		foreach i $index v [Tnm::mib unpack $oid] {
-		    set value([Tnm::mib label $i]:$inst) $v
+		foreach i $index v [tnm::mib unpack $oid] {
+		    set value([tnm::mib label $i]:$inst) $v
 		}
 		
 		foreach vb $vbl {
@@ -363,7 +363,7 @@ proc TnmSnmp::Table {s table name} {
 		    set syn  [lindex $vb 1]
 		    set val  [lindex $vb 2]
 		    if {[info exists exception($syn)]} continue
-		    set value([Tnm::mib label $oid]:$inst) $val
+		    set value([tnm::mib label $oid]:$inst) $val
 		}
 	    }
 	} msg] {
@@ -386,7 +386,7 @@ proc TnmSnmp::Table {s table name} {
 }
 
 
-# TnmSnmp::ShowTable --
+# tnmSnmp::showTable --
 #
 #	Show a complete MIB table. First determine which rows are supported
 #	by an agent and then walk through the table. The formating code is
@@ -399,11 +399,11 @@ proc TnmSnmp::Table {s table name} {
 # Results:
 #	The table represented in human readable multi-line text.
 
-proc TnmSnmp::ShowTable {s table} {
+proc tnmSnmp::showTable {s table} {
 
-    set txt [TnmSnmpGetHeader $s]
+    set txt [tnmSnmpGetHeader $s]
 
-    if {[catch {TnmSnmp::Table $s $table values} msg]} {
+    if {[catch {tnmSnmp::table $s $table values} msg]} {
 	append txt "$msg\n"
 	return $txt
     }
@@ -415,18 +415,18 @@ proc TnmSnmp::ShowTable {s table} {
 
     # Get the xorder
 
-    set columnList [Tnm::mib index $table]
-    Tnm::mib walk x $table {
+    set columnList [tnm::mib index $table]
+    tnm::mib walk x $table {
 	if {[lsearch $columnList $x] < 0} {
 	    lappend columnList $x
 	}
     }
 
     foreach x $columnList {
-	set label [Tnm::mib label $x]
+	set label [tnm::mib label $x]
 	if [llength [array names values $label*]] {
 	    lappend xorder $label
-	    switch [Tnm::mib syntax $x] {
+	    switch [tnm::mib syntax $x] {
 		{OBJECT IDENTIFIER} -
 		{OCTET STRING} {
 		    set xjustify($label) -
@@ -486,7 +486,7 @@ proc TnmSnmp::ShowTable {s table} {
 }
 
 
-# Tnm_SnmpSetValue --
+# tnm_snmpSetValue --
 #
 # Set a value of a MIB variable. A check is made if the MIB variable
 # is an enumeration. If yes
@@ -496,15 +496,15 @@ proc TnmSnmp::ShowTable {s table} {
 # oid -		The object identifier of the variable to set.
 # w -		The root widget name or empty if running with tkined.
 
-proc Tnm_SnmpSetValue {s oid {w ""}} {
+proc tnm_snmpSetValue {s oid {w ""}} {
     $s walk x $oid {
 	set x [lindex $x 0]
-	set value([Tnm::mib name [lindex $x 0]]) [lindex $x 2]
+	set value([tnm::mib name [lindex $x 0]]) [lindex $x 2]
     }
     set name [array names value]
     if {[llength $name] > 1} {
 	if {$w != ""} {
-	    set res [Tnm_DialogSelect $w.l questhead "Select an instance:" \
+	    set res [tnm_DialogSelect $w.l questhead "Select an instance:" \
 		    [lsort [array names value]] "select cancel"]
 	} else {
 	    set res [ined list "Select an instance:" \
@@ -517,18 +517,18 @@ proc Tnm_SnmpSetValue {s oid {w ""}} {
 
     set enums ""
     catch {
-	foreach {label number} [Tnm::mib enums [Tnm::mib type $name]] {
+	foreach {label number} [tnm::mib enums [tnm::mib type $name]] {
 	    lappend enums $label
 	}
     }
 
     if {$w != ""} {
 	if {$enums != ""} {
-	    set res [Tnm_DialogSelect $w.l questhead \
+	    set res [tnm_DialogSelect $w.l questhead \
 		    "Select a value (current = $value($name)):" \
 		    $enums "ok cancel"]
 	} else {
-	    set res [Tnm_DialogRequest $w.r questhead \
+	    set res [tnm_DialogRequest $w.r questhead \
 		    "Enter new value for $name:" $value($name) "ok cancel"]
 	}
     } else {
@@ -548,7 +548,7 @@ proc Tnm_SnmpSetValue {s oid {w ""}} {
 }
 
 
-# Tnm_SnmpCreateInstance --
+# tnm_snmpCreateInstance --
 #
 # Set a value of a MIB variable.
 #
@@ -557,20 +557,20 @@ proc Tnm_SnmpSetValue {s oid {w ""}} {
 # oid -		The object identifier of the variable to set.
 # w -		The root widget name or empty if running with tkined.
 
-proc Tnm_SnmpCreateInstance {s oid {w ""}} {
+proc tnm_snmpCreateInstance {s oid {w ""}} {
     if {$w != ""} {
-	set res [Tnm_DialogRequest $w.l questhead \
-		"Enter an instance identifier:" [Tnm::mib name $oid]. \
+	set res [tnm_DialogRequest $w.l questhead \
+		"Enter an instance identifier:" [tnm::mib name $oid]. \
 		"create cancel"]
     } else {
 	set res [ined request "Enter an instance identifier:" \
-		[list [list Instance [Tnm::mib name $oid] entry 20]] \
+		[list [list Instance [tnm::mib name $oid] entry 20]] \
 		"create cancel"]
     }
     if {[lindex $res 0] != "create"} return
     set name [lindex $res 1]
     if {$w != ""} {
-	set res [Tnm_DialogRequest $w.r questhead \
+	set res [tnm_DialogRequest $w.r questhead \
 		"Enter new value for $name:" "" "ok cancel"]
     } else {
 	set res [ined request "Enter new value for $name:" \

@@ -26,9 +26,9 @@ testConstraint knownBug64BitArchitecture [expr {!(
 			       || ($::tcl_platform(machine) == "x86_64")
 			       )}]
 
-package require Tnm 3.0
+package require tnm 3.0
 catch {
-    namespace import Tnm::snmp Tnm::mib
+    namespace import tnm::snmp tnm::mib
 }
 
 test snmp-1.1 {check general snmp syntax} {
@@ -370,14 +370,14 @@ if { [catch {
 	$s get sysDescr.0 {set result "%E %V"}
 	$s wait
 	set result
-    } {noError {1.3.6.1.2.1.1.1.0 {OCTET STRING} {Tnm SNMP agent}}}
+    } {noError {1.3.6.1.2.1.1.1.0 {OCTET STRING} {tnm SNMP agent}}}
     
     test snmp-2.2 {snmp getnext} {
 	global result
 	$s getnext sysDescr {set result "%E %V"}
 	$s wait
 	set result
-    } {noError {1.3.6.1.2.1.1.1.0 {OCTET STRING} {Tnm SNMP agent}}}
+    } {noError {1.3.6.1.2.1.1.1.0 {OCTET STRING} {tnm SNMP agent}}}
     
     test snmp-2.2.1 {snmp getnext} {
 	global result
@@ -433,7 +433,7 @@ if { [catch {
 	$s getbulk 0 1 sysDescr {set result "%E %V"}
 	$s wait
 	set result
-    } {noError {1.3.6.1.2.1.1.1.0 {OCTET STRING} {Tnm SNMP agent}}}
+    } {noError {1.3.6.1.2.1.1.1.0 {OCTET STRING} {tnm SNMP agent}}}
     
     test snmp-2.4 {snmp exchanges} {
 	global result
@@ -538,7 +538,7 @@ if { [catch {
 	$s get sysDescr.0 { set result "%E %V" }
 	$s wait
 	set result
-    } {noError {1.3.6.1.2.1.1.1.0 {OCTET STRING} {Tnm SNMP agent}}}
+    } {noError {1.3.6.1.2.1.1.1.0 {OCTET STRING} {tnm SNMP agent}}}
 
     test snmp-2.14 {snmp async destroys} {
 	rename [eval snmp session [$s configure]] x

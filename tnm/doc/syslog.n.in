@@ -7,14 +7,14 @@
 '\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 '\" 
 .so man.macros
-.TH Tnm::syslog n "May 2003" Tnm "Tnm Tcl Extension"
+.TH tnm::syslog n "May 2003" tnm "tnm Tcl Extension"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
-Tnm::syslog \- Write messages to the system logger.
+tnm::syslog \- Write messages to the system logger.
 
 .SH DESCRIPTION
-The Tnm::syslog command writes messages to the local system logging
+The tnm::syslog command writes messages to the local system logging
 subsystem.  On Unix platforms, the message is written to the syslog
 daemon. On Windows platforms, the message is written to the Windows
 event logging subsystem.
@@ -49,7 +49,7 @@ Informational messages.
 Messages that contain information
 normally of use only when debugging a program.
 .PP
-Not all system logging subsystems support all priority levels. The Tnm
+Not all system logging subsystems support all priority levels. The tnm
 extension will automatically convert the priorities listed above into
 levels understood by the local system logging subsystems if needed.
 
@@ -127,22 +127,22 @@ Local use messages type 6.
 .SB Local7
 Local use messages type 7.
 .PP
-Not all system logging subsystems support all facilities. The Tnm
+Not all system logging subsystems support all facilities. The tnm
 extension will automatically convert the facilities listed above into
 levels understood by the local system logging subsystems if needed.
 
 .SH SYSLOG COMMAND
 .TP
-\fBTnm::syslog\fR [\fIoptions\fR]
-Invoking the \fBTnm::syslog\fR command with options but without any
+\fBtnm::syslog\fR [\fIoptions\fR]
+Invoking the \fBtnm::syslog\fR command with options but without any
 command arguments allows to retrieve and change the default
 values. See the description of supported options below. Default values
 are bound to a Tcl interpreter which allows to have multiple Tcl
 interpreter with different defaults.
 
 .TP
-\fBTnm::syslog\fR [\fIoptions\fR] \fIlevel\fR \fImessage\fR
-The \fBTnm::syslog\fR command writes a \fImessage\fR to the system
+\fBtnm::syslog\fR [\fIoptions\fR] \fIlevel\fR \fImessage\fR
+The \fBtnm::syslog\fR command writes a \fImessage\fR to the system
 logging subsystem. Further processing of the message depends on the
 priority \fIlevel\fR of the message and the configuration of the
 system logging subsystem.
@@ -158,7 +158,7 @@ The \fB-facility\fR option defines the \fIfacility\fR of the
 event source. The default value is the facility \fIlocal0\fR.
 
 .SH SEE ALSO
-scotty(1), Tnm(n), Tcl(n)
+scotty(1), tnm(n), Tcl(n)
 
 .SH AUTHORS
 Juergen Schoenwaelder <schoenw@ibr.cs.tu-bs.de>

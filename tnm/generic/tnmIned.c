@@ -323,7 +323,7 @@ InedInitialize(Tcl_Interp *interp)
 static void
 InedFatal()
 {
-    TnmWriteMessage("Tnm: lost connection to Tkined\n");
+    TnmWriteMessage("tnm: lost connection to Tkined\n");
     Tcl_Exit(1);
 }
 

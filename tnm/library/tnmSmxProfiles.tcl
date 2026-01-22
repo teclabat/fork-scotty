@@ -1,4 +1,4 @@
-# TnmSmxProfiles.tcl --
+# tnmSmxProfiles.tcl --
 #
 #	This file implements some core SMX runtime security profiles.
 #
@@ -7,15 +7,15 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 
-package require Tnm 3.0
+package require tnm 3.0
 
-package provide TnmSmxProfiles 3.1.3
+package provide tnmSmxProfiles 3.1.3
 
-namespace eval TnmSmxProfiles {
+namespace eval tnmSmxProfiles {
     namespace export safe tnm snmp snmp-134.169
 }
 
-# TnmSmxProfiles::safe --
+# tnmSmxProfiles::safe --
 #
 #	The safe runtime security profile. This is trivial 
 #	the default slave interpreter is already a safe one.
@@ -26,15 +26,15 @@ namespace eval TnmSmxProfiles {
 # Results:
 #	None.
 
-proc TnmSmxProfiles::safe {slave} {
+proc tnmSmxProfiles::safe {slave} {
     # nothing to be done here...
     return
 }
 
-# TnmSmxProfiles::tnm --
+# tnmSmxProfiles::tnm --
 #
 #	The tnm runtime security profile supports all commands
-#	provided by the Tnm extension. This is not a very safe
+#	provided by the tnm extension. This is not a very safe
 #	profile since it allows scripts arbitrary use of the
 #	network. Furthermore, scripts can issue syslog messages
 #	and disturb the system in other unpleasant ways.
@@ -45,11 +45,11 @@ proc TnmSmxProfiles::safe {slave} {
 # Results:
 #	None.
 
-proc TnmSmxProfiles::tnm {slave} {
+proc tnmSmxProfiles::tnm {slave} {
     # Expose the snmp and mib commands and rename them into the
-    # Tnm namespace. (Note that the hidden commands exist in the
+    # tnm namespace. (Note that the hidden commands exist in the
     # global namespace due to a Tcl limitation.
-    foreach qualcmd [info commands ::Tnm::*] {
+    foreach qualcmd [info commands ::tnm::*] {
 	set cmd [namespace tail $qualcmd]
 	if {[lsearch [$slave hidden] $cmd] >= 0} {
 	    $slave expose $cmd
@@ -59,10 +59,10 @@ proc TnmSmxProfiles::tnm {slave} {
     return
 }
 
-# TnmSmxProfiles::snmp --
+# tnmSmxProfiles::snmp --
 #
 #	The snmp runtime security profile. This is a safe
-#	profile which allows to use the Tnm SNMP engine.
+#	profile which allows to use the tnm SNMP engine.
 #
 # Arguments:
 #	slave	The slave Tcl interpreter.
@@ -70,11 +70,11 @@ proc TnmSmxProfiles::tnm {slave} {
 # Results:
 #	None.
 
-proc TnmSmxProfiles::snmp {slave} {
+proc tnmSmxProfiles::snmp {slave} {
     # Expose the snmp and mib commands and rename them into the
-    # Tnm namespace. (Note that the hidden commands exist in the
+    # tnm namespace. (Note that the hidden commands exist in the
     # global namespace due to a Tcl limitation.
-    foreach qualcmd {::Tnm::snmp ::Tnm::mib} {
+    foreach qualcmd {::tnm::snmp ::tnm::mib} {
 	set cmd [namespace tail $qualcmd]
 	$slave expose $cmd
 	$slave eval rename $cmd $qualcmd
@@ -82,7 +82,7 @@ proc TnmSmxProfiles::snmp {slave} {
     return
 }
 
-# TnmSmxProfiles::snmp-134.169 --
+# tnmSmxProfiles::snmp-134.169 --
 #
 #	The snmp runtime security profile which allows SNMP
 #	access to the IPv4 network 134.169.*.*.
@@ -93,21 +93,21 @@ proc TnmSmxProfiles::snmp {slave} {
 # Results:
 #	None.
 
-proc TnmSmxProfiles::snmp-134.169 {slave} {
+proc tnmSmxProfiles::snmp-134.169 {slave} {
     # Expose the snmp and mib commands and rename them into the
-    # Tnm namespace. (Note that the hidden commands exist in the
+    # tnm namespace. (Note that the hidden commands exist in the
     # global namespace due to a Tcl limitation.
-    foreach qualcmd {::Tnm::mib} {
+    foreach qualcmd {::tnm::mib} {
 	set cmd [namespace tail $qualcmd]
 	$slave expose $cmd
 	$slave eval rename $cmd $qualcmd
     }
-    $slave alias Tnm::snmp \
-	    TnmSmxProfiles::SnmpCheckAddress $slave {^134.169.[0-9]+.[0-9]+}
+    $slave alias tnm::snmp \
+	    tnmSmxProfiles::SnmpCheckAddress $slave {^134.169.[0-9]+.[0-9]+}
     return
 }
 
-proc TnmSmxProfiles::SnmpCheckAddress {slave pattern args} {
+proc tnmSmxProfiles::SnmpCheckAddress {slave pattern args} {
     set option [lindex $args 0]
     switch $option {
 	responder -
@@ -128,7 +128,7 @@ proc TnmSmxProfiles::SnmpCheckAddress {slave pattern args} {
 		}
 	    }
 	    $slave alias $s \
-		    TnmSmxProfiles::SnmpSessionCheckAddress $slave $pattern $s
+		    tnmSmxProfiles::SnmpSessionCheckAddress $slave $pattern $s
 	    return $s
 	}
 	default {
@@ -139,7 +139,7 @@ proc TnmSmxProfiles::SnmpCheckAddress {slave pattern args} {
     }
 }
 
-proc TnmSmxProfiles::SnmpSessionCheckAddress {slave pattern s args} {
+proc tnmSmxProfiles::SnmpSessionCheckAddress {slave pattern s args} {
     set option [lindex $args 0]
     switch $option {
 	configure {
@@ -168,4 +168,4 @@ proc TnmSmxProfiles::SnmpSessionCheckAddress {slave pattern s args} {
 # Make the list of SMX profiles defined in this package known
 # to the SMX protocol implementation.
 
-Tnm::smx profiles [list safe snmp tnm snmp-134.169]
+tnm::smx profiles [list safe snmp tnm snmp-134.169]

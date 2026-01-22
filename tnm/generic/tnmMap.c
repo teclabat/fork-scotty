@@ -1329,7 +1329,7 @@ SaveMap(Tcl_Interp *interp, TnmMap *mapPtr, char *channelName)
 		      " in the Tcl variable \"map\".\n#\\\n", -1);
     Tcl_DStringAppend(&ds, "exec scotty \"$0\" \"$*\"\n\n", -1);
     Tcl_DStringAppend(&ds, 
-	      "if ![info exists map] { set map [Tnm::map create] }\n\n", -1);
+	      "if ![info exists map] { set map [tnm::map create] }\n\n", -1);
     DumpMap(interp, mapPtr);
     Tcl_DStringAppend(&ds, 
 	      Tcl_GetStringFromObj(Tcl_GetObjResult(interp), NULL), -1);

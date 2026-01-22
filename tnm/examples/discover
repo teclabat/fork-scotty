@@ -2,9 +2,9 @@
 # the next line restarts using tclsh -*- tcl -*- \
 exec tclsh "$0" "$@"
 
-package require Tnm 3.0
+package require tnm 3.0
 
-namespace import Tnm::mib Tnm::snmp Tnm::icmp Tnm::netdb
+namespace import tnm::mib tnm::snmp tnm::icmp tnm::netdb
 
 ##
 ## Send a snmp request to all ip addresses on a class C like

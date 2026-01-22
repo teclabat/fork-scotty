@@ -8,20 +8,20 @@
 '\" @(#) $Id: job.n,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 '\" 
 .so man.macros
-.TH Tnm::job n "December 1997" Tnm "Tnm Tcl Extension"
+.TH tnm::job n "December 1997" tnm "tnm Tcl Extension"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
-Tnm::job \- Invoke Tcl procedures at regular intervals.
+tnm::job \- Invoke Tcl procedures at regular intervals.
 .BE
 
 .SH DESCRIPTION
-The Tnm::job command provides a convenient mechanism to invoke Tcl
+The tnm::job command provides a convenient mechanism to invoke Tcl
 procedures at regular intervals. Jobs are activated from the Tcl event
 loop. It is therefore necessary that the Tcl event loop has been
 entered in order to execute jobs. Jobs are never interrupted due to
 the event-driven nature of Tcl. This means that long computations or
-blocking Tcl or Tnm commands can change the scheduling order
+blocking Tcl or tnm commands can change the scheduling order
 noticeably.
 
 Every job can have arbitrary attributes to store job specific state
@@ -38,21 +38,21 @@ the system clock forward can have the effect that jobs are activated
 earlier for the amount of time the system clock was moved forward.
 
 .SH JOB COMMANDS
-The Tnm::job command allows to create new jobs and to wait for jobs to
-complete. The Tnm::job command can also be used to retrieve status
+The tnm::job command allows to create new jobs and to wait for jobs to
+complete. The tnm::job command can also be used to retrieve status
 information from the job scheduler.
 .TP
-.B Tnm::job create \fR[\fIoption value\fR ...]
-The \fBTnm::job create\fR command creates a new job object. The
+.B tnm::job create \fR[\fIoption value\fR ...]
+The \fBtnm::job create\fR command creates a new job object. The
 \fIoptions\fR can be used to configure the behaviour of the new
 job. See the configure command below for the details.
 .TP
-.B Tnm::job current
-The \fBTnm::job current\fR command returns the name of the currently
+.B tnm::job current
+The \fBtnm::job current\fR command returns the name of the currently
 running job. An empty string is returned if no job is running.
 .TP
-.B Tnm::job find \fR[\fB-status \fIstate\fR] \fR[\fB-tags \fIpatternList\fR]
-The \fBTnm::job find\fR command returns lists of job names. The list
+.B tnm::job find \fR[\fB-status \fIstate\fR] \fR[\fB-tags \fIpatternList\fR]
+The \fBtnm::job find\fR command returns lists of job names. The list
 will contain all jobs known by the Tcl interpreter if no options are
 present. The \fB-status\fR option restricts the list to those jobs
 which are currently in the state \fIstate\fR. The \fB-tags\fR option
@@ -61,15 +61,15 @@ in the \fIpatternList\fR. Matching is done according to the rules
 defined for the Tcl string match command. Every pattern in the 
 patternList must match at least one tag in the tag list.
 .TP
-.B Tnm::job schedule
-The \fBTnm::job schedule\fR command invokes the scheduler. This is
+.B tnm::job schedule
+The \fBtnm::job schedule\fR command invokes the scheduler. This is
 usually done automatically from the event loop. This command may be
 used during long computations to invoke the scheduler explicitly.
 Note that this command can cause arbitrary side effects and should be
 used with care.
 .TP
-.B Tnm::job wait
-The \fBTnm::job wait\fR command blocks until all existing jobs in this
+.B tnm::job wait
+The \fBtnm::job wait\fR command blocks until all existing jobs in this
 interpreter have been finished. The command will wait infinitely if
 there is at least one job left. Events are processed while waiting for
 the jobs to finish, which can have arbitrary side effects.
@@ -115,10 +115,10 @@ whenever the job is activated.
 .TP
 .BI "-error " command
 The \fB-error\fR option defines the Tcl command that is evaluated 
-whenever the job causes an error. An empty error command causes Tnm
+whenever the job causes an error. An empty error command causes tnm
 to abort the running job and to call the Tcl bgerror procedure in order
 to signal this exception. Setting this option to a non-empty string
-causes Tnm evaluate the string without aborting the running job.
+causes tnm evaluate the string without aborting the running job.
 .TP
 .BI "-exit " command
 The \fB-exit\fR option defines the Tcl command that is evaluated 
@@ -156,7 +156,7 @@ The \fB-time\fR option returns the number of milliseconds until this
 job is activated the next time. This option is read-only.
 
 .SH SEE ALSO
-scotty(1), Tnm(n), Tcl(n)
+scotty(1), tnm(n), Tcl(n)
 
 .SH AUTHORS
 Juergen Schoenwaelder <schoenw@ibr.cs.tu-bs.de>

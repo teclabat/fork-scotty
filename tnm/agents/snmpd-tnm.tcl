@@ -9,13 +9,13 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 
-Tnm::mib load tubs-tnm.mib
+tnm::mib load tubs-tnm.mib
 
 ##
 ## Return the actual date and time in the textual convention format.
 ##
 
-proc DateAndTime {} {
+proc dateAndTime {} {
     clock format [clock seconds] -format "%Y-%m-%d-%T"
 }
 
@@ -23,9 +23,9 @@ proc DateAndTime {} {
 ## Create the scalars in the scotty group.
 ##
 
-proc SNMP_TnmInit {s} {
+proc SNMP_tnmInit {s} {
     global tnm
-    $s instance tnmDate.0 tnmDate [DateAndTime]
+    $s instance tnmDate.0 tnmDate [dateAndTime]
     $s instance tnmTrapDst.0 tnmTrapDst localhost
     $s instance tnmTrapMsg.0 tnmTrapMsg ""
     $s instance tnmVersion.0 tnmVersion [set tnm(version)]
@@ -42,7 +42,7 @@ proc SNMP_TnmInit {s} {
 
 ## http://www.cs.tu-bs.de/~schoenw/hello.tcl
 
-proc SNMP_HttpSource {interp url} {
+proc SNMP_httpSource {interp url} {
     global tnm
     set file $tnm(tmp)/http.[pid]
     catch { exec rm -f $file }
@@ -60,10 +60,10 @@ proc SNMP_HttpSource {interp url} {
     return ""
 }
 
-proc SNMP_HttpInit {s} {
+proc SNMP_httpInit {s} {
 
     set interp [$s cget -agent]
-    $interp alias SNMP_HttpSource SNMP_HttpSource $interp
+    $interp alias SNMP_httpSource SNMP_httpSource $interp
     $interp alias SNMP_HttpProxy http proxy
 
     $s instance tnmHttpProxy.0 tnmHttpProxy
@@ -77,7 +77,7 @@ proc SNMP_HttpInit {s} {
 
     $s bind tnmHttpSource.0 set {
 	set tnmHttpSource "%v"
-	set msg [SNMP_HttpSource $tnmHttpSource]
+	set msg [SNMP_httpSource $tnmHttpSource]
 	if {$msg != ""} {
 	    set tnmHttpError $msg
 	    error inconsistentValue
@@ -98,7 +98,7 @@ proc SNMP_HttpInit {s} {
 ## mechanisms in the protocol exchange.
 ##
 
-proc SMMP_EvalInit {s} {
+proc SMMP_evalInit {s} {
 
     $s instance tnmEvalSlot.0 tnmEvalSlot 0
     $s bind tnmEvalSlot.0 get { 

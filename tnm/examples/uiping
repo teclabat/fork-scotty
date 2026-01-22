@@ -2,9 +2,9 @@
 # the next line restarts using tclsh -*- tcl -*- \
 exec tclsh "$0" "$@"
 
-package require Tnm 3.0
+package require tnm 3.0
 
-namespace import Tnm::udp Tnm::icmp
+namespace import tnm::udp tnm::icmp
 
 #
 # Send a udp datagram to the echo port of the destination host.

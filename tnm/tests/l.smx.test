@@ -16,9 +16,9 @@ if {[lsearch [namespace children] ::tcltest] == -1} {
     namespace import ::tcltest::*
 }
 
-package require Tnm 3.0
+package require tnm 3.0
 catch {
-    namespace import Tnm::smx
+    namespace import tnm::smx
 }
 
 proc rte {msg} {
@@ -59,9 +59,9 @@ proc startengine {} {
     set env(SMX_COOKIE) 010a020b030c040d050e060f
     set file /tmp/smx-profile
     makeFile {
-	package require Tnm 3.0
-	package require TnmSmxProfiles 3.0
-	namespace import TnmSmxProfiles::*
+	package require tnm 3.0
+	package require tnmSmxProfiles 3.0
+	namespace import tnmSmxProfiles::*
     } $file
     exec scotty3.1.0 $file &
     vwait smx(channel)
@@ -148,7 +148,7 @@ startengine
 # Note: Commands must always have a valid command name and transaction
 # identifier in order to receive a response back.
 
-Tnm::smx profiles {profile trusted master}
+tnm::smx profiles {profile trusted master}
 
 test smx-2.1 {command syntax} {
     rte "foobar 21"
@@ -213,13 +213,13 @@ test smx-2.15 {command syntax} {
 test smx-2.16 {command syntax} {
     set file /tmp/smx-2.16
     makeFile {
-	package require Tnm 3.0
+	package require tnm 3.0
 	set cnt 0
-	Tnm::job create -iterations 10 -interval 10 -command { 
-	    Tnm::smx result "[incr cnt] job running [info cmdcount]"
+	tnm::job create -iterations 10 -interval 10 -command { 
+	    tnm::smx result "[incr cnt] job running [info cmdcount]"
 	}
 	after 30 {
-	    Tnm::smx exit
+	    tnm::smx exit
 	}
     } $file 
     rte "start 36 43 \"$file\" safe \"\""
@@ -246,10 +246,10 @@ test smx-2.20 {command syntax} {
 test smx-2.21 {command syntax} {
     set file /tmp/smx-2.21
     makeFile {
-	package require Tnm 3.0
-	Tnm::smx result [package names]
-	Tnm::smx result [Tnm::snmp info pdus]
-	Tnm::smx exit
+	package require tnm 3.0
+	tnm::smx result [package names]
+	tnm::smx result [tnm::snmp info pdus]
+	tnm::smx exit
     } $file
     rte "start 41 44 \"$file\" safe \"\""
 } {231 41 1}
@@ -261,9 +261,9 @@ test smx-2.22 {command syntax} {
 test smx-2.23 {command syntax} {
     set file /tmp/smx-2.23
     makeFile {
-	package require Tnm 3.0
-	Tnm::smx result [Tnm::snmp info pdus]
-	Tnm::smx exit
+	package require tnm 3.0
+	tnm::smx result [tnm::snmp info pdus]
+	tnm::smx exit
     } $file
     rte "start 43 45 \"$file\" snmp \"\""
 } {231 43 1}
@@ -275,9 +275,9 @@ test smx-2.24 {command syntax} {
 test smx-2.25 {command syntax} {
     set file /tmp/smx-2.25
     makeFile {
-	package require Tnm 3.0
-	Tnm::smx result [list $argc $argv $argv0]
-	Tnm::smx exit
+	package require tnm 3.0
+	tnm::smx result [list $argc $argv $argv0]
+	tnm::smx exit
     } $file
     rte "start 45 46 \"$file\" safe \"a b c\""
 } {231 45 1}
@@ -289,13 +289,13 @@ test smx-2.26 {command syntax} {
 test smx-2.27 {command syntax} knownBug {
     set file /tmp/smx-2.27
     makeFile {
-	package require Tnm 3.0
-	Tnm::mib load IF-MIB
-	set s [Tnm::snmp generator -address 134.169.34.12]
+	package require tnm 3.0
+	tnm::mib load IF-MIB
+	set s [tnm::snmp generator -address 134.169.34.12]
 	$s configure -address 134.169.34.21
-	Tnm::smx result [list [catch {$s getnext 1.3} msg] $msg]
+	tnm::smx result [list [catch {$s getnext 1.3} msg] $msg]
 	$s destroy
-	Tnm::smx exit
+	tnm::smx exit
     } $file
     rte "start 47 47 \"$file\" snmp-134.169 \"\""
 } {231 47 1}

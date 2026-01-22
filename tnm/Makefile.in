@@ -342,17 +342,17 @@ install-mibs:
 	    done
 
 TNM_LIBRARY_DIR	= library
-TNM_LIBRARY =	$(TNM_LIBRARY_DIR)/TnmDialog.tcl \
-		$(TNM_LIBRARY_DIR)/TnmTerm.tcl \
-		$(TNM_LIBRARY_DIR)/TnmMap.tcl \
-		$(TNM_LIBRARY_DIR)/TnmInet.tcl \
-		$(TNM_LIBRARY_DIR)/TnmMib.tcl \
-		$(TNM_LIBRARY_DIR)/TnmSmxProfiles.tcl \
-		$(TNM_LIBRARY_DIR)/TnmSnmp.tcl \
-		$(TNM_LIBRARY_DIR)/TnmScriptMib.tcl \
-		$(TNM_LIBRARY_DIR)/TnmIetf.tcl \
-		$(TNM_LIBRARY_DIR)/TnmEther.tcl \
-		$(TNM_LIBRARY_DIR)/TnmMonitor.tcl \
+TNM_LIBRARY =	$(TNM_LIBRARY_DIR)/tnmDialog.tcl \
+		$(TNM_LIBRARY_DIR)/tnmTerm.tcl \
+		$(TNM_LIBRARY_DIR)/tnmMap.tcl \
+		$(TNM_LIBRARY_DIR)/tnmInet.tcl \
+		$(TNM_LIBRARY_DIR)/tnmMib.tcl \
+		$(TNM_LIBRARY_DIR)/tnmSmxProfiles.tcl \
+		$(TNM_LIBRARY_DIR)/tnmSnmp.tcl \
+		$(TNM_LIBRARY_DIR)/tnmScriptMib.tcl \
+		$(TNM_LIBRARY_DIR)/tnmIetf.tcl \
+		$(TNM_LIBRARY_DIR)/tnmEther.tcl \
+		$(TNM_LIBRARY_DIR)/tnmMonitor.tcl \
 		$(TNM_LIBRARY_DIR)/init.tcl
 install-lib:
 	@for i in $(TNM_INSTALL_DIR)/library ; \

@@ -9,15 +9,15 @@
 '\" @(#) $Id: mib.n,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 '\" 
 .so man.macros
-.TH Tnm::mib n "October 1998" Tnm "Tnm Tcl Extension"
+.TH tnm::mib n "October 1998" tnm "tnm Tcl Extension"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
-Tnm::mib \- Load and access SNMP MIB definitions.
+tnm::mib \- Load and access SNMP MIB definitions.
 .BE
 
 .SH DESCRIPTION
-The Tnm::mib command allows to load and access SNMP MIB definitions
+The tnm::mib command allows to load and access SNMP MIB definitions
 that are written down in MIB files according to the rules defined in
 the Structure of Management Information (SMI) (RFC 1155, RFC 1212, RFC
 1215, RFC 2578, RFC 2579 and RFC 2580). Queries are either formulated
@@ -73,7 +73,7 @@ list of supported SNMP SMI data types).
 Derived types are either explicitly defined by the invocation of a
 TEXTUAL-CONVENTION macro or implicitly by putting value restrictions
 or enumerations in an OBJECT-TYPE macro. ASN.1 type assignments are
-also used to created derived types. The Tnm extension converts
+also used to created derived types. The tnm extension converts
 implicit type definitions and ASN.1 type assignments into explicit
 type definitions in order to handle both in a uniform way.
 
@@ -91,8 +91,8 @@ object ifOperStatus.
 .SH MIB COMMAND
 
 .TP
-.B Tnm::mib access \fInode ?varName?\fR
-The \fBTnm::mib access\fR command returns the maximum access allowed
+.B tnm::mib access \fInode ?varName?\fR
+The \fBtnm::mib access\fR command returns the maximum access allowed
 for a MIB node. The \fInode\fR argument may be a node name or an
 object identifier in one of the formats discussed above. The command
 returns one of the access modes "not-accessible",
@@ -104,8 +104,8 @@ returns a boolean value indicating whether an access mode definition
 exists.
 
 .TP
-.B Tnm::mib children \fInode ?varName?\fR
-The \fBTnm::mib children\fR command returns a list of all known child
+.B tnm::mib children \fInode ?varName?\fR
+The \fBtnm::mib children\fR command returns a list of all known child
 nodes of a given MIB node. The \fInode\fR argument may be a node name
 in one of the formats discussed above. The command returns the list of
 child nodes or an empty list if the optional \fIvarName\fR argument is
@@ -119,8 +119,8 @@ object identifier value. The result is a list of fully qualified MIB
 node names if \fInode\fR is a MIB node name.
 
 .TP
-.B Tnm::mib compare \fIoid1 oid2\fR
-The \fBTnm::mib compare\fR command compares two object identifier
+.B tnm::mib compare \fIoid1 oid2\fR
+The \fBtnm::mib compare\fR command compares two object identifier
 given as \fIoid1\fR and \fIoid2\fR based on their lexicographic
 order. The command returns -1, 0 or 1, depending on whether the object
 identifier given by \fIoid1\fR is less than, equal to, or greater than
@@ -129,8 +129,8 @@ the object identifier given by \fIoid2\fR. The \fIoid1\fR and
 of the formats discussed above.
 
 .TP
-.B Tnm::mib defval \fInode ?varName?\fR
-The \fBTnm::mib defval\fR command returns the default value for a
+.B tnm::mib defval \fInode ?varName?\fR
+The \fBtnm::mib defval\fR command returns the default value for a
 given MIB node. The \fInode\fR argument may be a node name in one of
 the formats discussed above. The default value will be written to the
 variable whose name is given by \fIvarName\fR if the optional
@@ -140,8 +140,8 @@ argument is present. Otherwise, the default value or an emtpy string is
 returned.
 
 .TP
-.B Tnm::mib description \fInodeOrType ?varName?\fR
-The \fBTnm::mib description\fR command returns the textual description
+.B tnm::mib description \fInodeOrType ?varName?\fR
+The \fBtnm::mib description\fR command returns the textual description
 of a MIB node or a MIB data type. The \fInodeOrType\fR argument may be
 a node or type name in one of the formats discussed above. This
 command requires that the file containing the MIB definition is
@@ -152,8 +152,8 @@ will be saved in the variable \fIvarName\fR and the command returns a
 boolean value indicating whether a description exists.
 
 .TP
-.B Tnm::mib displayhint \fItype ?varName?\fR
-The \fBTnm::mib displayhint\fR command returns the display-hint
+.B tnm::mib displayhint \fItype ?varName?\fR
+The \fBtnm::mib displayhint\fR command returns the display-hint
 associated with the MIB data type \fItype\fR. The command returns the
 display-hint or an empty string if the optional \fIvarName\fR argument
 is not present. If the optional \fIvarName\fR argument is present,
@@ -162,8 +162,8 @@ the command returns a boolean value indicating whether a display-hint
 exists.
 
 .TP
-.B Tnm::mib enums \fItype ?varName?\fR
-The \fBTnm::mib enums\fR command returns the enumerations associated
+.B tnm::mib enums \fItype ?varName?\fR
+The \fBtnm::mib enums\fR command returns the enumerations associated
 with \fItype\fR. The \fItype\fR argument may be a type name in one of
 the formats discussed above. The command returns the list of defined
 enumerations as a flat list of names and associated numbers or an
@@ -173,23 +173,23 @@ list will be saved in the variable \fIvarName\fR and the command
 returns a boolean value indicating whether enumerations exist.
 
 .TP
-.B Tnm::mib exists \fInodeOrType\fR
-The \fBTnm::mib exists\fR command tests if \fInodeOrType\fR refers
+.B tnm::mib exists \fInodeOrType\fR
+The \fBtnm::mib exists\fR command tests if \fInodeOrType\fR refers
 to a known MIB node or type. The command returns 1 if \fInodeOrType\fR
 exists and 0 otherwise. The \fInodeOrType\fR argument may be a node
 name, a type name or an object identifier in one of the formats
 discussed above.
 
 .TP
-.B Tnm::mib file \fInodeOrType\fR
-The \fBTnm::mib file\fR command returns the file name which contains
+.B tnm::mib file \fInodeOrType\fR
+The \fBtnm::mib file\fR command returns the file name which contains
 the definition of the MIB node or the MIB type. The \fInodeOrType\fR
 argument may be a node name, a type name or an object identifier in
 one of the formats discussed above.
 
 .TP
-.B Tnm::mib format \fInodeOrType\fR \fIvalue\fR
-The \fBTnm::mib format\fR command applies formatting rules associated
+.B tnm::mib format \fInodeOrType\fR \fIvalue\fR
+The \fBtnm::mib format\fR command applies formatting rules associated
 with a MIB data type to a \fIvalue\fR. The \fIvalue\fR is expected to
 be in a format which complies to the rules defined for the underlying
 base data type.  The data type is selected by the \fInodeOrType\fR
@@ -198,37 +198,37 @@ associated with that MIB node will be used. The \fInodeOrType\fR
 argument may be a node name, a type name or an object identifier in
 one of the formats discussed above.
 
-The \fBTnm::mib format\fR command can be used to render integer values
+The \fBtnm::mib format\fR command can be used to render integer values
 into enumerations, to apply display hints, or to convert object
 identifier into fully qualified names.
 
 .TP
-.B Tnm::mib index \fInode\fR
-The \fBTnm::mib index\fR command returns the list of MIB labels
+.B tnm::mib index \fInode\fR
+The \fBtnm::mib index\fR command returns the list of MIB labels
 which are used as a key in a conceptual table or an empty result if
 the MIB node does not identify a conceptual table. The \fInode\fR
 argument may be a node name in one of the formats discussed above.
 
 .TP
-.B Tnm::mib info \fIsubject ?pattern?\fR
-The \fBTnm::mib info\fR command returns information about a given
+.B tnm::mib info \fIsubject ?pattern?\fR
+The \fBtnm::mib info\fR command returns information about a given
 subject. The optional \fIpattern\fR is used to select a subset of
 information. The subject \fIaccess\fR returns the list of possible
-maximum access modes for MIB definitions understood by the Tnm MIB
+maximum access modes for MIB definitions understood by the tnm MIB
 parser. The \fIpattern\fR is matched against the access mode
 names. The subject \fIfiles\fR returns the list status MIB files
 currently loaded. The \fIpattern\fR is matched against the file
 names. The subject \fImacros\fR returns the list of MIB macros known
-by the Tnm MIB parser. The \fIpattern\fR is matched against the macro
+by the tnm MIB parser. The \fIpattern\fR is matched against the macro
 names. The subject \fIstatus\fR returns the list status modes for MIB
-definitions understood by the Tnm MIB parser. The \fIpattern\fR is
+definitions understood by the tnm MIB parser. The \fIpattern\fR is
 matched against the status name. The subject \fItypes\fR returns the
 lists of all known MIB types. The \fIpattern\fR is matched against the
 type name.
 
 .TP
-.B Tnm::mib label \fInodeOrType\fR
-The \fBTnm::mib label\fR command returns the label of a MIB node or a
+.B tnm::mib label \fInodeOrType\fR
+The \fBtnm::mib label\fR command returns the label of a MIB node or a
 MIB type. The \fInodeOrType\fR argument may be a node name, a type
 name or an object identifier in one of the formats discussed above.
 The label of the MIB node SNMPv2-MIB!sysDescr is the string sysDescr
@@ -237,15 +237,15 @@ DisplayString. The returned label is not necessarily unique and should
 not be used to refer to a MIB node or a MIB type.
 
 .TP
-.B Tnm::mib length \fIoid\fR
-The \fBTnm::mib length\fR command returns the length of the object
+.B tnm::mib length \fIoid\fR
+The \fBtnm::mib length\fR command returns the length of the object
 identifier \fIoid\fR. The length is defined as the number of
 subidentifiers. The \fIoid\fR argument can be an object identifier or
 a node name in one of the formats discussed above.
 
 .TP
-.B Tnm::mib load \fIfile\fR
-The \fBTnm::mib load\fR command loads the MIB definitions contained
+.B tnm::mib load \fIfile\fR
+The \fBtnm::mib load\fR command loads the MIB definitions contained
 in \fIfile\fR. The built-in parser reads the \fIfile\fR and creates
 internal data structures in main memory. Parsing errors are written to
 stderr. Not all MIB information is actually kept in memory due to the
@@ -254,8 +254,8 @@ size of some MIB definitions. Instead, some pointers into the
 this man page will not work as expected if the \fIfile\fR is removed
 after the MIB definitions have been loaded.
 
-The \fBTnm::mib load\fR command first tries to locate the \fIfile\fR
-in the current directory. The \fBTnm::mib load\fR command
+The \fBtnm::mib load\fR command first tries to locate the \fIfile\fR
+in the current directory. The \fBtnm::mib load\fR command
 automatically tries to locate the file in the $tnm(library)/site and
 the $tnm(library)/mibs directory if the \fIfile\fR does not exist in
 the current directory.  A condensed format of the MIB definition is
@@ -265,7 +265,7 @@ for the platform specific sub-directory. Missing write permissions
 will be silently ignored, which might result is increased MIB loading
 times.
 
-The Tnm extension uses two global Tcl variables to control which set
+The tnm extension uses two global Tcl variables to control which set
 of MIB files is loaded automatically. The Tcl variable $tnm(mibs:core)
 contains the names of the MIB files that make up the SNMPv1 and SNMPv2
 core definitions. The $tnm(mibs) contains the list of MIB file names
@@ -273,15 +273,15 @@ that are useful on your site. The default value of $tnm(mibs) is the
 set of all IETF MIBs published as RFCs. You can customize this set of
 MIBs in the $tnm(library)/site/init.tcl script. It is possible to
 bypass the auto-loading mechanism of the MIBs listed in $tnm(mibs) if
-the first \fBTnm::mib\fR command is a \fBTnm::mib load\fR command.
-Note that the \fBsnmp\fR command also invokes \fBTnm::mib\fR commands
+the first \fBtnm::mib\fR command is a \fBtnm::mib load\fR command.
+Note that the \fBsnmp\fR command also invokes \fBtnm::mib\fR commands
 internally. It is therefore a good idea to load MIB definitions at the
 beginning of a script. Note, the core MIBs defined in $tnm(mibs:core)
 are always loaded if this variable exists.
 
 .TP
-.B Tnm::mib macro \fInodeOrType\fR
-The \fBTnm::mib macro\fR command returns the name of the ASN.1 macro
+.B tnm::mib macro \fInodeOrType\fR
+The \fBtnm::mib macro\fR command returns the name of the ASN.1 macro
 used to define the MIB node or MIB type. The \fInodeOrType\fR argument
 may be a node name, a type name or an object identifier in one of the
 formats discussed above. An empty string is returned if the node or
@@ -292,36 +292,36 @@ therefore "", "OBJECT-TYPE", "OBJECT-IDENTITY", "MODULE-IDENTITY",
 "TEXTUAL-CONVENTION", TYPE-ASSIGNEMENT", or "VALUE-ASSIGNEMENT".
 
 .TP
-.B Tnm::mib member \fInode\fR
-The \fBTnm::mib member\fR command returns the list of members in an
+.B tnm::mib member \fInode\fR
+The \fBtnm::mib member\fR command returns the list of members in an
 object group or a notification group identified by \fInode\fR.
 
 .TP
-.B Tnm::mib module \fInodeOrType\fR 
-The \fBTnm::mib module\fR command returns the name of the module
+.B tnm::mib module \fInodeOrType\fR 
+The \fBtnm::mib module\fR command returns the name of the module
 which contains the definition of the MIB node or type. The
 \fInodeOrType\fR argument may be a node name, a type name or an object
 identifier in one of the formats discussed above.
 
 .TP
-.B Tnm::mib name \fInode\fR
-The \fBTnm::mib name\fR command returns the fully qualified name
+.B tnm::mib name \fInode\fR
+The \fBtnm::mib name\fR command returns the fully qualified name
 associated with a node in the OID tree. The \fInode\fR argument may be
 a node name or an object identifier in one of the formats discussed
 above.
 
 .TP
-.B Tnm::mib oid \fInode\fR
-The \fBTnm::mib oid\fR command is the counterpart to the
-\fBTnm::mib name\fR command and returns the object identifier of the
+.B tnm::mib oid \fInode\fR
+The \fBtnm::mib oid\fR command is the counterpart to the
+\fBtnm::mib name\fR command and returns the object identifier of the
 MIB node identified by \fInode\fR. The \fInode\fR argument may be a
 node name in one of the formats discussed above. The object identifier
 of the first matching MIB node will be returned if \fInode\fR is not
 unique within the set of currently loaded MIB definitions.
 
 .TP
-.B Tnm::mib pack \fIoid value ?value ...?\fR
-The \fBTnm::mib pack\fR command allows to construct object identifier
+.B tnm::mib pack \fIoid value ?value ...?\fR
+The \fBtnm::mib pack\fR command allows to construct object identifier
 values for elements in conceptual tables. The \fIoid\fR argument
 identifies a conceptual row. The values are used to build a instance
 identifier according to the object type definitions of the index
@@ -329,8 +329,8 @@ components. The command returns the complete object identifier needed
 to access the element identified by the values.
 
 .TP
-.B Tnm::mib parent \fInode\fR 
-The \fBTnm::mib parent\fR command returns the parent node of a MIB
+.B tnm::mib parent \fInode\fR 
+The \fBtnm::mib parent\fR command returns the parent node of a MIB
 node.  The \fInode\fR argument may be a node name in one of the
 formats discussed above. The format of the result depends on the
 format of \fInode\fR: The result is an object identifier value if
@@ -338,42 +338,42 @@ format of \fInode\fR: The result is an object identifier value if
 qualified MIB node names if \fInode\fR is a MIB node name.
 
 .TP
-.B Tnm::mib range \fItype\fR
-The \fBTnm::mib range\fR command returns range restrictions associated
+.B tnm::mib range \fItype\fR
+The \fBtnm::mib range\fR command returns range restrictions associated
 with \fItype\fR or an empty string if there are no range restrictions
 defined for \fItype\fR. The \fItype\fR argument may be a type name in
 one of the formats discussed above. The result is a flat list of
 upper and lower range bounds pairs.
 
 .TP
-.B Tnm::mib scan \fInodeOrType\fR \fIvalue\fR
-The \fBTnm::mib scan\fR command implements the inverse operation of
-the \fBTnm::mib format\fR command described above. It converts a
+.B tnm::mib scan \fInodeOrType\fR \fIvalue\fR
+The \fBtnm::mib scan\fR command implements the inverse operation of
+the \fBtnm::mib format\fR command described above. It converts a
 rendered \fIvalue\fR into the underlying base type representation. The
-\fBTnm::mib scan\fR command returns the \fIvalue\fR unaltered if no
+\fBtnm::mib scan\fR command returns the \fIvalue\fR unaltered if no
 conversions apply. The conversion rules depend on the \fInodeOrType\fR
 argument.  If \fInodeOrType\fR refers to a MIB node, the type
 associated with that MIB node will be used. The \fInodeOrType\fR
 argument may be a node name, a type name or an object identifier in
 one of the formats discussed above.
 
-The \fBTnm::mib scan\fR is useful in situations where you want to
+The \fBtnm::mib scan\fR is useful in situations where you want to
 operate on the primitive format rather than the rendered format. This
 allows in some cases to implement calculations based on the base type
 in a straight forward way, which would be difficult to do on the
 rendered value.
 
 .TP
-.B Tnm::mib size \fItype\fR
-The \fBTnm::mib size\fR command returns size restrictions associated
+.B tnm::mib size \fItype\fR
+The \fBtnm::mib size\fR command returns size restrictions associated
 with \fItype\fR or an empty string if there are no size restrictions
 defined for \fItype\fR. The \fItype\fR argument may be a type name in
 one of the formats discussed above. The result is a flat list of
 upper and lower size bounds pairs.
 
 .TP
-.B Tnm::mib split \fInode\fR
-The \fBTnm::mib split\fR command returns the object type and the
+.B tnm::mib split \fInode\fR
+The \fBtnm::mib split\fR command returns the object type and the
 instance part of an object identifier or MIB node name. The \fInode\fR
 argument may be a node name in one of the formats discussed above. The
 return value is a Tcl list where the first element is the object
@@ -382,8 +382,8 @@ instance identifier. No checks are made to ensure that the instance
 identifier is valid.
 
 .TP
-.B Tnm::mib status \fInodeOrType\fR
-The \fBTnm::mib status\fR command returns the status of the
+.B tnm::mib status \fInodeOrType\fR
+The \fBtnm::mib status\fR command returns the status of the
 definition of a MIB node or a MIB type. An empty string is returned if
 the node identified by \fInodeOrType\fR has no associated status
 definition.  The \fInodeOrType\fR argument may be a node name, a type
@@ -392,15 +392,15 @@ above. Possible return values are "current", "deprecated", and
 "obsolete".
 
 .TP
-.B Tnm::mib subtree \fIoid1 oid2\fR
-The \fBTnm::mib subtree\fR command compares two object identifier
+.B tnm::mib subtree \fIoid1 oid2\fR
+The \fBtnm::mib subtree\fR command compares two object identifier
 given as \fIoid1\fR and \fIoid2\fR and returns 1 if \fIoid2\fR is
 contained in the subtree defined by \fIoid1\fR. Otherwise, the
 value 0 will be returned.
 
 .TP
-.B Tnm::mib syntax \fInodeOrType\fR
-The \fBTnm::mib syntax\fR command returns the ASN.1 base syntax
+.B tnm::mib syntax \fInodeOrType\fR
+The \fBtnm::mib syntax\fR command returns the ASN.1 base syntax
 associated with a MIB node or a MIB type. An empty string is returned
 if the node identified by \fInodeOrType\fR has no associated ASN.1
 syntax. The \fInodeOrType\fR argument may be a node name, a type name
@@ -408,32 +408,32 @@ or an object identifier in one of the formats discussed above. The
 syntax name returned is the syntax name used in the ASN.1 macro.
 
 .TP
-.B Tnm::mib type \fInode\fR
-The \fBTnm::mib type\fR command returns the MIB data type associated
+.B tnm::mib type \fInode\fR
+The \fBtnm::mib type\fR command returns the MIB data type associated
 with a MIB node. An empty string is returned if the node identified by
 \fInode\fR has no associated data type. The \fInode\fR argument may be
 a node name or an object identifier in one of the formats discussed
 above.
 
 .TP
-.B Tnm::mib unpack \fIoid\fR
-The \fBTnm::mib unpack\fR command extracts the instance identification
+.B tnm::mib unpack \fIoid\fR
+The \fBtnm::mib unpack\fR command extracts the instance identification
 information from the object identifier value \fIoid\fR which
 indentifies an element in a conceptual table. This command allows to
 access values for auxiliary index objects that are defined to be
 not-accessible. The command returns the list of values that identify
 the instance in the same order as the result of the corresponding
-Tnm::mib index" command. The values are rendered according to the
+tnm::mib index" command. The values are rendered according to the
 object type definition for the index components.
 
 .TP
-.B Tnm::mib variables \fInode\fR
-The \fBTnm::mib variables\fR command returns the MIB variables that
+.B tnm::mib variables \fInode\fR
+The \fBtnm::mib variables\fR command returns the MIB variables that
 must be present in a notification identified by \fInode\fR.
 
 .TP
-.B Tnm::mib walk \fIvarName node body\fR
-The \fBTnm::mib walk\fR command evaluates the Tcl script \fIbody\fR
+.B tnm::mib walk \fIvarName node body\fR
+The \fBtnm::mib walk\fR command evaluates the Tcl script \fIbody\fR
 for each node in the OID subtree rooted at \fInode\fR. The
 \fInode\fR argument may be a node name or an object identifier in one
 of the formats discussed above.  The variable varName will hold the
@@ -445,7 +445,7 @@ an object identifier value. The value of \fIvarName\fR is a fully
 qualified MIB node names if \fInode\fR is a MIB node name.
 
 .SH SEE ALSO
-scotty(1), Tnm(n), Tcl(n)
+scotty(1), tnm(n), Tcl(n)
 
 .SH AUTHORS
 Juergen Schoenwaelder <schoenw@ibr.cs.tu-bs.de>

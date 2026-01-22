@@ -1,4 +1,4 @@
-# TnmMib.tcl --
+# tnmMib.tcl --
 #
 #	This file defines a package of MIB utility procedures used
 #	to build applications like MIB browsers.
@@ -8,16 +8,16 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# @(#) $Id: TnmMib.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
+# @(#) $Id: tnmMib.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 
-package require Tnm 3.1
-package provide TnmMib 3.1.3
+package require tnm 3.1
+package provide tnmMib 3.1.3
 
-namespace eval TnmMib {
-    namespace export DescribeType DescribeNode GetVendor
+namespace eval tnmMib {
+    namespace export describeType describeNode getVendor
 }
 
-# TnmMib::DescribeNode --
+# tnmMib::describeNode --
 #
 #	This procedure returns a human readable string which
 #	contains information about a MIB node.
@@ -28,28 +28,28 @@ namespace eval TnmMib {
 #       A string describing the MIB node. An error is generated
 #	if the node parameter does not resolve to a MIB node.
 
-proc TnmMib::DescribeNode {node} {
+proc tnmMib::describeNode {node} {
     append txt [format "%-8s%-22s%-12s%s\n" \
-	    Module: [Tnm::mib module $node] \
-	    Label: [Tnm::mib label $node]]
+	    Module: [tnm::mib module $node] \
+	    Label: [tnm::mib label $node]]
     append txt [format "%-8s%-22s%-12s%s\n" \
-	    Macro: [Tnm::mib macro $node] \
-	    Identifier: [Tnm::mib oid $node]]
+	    Macro: [tnm::mib macro $node] \
+	    Identifier: [tnm::mib oid $node]]
     append txt [format "%-8s%-22s%-12s%s\n" \
-	    Access: [Tnm::mib access $node] \
-	    Type: [Tnm::mib type $node]]
+	    Access: [tnm::mib access $node] \
+	    Type: [tnm::mib type $node]]
     append txt [format "%-8s%-22s%-12s%s\n" \
-	    Status: [Tnm::mib status $node] \
-	    File: [file tail [Tnm::mib file $node]]]
+	    Status: [tnm::mib status $node] \
+	    File: [file tail [tnm::mib file $node]]]
 
-    if {[Tnm::mib description $node descr]} {
+    if {[tnm::mib description $node descr]} {
 	append txt "\n$descr\n"
     }
 
     return $txt
 }
 
-# TnmMib::DescribeType --
+# tnmMib::describeType --
 #
 #	This procedure returns a human readable string which
 #	contains information about a MIB type.
@@ -60,24 +60,24 @@ proc TnmMib::DescribeNode {node} {
 #       A string describing the MIB type. An error is generated
 #	if the type parameter does not resolve to a MIB type.
 
-proc TnmMib::DescribeType {type} {
+proc tnmMib::describeType {type} {
     append txt [format "%-8s%-22s%-12s%s\n" \
-	    Module: [Tnm::mib module $type] \
-	    Label: [Tnm::mib label $type]]
+	    Module: [tnm::mib module $type] \
+	    Label: [tnm::mib label $type]]
     append txt [format "%-8s%-22s%-12s%s\n" \
-            Macro: [Tnm::mib macro $type] \
-            Base: [Tnm::mib syntax $type]]
+            Macro: [tnm::mib macro $type] \
+            Base: [tnm::mib syntax $type]]
     append txt [format "%-8s%-22s%-12s%s\n" \
-            Status: [Tnm::mib status $type] \
-            File: [file tail [Tnm::mib file $type]]]
+            Status: [tnm::mib status $type] \
+            File: [file tail [tnm::mib file $type]]]
 
-    if {[Tnm::mib displayhint $type displayhint]} {
+    if {[tnm::mib displayhint $type displayhint]} {
 	append txt [format "%-8s%s\n" Format: $displayhint]
     }
 
-    if {[Tnm::mib enums $type enums]} {
+    if {[tnm::mib enums $type enums]} {
 	set prefix "Enums: "
-	if {[Tnm::mib syntax $type] == "OCTET STRING"} {
+	if {[tnm::mib syntax $type] == "OCTET STRING"} {
 	    set prefix "Bits:  "
 	}
 	set line $prefix
@@ -97,7 +97,7 @@ proc TnmMib::DescribeType {type} {
 	}
     }
 
-    if {[Tnm::mib description $type descr]} {
+    if {[tnm::mib description $type descr]} {
         append txt "\n$descr\n"
     }
 
@@ -105,7 +105,7 @@ proc TnmMib::DescribeType {type} {
 }
 
 
-# TnmMib::GetVendor --
+# tnmMib::getVendor --
 #
 #	This procedure returns the vendor name for a vendor
 #	specific object identifier. The list of known vendor
@@ -117,7 +117,7 @@ proc TnmMib::DescribeType {type} {
 # Results:
 #       A string with the name of the vendor or an empty result.
 
-proc TnmMib::GetVendor {oid} {
+proc tnmMib::getVendor {oid} {
 
     array set vendors {
 	9	{CISCO}
@@ -134,7 +134,7 @@ proc TnmMib::GetVendor {oid} {
     }
 
     foreach n [array names vendors] {
-	if [Tnm::mib subtree 1.3.6.1.4.1.$n $oid] {
+	if [tnm::mib subtree 1.3.6.1.4.1.$n $oid] {
 	    return $vendors($n)
 	}
     }

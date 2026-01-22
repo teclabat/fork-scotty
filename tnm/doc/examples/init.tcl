@@ -1,4 +1,4 @@
-# Site specific Tnm configuration file.
+# Site specific tnm configuration file.
 
 # lappend tnm(mibs) CISCO-SMI.my
 # lappend tnm(mibs) CISCO-TC.my

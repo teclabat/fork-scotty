@@ -22,9 +22,9 @@ testConstraint runWithEvilCatchCrash 0
 
 configure -verbose {body error skip}
 
-package require Tnm 3.0
+package require tnm 3.0
 catch {
-    namespace import Tnm::sunrpc
+    namespace import tnm::sunrpc
 }
 
 #set target localhost

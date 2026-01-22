@@ -2,7 +2,7 @@
 # the next line restarts using tclsh -*- tcl -*- \
 exec tclsh "$0" "$@"
 
-package require Tnm 3.0
+package require tnm 3.0
 
 ##
 ## This script checks if a list of process is still running.

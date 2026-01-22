@@ -347,17 +347,17 @@ SNMP_OBJS =	tnmAsn1.o \
 		tnmMibTcl.o \
 		tnmSmiTcl.o
 
-TNM_LIBRARY =	$(TNM_LIBRARY_DIR)/TnmDialog.tcl \
-		$(TNM_LIBRARY_DIR)/TnmTerm.tcl \
-		$(TNM_LIBRARY_DIR)/TnmMap.tcl \
-		$(TNM_LIBRARY_DIR)/TnmInet.tcl \
-		$(TNM_LIBRARY_DIR)/TnmMib.tcl \
-		$(TNM_LIBRARY_DIR)/TnmSmxProfiles.tcl \
-		$(TNM_LIBRARY_DIR)/TnmSnmp.tcl \
-		$(TNM_LIBRARY_DIR)/TnmScriptMib.tcl \
-		$(TNM_LIBRARY_DIR)/TnmIetf.tcl \
-		$(TNM_LIBRARY_DIR)/TnmEther.tcl \
-		$(TNM_LIBRARY_DIR)/TnmMonitor.tcl \
+TNM_LIBRARY =	$(TNM_LIBRARY_DIR)/tnmDialog.tcl \
+		$(TNM_LIBRARY_DIR)/tnmTerm.tcl \
+		$(TNM_LIBRARY_DIR)/tnmMap.tcl \
+		$(TNM_LIBRARY_DIR)/tnmInet.tcl \
+		$(TNM_LIBRARY_DIR)/tnmMib.tcl \
+		$(TNM_LIBRARY_DIR)/tnmSmxProfiles.tcl \
+		$(TNM_LIBRARY_DIR)/tnmSnmp.tcl \
+		$(TNM_LIBRARY_DIR)/tnmScriptMib.tcl \
+		$(TNM_LIBRARY_DIR)/tnmIetf.tcl \
+		$(TNM_LIBRARY_DIR)/tnmEther.tcl \
+		$(TNM_LIBRARY_DIR)/tnmMonitor.tcl \
 		$(TNM_LIBRARY_DIR)/init.tcl
 
 TNM_AGENTS =	$(TNM_AGENT_DIR)/snmpd-tnm.tcl \
@@ -389,16 +389,16 @@ TNM_DOCS_1 =	scotty.1
 TNM_DOCS_8 =	nmicmpd.8 \
 		nmtrapd.8
 TNM_DOCS_N =	Tnm.n \
-		TnmDialog.n \
-		TnmEther.n \
-		TnmIetf.n \
-		TnmInet.n \
-		TnmMap.n \
-		TnmMib.n \
-		TnmSmxProfiles.n \
-		TnmSnmp.n \
-		TnmScriptMib.n \
-		TnmTerm.n \
+		tnmDialog.n \
+		tnmEther.n \
+		tnmIetf.n \
+		tnmInet.n \
+		tnmMap.n \
+		tnmMib.n \
+		tnmSmxProfiles.n \
+		tnmSnmp.n \
+		tnmScriptMib.n \
+		tnmTerm.n \
 		dns.n \
 		icmp.n \
 		job.n \
@@ -610,7 +610,7 @@ tnm-install-mibs:
 	export TCLLIBPATH; \
 	TNM_LIBRARY="$(TNM_INSTALL_DIR)"; \
 	export TNM_LIBRARY; \
-	echo 'foreach f $$tnm(mibs) {puts "Parsing $$f"; Tnm::mib load $$f}; exit' | \
+	echo 'foreach f $$tnm(mibs) {puts "Parsing $$f"; tnm::mib load $$f}; exit' | \
 		./scotty
 
 tnm-install-library:

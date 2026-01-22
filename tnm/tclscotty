@@ -25,7 +25,7 @@ if {[set tty [expr ![catch {fconfigure stdin -mode}]]]
     set tcl_interactive 1
 }
 
-if {[catch {package require Tnm} msg]} {
+if {[catch {package require tnm} msg]} {
     if {[string match "*can't find package*" $msg]} {
 	append msg "
 

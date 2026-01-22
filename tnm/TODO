@@ -26,9 +26,9 @@ reason why this problem shows up on MacOSX.  We have to disable most
 tests with real lookups on this platform.
 
 
-### Tnm::icmp
+### tnm::icmp
 
-There seems to be a problem with `nmicmpd`/Tnm::icmp for unreachable
+There seems to be a problem with `nmicmpd`/tnm::icmp for unreachable
 IP's.  While on the other (two) platforms the command times out
 gracefully, on MacOSX an error is thrown:
 
@@ -36,7 +36,7 @@ gracefully, on MacOSX an error is thrown:
 
 Disabled with knownBugMacOSX in 8 occurrencies in tests/icmp.test
 
-### Tnm::mib
+### tnm::mib
 
 The `mib format BinaryValue` command fails strangely and is disabled
 with knownBugMacOSX.
@@ -57,7 +57,7 @@ mib format BinaryValue -12345
 -11000000111001
 `
 
-### Tnm::snmp
+### tnm::snmp
 
 The `snmp expand` command fails on *32 types and on TimeTicks type for
 some values.  Respective testcases are disabled with knownBugMacOSX.
@@ -92,7 +92,7 @@ list [catch {snmp expand {{1.3 TimeTicks 4294967296}}} msg] $msg
 1 {unsigned value too large to represent}
 `
 
-### Tnm::udp
+### tnm::udp
 
 Two of the three `udp receive` tests fail: udp-7.1, udp-7.3, with:
 
@@ -122,7 +122,7 @@ found by man(1).
 FreeBSD 10.3
 ------------
 
-### Tnm::netdb
+### tnm::netdb
 
 Tests netdb-6.6 and netb-6.7 consume all available memory and then
 scotty gets killed. (netdb ip).  Note: tested on a 64 bit
@@ -134,7 +134,7 @@ The same behaviour is found also on the original scotty (flightaware).
 FreeBSD 11
 ----------
 
-### Tnm::udp
+### tnm::udp
 
 Tests:
 - udp-11.2.2 udp configure/send: send to connected
@@ -160,7 +160,7 @@ is not on path, `chown`, `chmod` is inside `/sbin/.
 
 - manuals are not found after install
 
-### Tnm::dns
+### tnm::dns
 
 We get errors:
 
@@ -169,14 +169,14 @@ We get errors:
 when running, e.g. tkined or in the tnm dns test suite.  The test
 dumps core then.
 
-### Tnm::netdb
+### tnm::netdb
 
 Same problem as in FreeBSD and MacOX
 
 Slackware Linux
 ---------------
 
-### Tnm::netdb
+### tnm::netdb
 
 Slackware 14.2.: x86_64: same problem as with FreeBSD amd64
 
@@ -224,7 +224,7 @@ Generic
 - We could clean up the Makefile, now that everything builds ok.
 
 
-Tnm::dns
+tnm::dns
 --------
 
 - (obsolete) dns hinfo command returns errorCode but the error message
@@ -249,7 +249,7 @@ Tnm::dns
   `tinydns` or `dnsmasq` setup.
 
 
-Tnm::icmp
+tnm::icmp
 ---------
 
 - test/icmp.test seems to use 182.168.173.173 as invalid (never
@@ -261,13 +261,13 @@ Tnm::icmp
   We should use invalid IP's from RFC5737: 192.0.2.0 instead.
  
 
-Tnm::mib
+tnm::mib
 --------
 
 - At the end of tnmOidObj.c there is a #if/else/endif where
   inconditionally the Oid strings are glued together with '::' instead
   of '!'.  Thus, the returned strings do not conform to the standard
-  notation and cannot be used as direct input to Tnm::mib function.
+  notation and cannot be used as direct input to tnm::mib function.
 
   Ok: not so fast.  The following tests show, that at least some input
   on `mib macro` is allowed to use '::'. 
@@ -306,7 +306,7 @@ Tnm::mib
   'SNMPv2TC!MacAddress' with: `SYNTAX       OCTET STRING (SIZE (6))`.
 
 
-Tnm::netdb
+tnm::netdb
 ----------
 
 - services: check netdb-3.8 fails when ports are doubly assigned -
@@ -344,14 +344,14 @@ Tnm::netdb
   hopopt                0 HOPOPT
   `
 
-Tnm::ntp
+tnm::ntp
 --------
 
 Seems not to work at all.  I get my time synchronized on my network
-via pool.ntp.org, but Tnm::ntp does not reach any of the hosts.
+via pool.ntp.org, but tnm::ntp does not reach any of the hosts.
 
 
-Tnm::smx
+tnm::smx
 --------
 
 Doesn't work at all: `smx peer gone away`.
@@ -359,7 +359,7 @@ Doesn't work at all: `smx peer gone away`.
 Test suite disabled smx.test -> l.smx.test
 
 
-Tnm::snmp
+tnm::snmp
 ---------
 
 - snmp-2.8 snmp alias FAIlLED
@@ -408,7 +408,7 @@ Should this be a MIB related problem?
 - snmp.test file has an annex section of tests.  Merge/cleanup?
 
 
-Tnm::sunrpc
+tnm::sunrpc
 -----------
 
 All subcommands of sunrpc segfault when called
@@ -443,14 +443,14 @@ Fix
 Functionality
 -------------
 
-### Tnm::dns
+### tnm::dns
 
 - Add at least the following lookups: srv.
 - Add all currently in use lookups.
 - Add possibility to craft a lookup type.
 - Add IPv6 lookups.
 
-### New Tnm::interfaces
+### New tnm::interfaces
 
 See this example for getting interface information on Linux/BSD/MacOSX
 

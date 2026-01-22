@@ -18,9 +18,9 @@ if {[lsearch [namespace children] ::tcltest] == -1} {
     namespace import ::tcltest::*
 }
 
-package require Tnm 3.0
+package require tnm 3.0
 catch {
-    namespace import Tnm::mib
+    namespace import tnm::mib
 }
 
 set verbosity [configure -verbose]
@@ -284,7 +284,7 @@ test mib-9.2 {mib parser} knownBug {
 	set macro [mib macro $x]
 	if {$macro == "OBJECT-TYPE"} {
 	    set sntx [mib syntax $x]
-	    if {[lsearch [Tnm::snmp info types] $sntx] < 0} {
+	    if {[lsearch [tnm::snmp info types] $sntx] < 0} {
 		puts $::tcltest::errorChannel "Warning: [mib name $x] has unknown SNMP syntax $sntx."
 	    }
 	}

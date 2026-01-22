@@ -18,9 +18,9 @@ if {[lsearch [namespace children] ::tcltest] == -1} {
     namespace import ::tcltest::*
 }
 
-package require Tnm 3.0
+package require tnm 3.0
 catch {
-    namespace import Tnm::ntp
+    namespace import tnm::ntp
 }
 
 set target $tnm(host)

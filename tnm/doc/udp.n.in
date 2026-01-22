@@ -7,28 +7,28 @@
 '\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 '\" 
 .so man.macros
-.TH Tnm::udp n "February 2017" Tnm "Tnm Tcl Extension %TNM_VERSION%"
+.TH tnm::udp n "February 2017" tnm "tnm Tcl Extension %TNM_VERSION%"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
-Tnm::udp \- Send and receive UDP datagrams.
+tnm::udp \- Send and receive UDP datagrams.
 .BE
 
 .SH DESCRIPTION
-The Tnm::udp command allows to send and receive datagrams using the
+The tnm::udp command allows to send and receive datagrams using the
 User Datagram Protocol (UDP) (RFC 768).
 
 .SH UDP COMMANDS
-The Tnm::udp command allows to create new udp endpoints and to search for
+The tnm::udp command allows to create new udp endpoints and to search for
 existing endpoints that match certain criterias.
 .TP
-.B Tnm::udp create \fR[\fIoption value\fR ...]
-The \fBTnm::udp create\fR command creates a new udp endpoint. The
+.B tnm::udp create \fR[\fIoption value\fR ...]
+The \fBtnm::udp create\fR command creates a new udp endpoint. The
 \fIoptions\fR can be used to configure the new endpoint. See the
 description of supported options below.
 .TP
-.B Tnm::udp find \fR[\fB\-tags \fIpatternList\fR]
-The \fBTnm::udp find\fR command retrieves a list of udp endpoints that
+.B tnm::udp find \fR[\fB\-tags \fIpatternList\fR]
+The \fBtnm::udp find\fR command retrieves a list of udp endpoints that
 match the search options. If no options are present, the list of all
 existing udp endpoints will be returned. The \fB-tags\fR option
 matches the tag associated with an udp endpoint against the pattern
@@ -90,7 +90,7 @@ remote host associated with the endpoint.
 .VS
 .B udp# join group port ?interface?
 The \fBudp# join\fR command allows to join a multicast group.  It is
-only available if Tnm has been compiled with multicast support.
+only available if tnm has been compiled with multicast support.
 .VE
 .TP
 .B udp# receive
@@ -157,7 +157,7 @@ together. Tags are also convenient to relate udp endpoints to network
 map objects and/or management functions.
 
 .SH SEE ALSO
-scotty(1), Tnm(n), Tcl(n)
+scotty(1), tnm(n), Tcl(n)
 
 .SH AUTHORS
 Juergen\ Schoenwaelder\ <schoenw@ibr.cs.tu-bs.de>

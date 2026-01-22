@@ -18,9 +18,9 @@ if {[lsearch [namespace children] ::tcltest] == -1} {
     namespace import ::tcltest::*
 }
 
-package require Tnm 3.0
+package require tnm 3.0
 catch {
-    namespace import Tnm::dns
+    namespace import tnm::dns
 }
 configure -debug 0
 set verbosity [configure -verbose] 
@@ -28,7 +28,7 @@ configure -verbose {body error skip}
 
 
 # We use iana.org for tests.  If this domain should happen to go away
-# there would be no need for Tnm::dns anyway. 
+# there would be no need for tnm::dns anyway. 
 set testDomain iana.org
 set testHostName ianawww.vip.icann.org
 set testCname www.iana.org

@@ -4,8 +4,8 @@
 # $Id: pkgIndex.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 
 foreach pkg {
-    TnmDialog TnmTerm TnmInet TnmMap TnmIetf TnmEther TnmMonitor
-    TnmSnmp TnmMib TnmScriptMib TnmSmxProfiles
+    tnmDialog tnmTerm tnmInet tnmMap tnmIetf tnmEther tnmMonitor
+    tnmSnmp tnmMib tnmScriptMib tnmSmxProfiles
 } {
     package ifneeded $pkg 3.1.3 [list source [file join $dir $pkg.tcl]]
 }

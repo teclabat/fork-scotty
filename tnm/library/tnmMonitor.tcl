@@ -1,8 +1,8 @@
-# TnmMonitor.tcl --
+# tnmMonitor.tcl --
 #
 #	This file contains the implementation of some generic monitoring
 #	procedures which usually run in the background and create events
-#	on Tnm network maps. This is work in progress and the APIs might
+#	on tnm network maps. This is work in progress and the APIs might
 #	change in future versions.
 #
 # Copyright (c) 1996	  Technical University of Braunschweig.
@@ -13,21 +13,21 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# @(#) $Id: TnmMonitor.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
+# @(#) $Id: tnmMonitor.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 
-package require Tnm 3.1
-package require TnmMap 3.1
-package provide TnmMonitor 3.1.3
+package require tnm 3.1
+package require tnmMap 3.1
+package provide tnmMonitor 3.1.3
 
 #########################################################################
 
-proc TnmGetStatusProc {job status vbl} {
-    set event Tnm_MonitorStatus:Value
-    set error Tnm_MonitorStatus:Error
+proc tnmGetStatusProc {job status vbl} {
+    set event tnm_monitorStatus:Value
+    set error tnm_monitorStatus:Error
     array set cx [$job attribute status]
     switch $status {
 	noError {
-	    set value [Tnm::snmp value $vbl 0]
+	    set value [tnm::snmp value $vbl 0]
 	    if {$value != $cx(value)} {
 		$cx(node) raise $event [list $cx(oid) $value]
 	    }
@@ -43,28 +43,28 @@ proc TnmGetStatusProc {job status vbl} {
     }
 }
 
-proc TnmGetStatusCmd {} {
-    set job [Tnm::job current]
+proc tnmGetStatusCmd {} {
+    set job [tnm::job current]
     array set cx [$job attribute status]
     if {[info commands $cx(node)] == ""} { $job destroy }
     catch {
 	$cx(session) get $cx(oid) \
-		[subst { TnmGetStatusProc "$job" "%E" "%V" } ]
+		[subst { tnmGetStatusProc "$job" "%E" "%V" } ]
     }
 }
 
-proc Tnm_MonitorStatus {node tree seconds} {
-    set s [TnmMap::GetSnmpSession $node]
+proc tnm_monitorStatus {node tree seconds} {
+    set s [tnmMap::getSnmpSession $node]
     set result ""
     set ms [expr $seconds * 1000]
     foreach var $tree {
 	catch {
 	    $s walk vbl $var {
 		set cx(node)     $node
-		set cx(session)  [eval Tnm::snmp generator [$s configure]]
-		set cx(oid)      [Tnm::snmp oid $vbl 0]
-		set cx(value)    [Tnm::snmp value $vbl 0]
-		set j [Tnm::job create -command TnmGetStatusCmd -interval $ms]
+		set cx(session)  [eval tnm::snmp generator [$s configure]]
+		set cx(oid)      [tnm::snmp oid $vbl 0]
+		set cx(value)    [tnm::snmp value $vbl 0]
+		set j [tnm::job create -command tnmGetStatusCmd -interval $ms]
 		$j configure -exit "$cx(session) destroy"
 		$j attribute status [array get cx]
 		lappend result $j
@@ -77,13 +77,13 @@ proc Tnm_MonitorStatus {node tree seconds} {
 
 #########################################################################
 
-proc TnmGetValueProc {job status vbl} {
-    set event Tnm_MonitorValue:Value
-    set error Tnm_MonitorValue:Error
+proc tnmGetValueProc {job status vbl} {
+    set event tnm_monitorValue:Value
+    set error tnm_monitorValue:Error
     array set cx [$job attribute status]
     switch $status {
 	noError {
-	    set value [Tnm::snmp value $vbl 0]
+	    set value [tnm::snmp value $vbl 0]
 	    $cx(node) raise $event [list $cx(oid) $value]
 	}
 	noSuchName {
@@ -95,27 +95,27 @@ proc TnmGetValueProc {job status vbl} {
     }
 }
 
-proc TnmGetValueCmd {} {
-    set job [Tnm::job current]
+proc tnmGetValueCmd {} {
+    set job [tnm::job current]
     array set cx [$job attribute status]
     if {[info commands $cx(node)] == ""} { $job destroy }
     catch {
 	$cx(session) get $cx(oid) \
-		[subst { TnmGetValueProc "$job" "%E" "%V" } ]
+		[subst { tnmGetValueProc "$job" "%E" "%V" } ]
     }
 }
 
-proc Tnm_MonitorValue {node tree seconds} {
-    set s [TnmMap::GetSnmpSession $node]
+proc tnm_monitorValue {node tree seconds} {
+    set s [tnmMap::getSnmpSession $node]
     set result ""
     set ms [expr $seconds * 1000]
     foreach var $tree {
 	catch {
 	    $s walk vbl $var {
 		set cx(node)     $node
-		set cx(session)  [eval Tnm::snmp generator [$s configure]]
-		set cx(oid)	 [Tnm::snmp oid $vbl 0]
-		set j [Tnm::job create -command TnmGetValueCmd -interval $ms]
+		set cx(session)  [eval tnm::snmp generator [$s configure]]
+		set cx(oid)	 [tnm::snmp oid $vbl 0]
+		set j [tnm::job create -command tnmGetValueCmd -interval $ms]
 		$j configure -exit "$cx(session) destroy"
 		$j attribute status [array get cx]
 		lappend result $j
@@ -128,14 +128,14 @@ proc Tnm_MonitorValue {node tree seconds} {
 
 #########################################################################
 
-proc TnmGetUpTimeProc {job status vbl} {
-    set event Tnm_MonitorSysUpTime:Value
-    set error Tnm_MonitorSysUpTime:Error
-    set oid [Tnm::mib oid SNMPv2-MIB!sysUpTime.0]
+proc tnmGetUpTimeProc {job status vbl} {
+    set event tnm_monitorSysUpTime:Value
+    set error tnm_monitorSysUpTime:Error
+    set oid [tnm::mib oid SNMPv2-MIB!sysUpTime.0]
     switch $status {
 	noError {
 	    array set cx [$job attribute status]
-	    set uptime [Tnm::snmp value $vbl 0]
+	    set uptime [tnm::snmp value $vbl 0]
 	    $cx(node) raise $event [list $oid $uptime]
 	    if {$uptime < $cx(sysUpTime)} {
 		$cx(node) raise $error:Restart [list $oid $uptime]
@@ -149,25 +149,25 @@ proc TnmGetUpTimeProc {job status vbl} {
     }
 }
 
-proc TnmGetUpTimeCmd {} {
-    set oid [Tnm::mib oid SNMPv2-MIB!sysUpTime.0]
-    set job [Tnm::job current]
+proc tnmGetUpTimeCmd {} {
+    set oid [tnm::mib oid SNMPv2-MIB!sysUpTime.0]
+    set job [tnm::job current]
     array set cx [$job attribute status]
     if {[info commands $cx(node)] == ""} { $job destroy }
     catch {
 	$cx(session) get $oid \
-		[subst { TnmGetUpTimeProc "$job" "%E" "%V" } ]
+		[subst { tnmGetUpTimeProc "$job" "%E" "%V" } ]
     }
 }
 
-proc Tnm_MonitorSysUpTime {node seconds} {
-    set s [TnmMap::GetSnmpSession $node]
+proc tnm_monitorSysUpTime {node seconds} {
+    set s [tnmMap::getSnmpSession $node]
     set ms [expr $seconds * 1000]
-    set vbl [$s get [Tnm::mib oid SNMPv2-MIB!sysUpTime.0]]
+    set vbl [$s get [tnm::mib oid SNMPv2-MIB!sysUpTime.0]]
     set cx(node)         $node
-    set cx(session)      [eval Tnm::snmp generator [$s configure]]
-    set cx(sysUpTime)    [Tnm::snmp value $vbl 0]
-    set j [Tnm::job create -command TnmGetUpTimeCmd -interval $ms]
+    set cx(session)      [eval tnm::snmp generator [$s configure]]
+    set cx(sysUpTime)    [tnm::snmp value $vbl 0]
+    set j [tnm::job create -command tnmGetUpTimeCmd -interval $ms]
     $j configure -exit "$cx(session) destroy"
     $j attribute status [array get cx]
     $s destroy
@@ -176,13 +176,13 @@ proc Tnm_MonitorSysUpTime {node seconds} {
 
 #########################################################################
 
-proc TnmGetDot3StatsProc {job status vbl} {
-    set event Tnm_MonitorDot3Stats:Value
-    set error Tnm_MonitorDot3Stats:Error
+proc tnmGetDot3StatsProc {job status vbl} {
+    set event tnm_monitorDot3Stats:Value
+    set error tnm_monitorDot3Stats:Error
     switch $status {
 	noError {
 	    array set cx [$job attribute status]
-	    set uptime [Tnm::snmp value $vbl 0]
+	    set uptime [tnm::snmp value $vbl 0]
 
 	    if [info exists cx(sysUpTime)] {
 		if {$uptime < $cx(sysUpTime)} {
@@ -191,7 +191,7 @@ proc TnmGetDot3StatsProc {job status vbl} {
 		
 		set msg ""
 		foreach vb $vbl { 
-		    lappend msg [Tnm::mib label [lindex $vb 0]]
+		    lappend msg [tnm::mib label [lindex $vb 0]]
 		    lappend msg [lindex $vb 2]
 		}
 		$cx(node) raise $event $msg
@@ -206,8 +206,8 @@ proc TnmGetDot3StatsProc {job status vbl} {
     }
 }
 
-proc TnmGetDot3StatsCmd {} {
-    set job [Tnm::job current]
+proc tnmGetDot3StatsCmd {} {
+    set job [tnm::job current]
     array set cx [$job attribute status]
     if {[info commands $cx(node)] == ""} { $job destroy }
     set vbl [list \
@@ -225,19 +225,19 @@ proc TnmGetDot3StatsCmd {} {
     ]
     catch {
 	$cx(session) get $vbl \
-		[subst { TnmGetDot3StatsProc "$job" "%E" "%V" } ]
+		[subst { tnmGetDot3StatsProc "$job" "%E" "%V" } ]
     }
 }
 
-proc Tnm_MonitorDot3Stats {node seconds} {
-    set s [TnmMap::GetSnmpSession $node]
+proc tnm_monitorDot3Stats {node seconds} {
+    set s [tnmMap::getSnmpSession $node]
     set ms [expr $seconds * 1000]
     set cx(node) $node
     set jobs ""
     $s walk x dot3StatsIndex {
-	set cx(index) [Tnm::snmp value $x 0]
-	set cx(session) [eval Tnm::snmp generator [$s configure]]
-	set j [Tnm::job create -command TnmGetDot3StatsCmd -interval $ms]
+	set cx(index) [tnm::snmp value $x 0]
+	set cx(session) [eval tnm::snmp generator [$s configure]]
+	set j [tnm::job create -command tnmGetDot3StatsCmd -interval $ms]
 	$j configure -exit "$cx(session) destroy"
 	$j attribute status [array get cx]
 	lappend jobs $j
@@ -263,19 +263,19 @@ proc Tnm_MonitorDot3Stats {node seconds} {
 # See Simple Times, 1(5), November/December, 1992 for more details.
 #
 
-proc TnmGetIfLoadProc {job status vbl} {
+proc tnmGetIfLoadProc {job status vbl} {
 
-    set event Tnm_MonitorIfLoad
+    set event tnm_monitorIfLoad
 
     if {$status != "noError"} return
 
     array set cx [$job attribute status]
 
     set ifIndex	     $cx(ifIndex)
-    set sysUpTime    [Tnm::snmp value $vbl 0]
-    set ifOperStatus [Tnm::snmp value $vbl 1]
-    set ifInOctets   [Tnm::snmp value $vbl 2]
-    set ifOutOctets  [Tnm::snmp value $vbl 3]
+    set sysUpTime    [tnm::snmp value $vbl 0]
+    set ifOperStatus [tnm::snmp value $vbl 1]
+    set ifInOctets   [tnm::snmp value $vbl 2]
+    set ifOutOctets  [tnm::snmp value $vbl 3]
     
     # be careful with Tcl's broken arithmetic
     
@@ -317,13 +317,13 @@ proc TnmGetIfLoadProc {job status vbl} {
     $job attribute status [array get cx]
 }
 
-proc TnmGetIfLoad {} {
-    set job [Tnm::job current]
+proc tnmGetIfLoad {} {
+    set job [tnm::job current]
     array set cx [$job attribute status]
     if {[info commands $cx(node)] == ""} { $job destroy }
     set i $cx(ifIndex)
     set vbl "sysUpTime.0 ifOperStatus.$i ifInOctets.$i ifOutOctets.$i"
-    $cx(session) get $vbl [subst { TnmGetIfLoadProc "$job" "%E" "%V" } ]
+    $cx(session) get $vbl [subst { tnmGetIfLoadProc "$job" "%E" "%V" } ]
 }
 
 #
@@ -333,9 +333,9 @@ proc TnmGetIfLoad {} {
 # jobs.
 #
 
-proc Tnm_MonitorIfLoad {node seconds {iterations {}}} {
+proc tnm_monitorIfLoad {node seconds {iterations {}}} {
 
-    set s [TnmMap::GetSnmpSession $node]
+    set s [tnmMap::getSnmpSession $node]
     set ms [expr $seconds * 1000]
     set result ""
 
@@ -350,7 +350,7 @@ proc Tnm_MonitorIfLoad {node seconds {iterations {}}} {
     }
 
     $s walk vbl ifIndex {
-	set ifIndex [Tnm::snmp value $vbl 0]
+	set ifIndex [tnm::snmp value $vbl 0]
 
 	set vbl [$s get [list sysUpTime.0 \
                           ifInOctets.$ifIndex ifOutOctets.$ifIndex \
@@ -358,18 +358,18 @@ proc Tnm_MonitorIfLoad {node seconds {iterations {}}} {
 			  ifType.$ifIndex ifOperStatus.$ifIndex]]
 
 	set cx(node)         $node
-	set cx(session)      [eval Tnm::snmp generator [$s configure]]
+	set cx(session)      [eval tnm::snmp generator [$s configure]]
 	set cx(ifIndex)      $ifIndex
-	set cx(sysUpTime)    [Tnm::snmp value $vbl 0]
-	set cx(ifInOctets)   [Tnm::snmp value $vbl 1]
-	set cx(ifOutOctets)  [Tnm::snmp value $vbl 2]
-	set cx(ifSpeed)      [Tnm::snmp value $vbl 3]
-	set cx(ifDescr)      [Tnm::snmp value $vbl 4]
-	set cx(ifType)       [Tnm::snmp value $vbl 5]
-	set cx(ifOperStatus) [Tnm::snmp value $vbl 6]
+	set cx(sysUpTime)    [tnm::snmp value $vbl 0]
+	set cx(ifInOctets)   [tnm::snmp value $vbl 1]
+	set cx(ifOutOctets)  [tnm::snmp value $vbl 2]
+	set cx(ifSpeed)      [tnm::snmp value $vbl 3]
+	set cx(ifDescr)      [tnm::snmp value $vbl 4]
+	set cx(ifType)       [tnm::snmp value $vbl 5]
+	set cx(ifOperStatus) [tnm::snmp value $vbl 6]
 	set cx(fullduplex)   [expr [lsearch $fullDuplex $cx(ifType)] >= 0]
 
-	set j [Tnm::job create -command TnmGetIfLoad -interval $ms]
+	set j [tnm::job create -command tnmGetIfLoad -interval $ms]
 	if {$iterations != ""} {
 	    $j configure -iterations $iterations
 	}
@@ -384,13 +384,13 @@ proc Tnm_MonitorIfLoad {node seconds {iterations {}}} {
 
 #########################################################################
 
-proc TnmPingCmd {} {
-    set event Tnm_MonitorPing:Value
-    set error Tnm_MonitorPing:Error
-    set job [Tnm::job current]
+proc tnmPingCmd {} {
+    set event tnm_monitorPing:Value
+    set error tnm_monitorPing:Error
+    set job [tnm::job current]
     array set cx [$job attribute status]
     if {[info commands $cx(node)] == ""} { $job destroy }
-    if [catch {Tnm::icmp echo $cx(ip)} msg] {
+    if [catch {tnm::icmp echo $cx(ip)} msg] {
 	$cx(node) raise $error:NoResponse $msg
     }
     set rtt [lindex $msg 1]
@@ -401,24 +401,24 @@ proc TnmPingCmd {} {
     }
 }
 
-proc Tnm_MonitorPing {node seconds} {
+proc tnm_monitorPing {node seconds} {
     set ms [expr $seconds * 1000]
     set cx(node) $node
-    set cx(ip) [TnmMap::GetIpAddress $node]
-    set j [Tnm::job create -command TnmPingCmd -interval $ms]
+    set cx(ip) [tnmMap::getIpAddress $node]
+    set j [tnm::job create -command tnmPingCmd -interval $ms]
     $j attribute status [array get cx]
     return $j
 }
 
 #########################################################################
 
-proc TnmRstatCmd {} {
-    set event Tnm_MonitorRstat:Value
-    set error Tnm_MonitorRstat:Error
-    set job [Tnm::job current]
+proc tnmRstatCmd {} {
+    set event tnm_monitorRstat:Value
+    set error tnm_monitorRstat:Error
+    set job [tnm::job current]
     array set cx [$job attribute status]
     if {[info commands $cx(node)] == ""} { $job destroy }
-    if [catch {Tnm::sunrpc stat $cx(ip)} new] {
+    if [catch {tnm::sunrpc stat $cx(ip)} new] {
 	$cx(node) raise $error $new
 	return
     }
@@ -468,21 +468,21 @@ proc TnmRstatCmd {} {
     $job attribute status [array get cx]
 }
 
-proc Tnm_MonitorRstat { node seconds } {
+proc tnm_monitorRstat { node seconds } {
     set ms [expr $seconds * 1000]
     set cx(node) $node
-    set cx(ip) [TnmMap::GetIpAddress $node]
-    set j [Tnm::job create -command TnmRstatCmd -interval $ms]
+    set cx(ip) [tnmMap::getIpAddress $node]
+    set j [tnm::job create -command tnmRstatCmd -interval $ms]
     $j attribute status [array get cx]
     return $j
 }
 
 #########################################################################
 
-proc TnmRecvTrap {map ip vbl} {
-    set event Tnm_MonitorTraps
-    set sysUpTime [Tnm::snmp value $vbl 0]
-    set trapOid [Tnm::snmp value $vbl 1]
+proc tnmRecvTrap {map ip vbl} {
+    set event tnm_monitorTraps
+    set sysUpTime [tnm::snmp value $vbl 0]
+    set trapOid [tnm::snmp value $vbl 1]
     set nodes [$map find -address $ip -type node]
     if [llength $nodes] {
 	foreach node $nodes {
@@ -493,15 +493,15 @@ proc TnmRecvTrap {map ip vbl} {
     }
 }
 
-proc Tnm_MonitorTraps {map {community public}} {
-    set s [Tnm::snmp listener -notify $community]
-    $s bind trap [subst { TnmRecvTrap "$map" "%A" "%V" } ]
+proc tnm_monitorTraps {map {community public}} {
+    set s [tnm::snmp listener -notify $community]
+    $s bind trap [subst { tnmRecvTrap "$map" "%A" "%V" } ]
 }
 
 #########################################################################
 
-proc TnmMapCheckCmd {} {
-    set job [Tnm::job current]
+proc tnmMapCheckCmd {} {
+    set job [tnm::job current]
     array set cx [$job attribute status]
     if {[info commands $cx(map)] == ""} { $job destroy }
     foreach node [$cx(map) find -type node] {
@@ -524,19 +524,19 @@ proc TnmMapCheckCmd {} {
     }
 }
 
-proc Tnm_MonitorCheck {map seconds} {
+proc tnm_monitorCheck {map seconds} {
     set ms [expr $seconds * 1000]
     set cx(map) $map
-    set j [Tnm::job create -command TnmMapCheckCmd -interval $ms]
+    set j [tnm::job create -command tnmMapCheckCmd -interval $ms]
     $j attribute status [array get cx]
     return $j
 }
 
 #########################################################################
 
-proc TnmCheckHealthCmd {} {
-    set event Tnm_CheckHealth
-    set job [Tnm::job current]
+proc tnmCheckHealthCmd {} {
+    set event tnm_checkHealth
+    set job [tnm::job current]
     array set cx [$job attribute status]
     if {[info commands $cx(map)] == ""} { $job destroy }
     foreach item [$cx(map) find] {
@@ -551,17 +551,17 @@ proc TnmCheckHealthCmd {} {
     }
 }
 
-proc Tnm_CheckHealth { map seconds } {
+proc tnm_checkHealth { map seconds } {
     set ms [expr $seconds * 1000]
     set cx(map) $map
-    set j [Tnm::job create -command TnmCheckHealthCmd -interval $ms]
+    set j [tnm::job create -command tnmCheckHealthCmd -interval $ms]
     $j attribute status [array get cx]
     return $j
 }
 
 #########################################################################
 
-proc TnmTestTcpConnect {channel job} {
+proc tnmTestTcpConnect {channel job} {
     array set cx [$job attribute status]
     puts stderr "** [clock seconds] connect $job: [$job attribute status]"
     puts stderr "** eof -> [eof $channel]"
@@ -571,37 +571,37 @@ proc TnmTestTcpConnect {channel job} {
     catch {close $channel}
 }
 
-proc TnmTestTcpTimeout {channel job} {
+proc tnmTestTcpTimeout {channel job} {
     puts stderr "** [clock seconds] timeout $job: [$job attribute status]"
     catch {close $channel}
 }
 
-proc TnmTestTcpCmd {} {
-    set event Tnm_TestTcp:Value
-    set error Tnm_TestTcp:Error
-    set job [Tnm::job current]
+proc tnmTestTcpCmd {} {
+    set event tnm_testTcp:Value
+    set error tnm_testTcp:Error
+    set job [tnm::job current]
     array set cx [$job attribute status]
     if {[info commands $cx(node)] == ""} { $job destroy }
     puts stderr "** [clock seconds] trying $job: [$job attribute status]"
     set channel [socket -async $cx(ip) $cx(port)]
-    set cx(timer) [after 60000 TnmTestTcpTimeout $channel $job]
-    fileevent $channel writable "TnmTestTcpConnect $channel $job"
+    set cx(timer) [after 60000 tnmTestTcpTimeout $channel $job]
+    fileevent $channel writable "tnmTestTcpConnect $channel $job"
 }
 
-proc Tnm_TestTcp {node port seconds} {
+proc tnm_testTcp {node port seconds} {
     set ms [expr $seconds * 1000]
     set cx(node) $node
     set cx(port) $port
-    set cx(ip) [TnmMap::GetIpAddress $node]
-    set j [Tnm::job create -command TnmTestTcpCmd -interval $ms]
+    set cx(ip) [tnmMap::getIpAddress $node]
+    set j [tnm::job create -command tnmTestTcpCmd -interval $ms]
     $j attribute status [array get cx]
     return $j
 }
 
 
-proc Tnm_MonitorHtml {map path seconds} {
+proc tnm_monitorHtml {map path seconds} {
     set ms [expr $seconds * 1000]
-    set j [Tnm::job create -command [list TnmMap::Html $map $path] -interval $ms]
+    set j [tnm::job create -command [list tnmMap::html $map $path] -interval $ms]
     
 }
 

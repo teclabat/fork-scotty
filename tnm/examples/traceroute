@@ -17,10 +17,10 @@ exec tclsh "$0" "$@"
 #
 # @(#) $Id: traceroute,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 
-package require Tnm 3.0
-package require TnmMap $tnm(version)
+package require tnm 3.0
+package require tnmMap $tnm(version)
 
-namespace import Tnm::*
+namespace import tnm::*
 
 # usage --
 #
@@ -68,9 +68,9 @@ if {[llength $argv] != 1} usage
 # the process if we receive an event that we are done.
 
 set node [[map create] create node -name $argv]
-$node bind TnmMap:TraceRoute:Value { puts "%A" }
-$node bind TnmMap:TraceRoute:Done { exit }
-if [catch {TnmMap::TraceRoute $node} msg] {
+$node bind tnmMap:traceRoute:Value { puts "%A" }
+$node bind tnmMap:traceRoute:Done { exit }
+if [catch {tnmMap::traceRoute $node} msg] {
     puts stderr "$argv0: $msg ($argv)"
     exit 2
 }

@@ -13,7 +13,7 @@ exec tclsh8.0 "$0" "$@"
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 
-package require Tnm 3.0
+package require tnm 3.0
 
 set sbrowser sbrowser.cgi
 
@@ -24,7 +24,7 @@ set icon(txt) "<IMG ALT=\"\" SRC=\"/icons/doc.gif\">"
 ## Exit if the load on the server is too high.
 ##
 
-if {[catch {Tnm::sunrpc stat localhost} s]} {
+if {[catch {tnm::sunrpc stat localhost} s]} {
     puts stderr "loadcheck: $s"
     exit 1
 }
@@ -68,15 +68,15 @@ proc EndPage {} {
 
 proc ListTable { oid host } {
     global sbrowser
-    set oid [Tnm::mib oid $oid]
-    if {[Tnm::mib syntax $oid] != "SEQUENCE OF"} return
-    puts "<H3>[Tnm::mib label $oid] ([Tnm::mib module $oid], [file tail [Tnm::mib file $oid]])</H3>"
-    puts "<BLOCKQUOTE>[Tnm::mib description $oid]</BLOCKQUOTE>"
+    set oid [tnm::mib oid $oid]
+    if {[tnm::mib syntax $oid] != "SEQUENCE OF"} return
+    puts "<H3>[tnm::mib label $oid] ([tnm::mib module $oid], [file tail [tnm::mib file $oid]])</H3>"
+    puts "<BLOCKQUOTE>[tnm::mib description $oid]</BLOCKQUOTE>"
     puts "<TABLE BORDER>"
-    set entry [Tnm::mib children $oid]
-    foreach o [Tnm::mib children $entry] {
-	puts "<TR><TD><A HREF=\"$sbrowser?HOST=$host&OID=$o\">[Tnm::mib label $o]</A>"
-	puts "<TD>[Tnm::mib oid $o]<TD>[Tnm::mib syntax $o]<TD>[Tnm::mib access $o]"
+    set entry [tnm::mib children $oid]
+    foreach o [tnm::mib children $entry] {
+	puts "<TR><TD><A HREF=\"$sbrowser?HOST=$host&OID=$o\">[tnm::mib label $o]</A>"
+	puts "<TD>[tnm::mib oid $o]<TD>[tnm::mib syntax $o]<TD>[tnm::mib access $o]"
     }
     puts "</TABLE>"
 }
@@ -87,19 +87,19 @@ proc ListTable { oid host } {
 
 proc ListScalars { oid host } {
     global sbrowser
-    set oid [Tnm::mib oid $oid]
-    foreach o [Tnm::mib children $oid] {
-	if {[Tnm::mib syntax $o] != "SEQUENCE OF"} {
+    set oid [tnm::mib oid $oid]
+    foreach o [tnm::mib children $oid] {
+	if {[tnm::mib syntax $o] != "SEQUENCE OF"} {
 	    lappend scalars $o
 	}
     }
     if ![info exists scalars] return
-    puts "<H3>[Tnm::mib label $oid] ([Tnm::mib module $oid], [file tail [Tnm::mib file $oid]])</H3>"
-    puts "<BLOCKQUOTE>[Tnm::mib description $oid]</BLOCKQUOTE>"
+    puts "<H3>[tnm::mib label $oid] ([tnm::mib module $oid], [file tail [tnm::mib file $oid]])</H3>"
+    puts "<BLOCKQUOTE>[tnm::mib description $oid]</BLOCKQUOTE>"
     puts "<TABLE BORDER>"
     foreach o $scalars {
-	puts "<TR><TD><A HREF=\"$sbrowser?HOST=$host&OID=$o\">[Tnm::mib label $o]</A>"
-	puts "<TD>[Tnm::mib oid $o]<TD>[Tnm::mib syntax $o]<TD>[Tnm::mib access $o]"
+	puts "<TR><TD><A HREF=\"$sbrowser?HOST=$host&OID=$o\">[tnm::mib label $o]</A>"
+	puts "<TD>[tnm::mib oid $o]<TD>[tnm::mib syntax $o]<TD>[tnm::mib access $o]"
     }
     puts "</TABLE>"
 }
@@ -111,21 +111,21 @@ proc ListScalars { oid host } {
 proc ListChildren { oid host {level 1} } {
     global sbrowser icon
     incr level -1
-    set children [Tnm::mib children $oid]
+    set children [tnm::mib children $oid]
     if {[llength $children] == 0} {
 	return
     }
     puts "<DL>"
-    foreach s [Tnm::mib children $oid] {
+    foreach s [tnm::mib children $oid] {
 	puts "<DT>"
-	if {[Tnm::mib children $s] == ""} {
+	if {[tnm::mib children $s] == ""} {
 	    puts "$icon(txt)"
 	} else {
 	    puts "$icon(dir)"
 	}
 	puts "<A HREF=\"$sbrowser?HOST=$host&OID=$s\">$s</A>"
-	puts "([Tnm::mib oid $s])"
-	puts "<DD>[Tnm::mib description $s]"
+	puts "([tnm::mib oid $s])"
+	puts "<DD>[tnm::mib description $s]"
 	if {$level > 0} {
 	    ListChildren $s $host $level
 	}
@@ -157,7 +157,7 @@ proc WalkTree { oid host } {
 	puts "<H3>$host:</H3>"
 	if {[catch {
 	    set host [split $host :]
-	    set s [Tnm::snmp generator -address [lindex $host 0]]
+	    set s [tnm::snmp generator -address [lindex $host 0]]
 	    if {[lindex $host 1] != ""} {
 		$s configure -port [lindex $host 1]
 	    }
@@ -168,7 +168,7 @@ proc WalkTree { oid host } {
 	    $s walk x $oid {
 		set o [lindex [lindex $x 0] 0]
 		set v [lindex [lindex $x 0] 2]
-		puts "<TR><TD>[Tnm::mib module $o]<TD>[Tnm::mib label $o].[lindex [Tnm::mib split $o] 1]<TD>$v"
+		puts "<TR><TD>[tnm::mib module $o]<TD>[tnm::mib label $o].[lindex [tnm::mib split $o] 1]<TD>$v"
 		puts "<BR>"
 	    }
 	    puts "</TABLE>"
@@ -251,7 +251,7 @@ proc Welcome { oid host } {
 
 proc Browse { oid host } {
     global sbrowser
-    StartPage [Tnm::mib name $oid]
+    StartPage [tnm::mib name $oid]
 
     puts "<B>Goto:</B> "
     puts "<A HREF=\"$sbrowser?HOST=$host&OID=$oid&ACTION=WELCOME\">HOME</A> "
@@ -265,37 +265,37 @@ proc Browse { oid host } {
     puts "<P><A HREF=\"$sbrowser?ACTION=GETHOST&OID=$oid&HOST=$host\">"
     puts "<B>Hosts:</B></A> <TT>[join [split $host +]]</TT><P><HR>"
 
-    set sucs [Tnm::mib children $oid]
+    set sucs [tnm::mib children $oid]
 
     if {$sucs != ""} {
 	ListChildren $oid $host 4
     } else {
 	puts "<P>"
 	puts "<DL>"
-	puts "<DT><B>Name:</B><DD>[Tnm::mib name $oid]"
-	puts "<DT><B>Identifier:</B><DD>[Tnm::mib oid $oid]"
-	puts "<DT><B>Macro:</B><DD>[Tnm::mib macro $oid]"
-	puts "<DT><B>Access:</B><DD>[Tnm::mib access $oid]"
-	set type [Tnm::mib type $oid]
+	puts "<DT><B>Name:</B><DD>[tnm::mib name $oid]"
+	puts "<DT><B>Identifier:</B><DD>[tnm::mib oid $oid]"
+	puts "<DT><B>Macro:</B><DD>[tnm::mib macro $oid]"
+	puts "<DT><B>Access:</B><DD>[tnm::mib access $oid]"
+	set type [tnm::mib type $oid]
 	if [string length $type] {
-	    if {[Tnm::mib macro $type] == ""} {
-		puts "<DT><B>Syntax:</B><DD>[Tnm::mib syntax $oid]"
+	    if {[tnm::mib macro $type] == ""} {
+		puts "<DT><B>Syntax:</B><DD>[tnm::mib syntax $oid]"
 	    } else {
-		puts "<DT><B>Syntax:</B><DD>[Tnm::mib syntax $type]"
-		if {[Tnm::mib displayhint $type] != ""} {
+		puts "<DT><B>Syntax:</B><DD>[tnm::mib syntax $type]"
+		if {[tnm::mib displayhint $type] != ""} {
 		    puts "<DT><B>Textual Convention:</B><DD>$type"
-		    puts "<DT><B>Format:</B><DD>[Tnm::mib displayhint $type]"
-		} elseif {[Tnm::mib enums $type] != ""} {
-		    puts "<DT><B>Enumeration:</B><DD>[Tnm::mib enums $type]"
+		    puts "<DT><B>Format:</B><DD>[tnm::mib displayhint $type]"
+		} elseif {[tnm::mib enums $type] != ""} {
+		    puts "<DT><B>Enumeration:</B><DD>[tnm::mib enums $type]"
 		} else {
 		    puts "<DT><B>Textual Convention:</B><DD>$type"
 		}
 	    }
 	}
-	if {[Tnm::mib description $oid description]} {
+	if {[tnm::mib description $oid description]} {
 	    puts "<DT><B>Description:</B><DD>$description"
 	}
-	puts "<DT><B>File:</B><DD>[file tail [Tnm::mib file $oid]]</DL><HR>"
+	puts "<DT><B>File:</B><DD>[file tail [tnm::mib file $oid]]</DL><HR>"
 	WalkTree $oid $host
     }
 
@@ -308,7 +308,7 @@ proc Browse { oid host } {
 
 proc Walk { oid host } {
     global sbrowser
-    StartPage [Tnm::mib name $oid]
+    StartPage [tnm::mib name $oid]
 
     puts "<B>Goto:</B> "
     puts "<A HREF=\"$sbrowser?HOST=$host&OID=$oid&ACTION=WELCOME\">HOME</A> "

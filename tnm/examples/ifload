@@ -2,10 +2,10 @@
 # the next line restarts using tclsh -*- tcl -*- \
 exec tclsh "$0" "$@"
 
-package require Tnm 3.0
-package require TnmMonitor $tnm(version)
+package require tnm 3.0
+package require tnmMonitor $tnm(version)
 
-namespace import Tnm::mib Tnm::snmp Tnm::job Tnm::map Tnm::netdb
+namespace import tnm::mib tnm::snmp tnm::job tnm::map tnm::netdb
 
 ##
 ## IfLoadEventProc is called whenever an ifLoad event is received.
@@ -29,7 +29,7 @@ proc MonitorIfLoadDaily { node interval } {
     global tnm out
 
     set clock [clock seconds]
-    set s [TnmMapGetSnmpSession $node]
+    set s [tnmMapgetSnmpSession $node]
     set file "[$s cget -address]-[clock format $clock -format "%b-%d"]"
     set out [open $file w+]
     set secs [expr ((($clock / 86400) + 1) * 86400) - $clock]

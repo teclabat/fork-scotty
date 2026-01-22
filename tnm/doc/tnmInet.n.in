@@ -5,19 +5,19 @@
 '\" See the file "license.terms" for information on usage and redistribution
 '\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 '\" 
-'\" @(#) $Id: TnmInet.n,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
+'\" @(#) $Id: tnmInet.n,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 '\" 
 .so man.macros
-.TH TnmInet n "February 1998" Tnm "Tnm Tcl Extension"
+.TH tnmInet n "February 1998" tnm "tnm Tcl Extension"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
-TnmInet \- A Tcl package to use and probe TCP/IP services.
+tnmInet \- A Tcl package to use and probe TCP/IP services.
 .BE
 
 .SH DESCRIPTION
 
-The TnmInet package provides a set of Tcl command procedures to probe
+The tnmInet package provides a set of Tcl command procedures to probe
 various TCP/IP services. Most of the commands work synchronously which
 means that they might block the process for a while if there are
 communication problems. The result of some of the commands is returned
@@ -28,21 +28,21 @@ user-interface and not further processed by software.
 
 .SH USING THE PACKAGE
 
-The TnmInet package is loaded into a Tcl interpreter by using the 
+The tnmInet package is loaded into a Tcl interpreter by using the 
 following sequence of Tcl commands:
 
 .CS
-package require Tnm
+package require tnm
 .br
-package require TnmInet $tnm(version)
+package require tnmInet $tnm(version)
 .CE
 
-All the TnmInet commands live in the TnmInet namespace. You can import
+All the tnmInet commands live in the tnmInet namespace. You can import
 these commands into the current namespace by using the following Tcl
 command:
 
 .CS
-namespace import TnmInet::*
+namespace import tnmInet::*
 .CE
 
 It is however suggested to import commands explicitely or to use the
@@ -51,49 +51,49 @@ full name in scripts to avoid name clashes.
 .SH COMMANDS
 
 .TP
-.B TnmInet::GetIpAddress \fIhost\fR
-The \fBTnmInet::GetIpAddress\fR commmand takes a \fIhost\fR name or a
+.B tnmInet::getIpAddress \fIhost\fR
+The \fBtnmInet::getIpAddress\fR commmand takes a \fIhost\fR name or a
 \fIhost\fR address and returns the \fIhost\fR address or an error if
 the \fIhost\fR is not known in the local network database or in the
 global Domain Name System (DNS).
 
 .TP
-.B TnmInet::GetIpName \fIhost\fR
-The \fBTnmInet::GetIpName\fR command takes a \fIhost\fR name or a
+.B tnmInet::getIpName \fIhost\fR
+The \fBtnmInet::getIpName\fR command takes a \fIhost\fR name or a
 \fIhost\fR address and returns the \fIhost\fR name or an error if
 the \fIhost\fR is not known in the local network database or in the
 global Domain Name System (DNS).
 
 .TP
-.B TnmInet::DayTime \fIhost\fR
-The \fBTnmInet::DayTime\fR command connects to the daytime service on
+.B tnmInet::dayTime \fIhost\fR
+The \fBtnmInet::dayTime\fR command connects to the daytime service on
 \fIhost\fR and retrieves the local time of day. The command returns
 the remote system time.
 
 .TP
-.B TnmInet::Finger \fIhost ?user?
-The \fBTnmInet::Finger\fR command connects to a \fIhost\fR using the
+.B tnmInet::finger \fIhost ?user?
+The \fBtnmInet::finger\fR command connects to a \fIhost\fR using the
 finger user information protocol (RFC 1288).
 
 .TP
-.B TnmInet::TraceRoute \fIhost ?maxlength? ?retries?
-The \fBTnmInet::TraceRoute\fR command uses the van Jacobsen algorithm
+.B tnmInet::traceRoute \fIhost ?maxlength? ?retries?
+The \fBtnmInet::traceRoute\fR command uses the van Jacobsen algorithm
 to trace a route through the Internet to \fIhost\fR. It returns the
 routing trace in formatted, human readable format. The optional
 \fImaxlength\fR and \fRretries\fR parameters set the maximum length of
 a route and the number of retries for each hop.
 
 .TP
-.B TnmInet::TcpServices \fI?host?
-The \fBTnmInet::TcpServices\fR command first reads obtains a list of
+.B tnmInet::tcpServices \fI?host?
+The \fBtnmInet::tcpServices\fR command first reads obtains a list of
 locally known service names and port numbers. Afterwards, it tries to
 establish a TCP connection to each port number on \fIhost\fR. The
 command returns a formatted, human readable list of TCP services 
 where the attempt to establish a connection was successful.
 
 .TP
-.B TnmInet::RpcServices \fI?host?
-The \fBTnmInet::RpcServices\fR command first obtains the list of ONC
+.B tnmInet::rpcServices \fI?host?
+The \fBtnmInet::rpcServices\fR command first obtains the list of ONC
 RPC services registered at the portmapper on \fIhost\fR. Afterwards,
 it probes every listed RPC service by calling RPC procedure 0. The
 command returns a formatted, human readable list of RPC service
@@ -102,18 +102,18 @@ The output also contains the time needed to call procedure 0 for those
 calls that were successful.
 
 .TP
-.B TnmInet::SendMail \fIrecipients message ?subject?
-The \fBTnmInet::SendMail\fR command send a mail \fImessage\fR to a
+.B tnmInet::sendMail \fIrecipients message ?subject?
+The \fBtnmInet::sendMail\fR command send a mail \fImessage\fR to a
 list of \fIrecipients\fR. The option parameters defines the
 \fIsubject\fR of the outgoing \fImessage\fR. The message is delivered
 by talking SMTP (RFC 821) to the local mail transfer agent.
 
-The \fBTnmInet::SendMail\fR uses the contents of the global tnm(email)
+The \fBtnmInet::sendMail\fR uses the contents of the global tnm(email)
 variable in the SMTP From: header line. The global variable tnm(email)
 is set to "$tnm(user)@$tnm(domain)" if is does not exist.
 
 .SH SEE ALSO
-scotty(1), Tnm(n), Tcl(n)
+scotty(1), tnm(n), Tcl(n)
 
 .SH AUTHORS
 Juergen Schoenwaelder <schoenw@ibr.cs.tu-bs.de>

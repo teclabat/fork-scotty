@@ -1,4 +1,4 @@
-# TnmTerm.tcl --
+# tnmTerm.tcl --
 #
 #	This file contains the definition of an output or terminal
 #	window, which is basically a text widget with scrollbars
@@ -13,17 +13,17 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# @(#) $Id: TnmTerm.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
+# @(#) $Id: tnmTerm.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 
-package require Tnm 3.1
-package require TnmInet 3.1
-package require TnmDialog 3.1
-package provide TnmTerm 3.1.3
+package require tnm 3.1
+package require tnmInet 3.1
+package require tnmDialog 3.1
+package provide tnmTerm 3.1.3
 
-namespace eval TnmTerm {
-    namespace export Open Close Clear Write SetName SetIcon
-    namespace export ToggleFreeze ToggleWrap ToggleXScroll ToggleYScroll
-    namespace export Save Load Print EMail
+namespace eval tnmTerm {
+    namespace export open close clear write setName setIcon
+    namespace export toggleFreeze toggleWrap toggleXScroll toggleYScroll
+    namespace export save load print email
 }
 
 # Definitions for virtual events that are used to define the 
@@ -43,7 +43,7 @@ event add <<TnmTermWrap>>	<Alt-v> <Alt-V> <Meta-v> <Meta-V>
 event add <<TnmTermScrollX>>	<Alt-x> <Alt-X> <Meta-x> <Meta-X>
 event add <<TnmTermScrollY>>	<Alt-y> <Alt-Y> <Meta-y> <Meta-Y>
 
-# TnmTerm::Open --
+# tnmTerm::open --
 #
 #	Create an output window and define a proc named writeln 
 #	to write to the text widget in this window. A hack, but 
@@ -54,7 +54,7 @@ event add <<TnmTermScrollY>>	<Alt-y> <Alt-Y> <Meta-y> <Meta-Y>
 # Results:
 #	None.
 
-proc TnmTerm::Open w {
+proc tnmTerm::open w {
 
     variable state
 
@@ -84,74 +84,74 @@ proc TnmTerm::Open w {
 	menu $w.menu.file -tearoff 0
 	$w.menu.file add command -label "Clear" \
 		-accelerator "  Alt+C" \
-		-command "TnmTerm::Clear $w"
+		-command "tnmTerm::clear $w"
 	bind $w <<TnmTermClear>> "$w.menu.file invoke Clear"
 	$w.menu.file add command -label "Open..." \
 		-accelerator "  Alt+O" \
-		-command "TnmTerm::Load $w"
+		-command "tnmTerm::load $w"
 	bind $w <<TnmTermOpen>> "$w.menu.file invoke Open..."
 	$w.menu.file add command -label "Save As..." \
 		-accelerator "  Alt+A" \
-		-command "TnmTerm::Save $w"
+		-command "tnmTerm::save $w"
 	bind $w <<TnmTermSave>> "$w.menu.file invoke {Save As...}"
 	$w.menu.file add sep
 	$w.menu.file add command -label "Print..." \
 		-accelerator "  Alt+P" \
-		-command "TnmTerm::Print $w"
+		-command "tnmTerm::print $w"
 	bind $w <<TnmTermPrint>> "$w.menu.file invoke Print..."
 	$w.menu.file add command -label "Email..." \
 		-accelerator "  Alt+E" \
-		-command "TnmTerm::EMail $w"
+		-command "tnmTerm::email $w"
 	bind $w <<TnmTermEmail>> "$w.menu.file invoke Email..."
 	$w.menu.file add sep
 	$w.menu.file add command -label "New View" \
 		-accelerator "  Alt+N" \
-		-command "TnmTerm::NewView $w"
+		-command "tnmTerm::newView $w"
 	bind $w <<TnmTermView>> "$w.menu.file invoke {New View}"
 	$w.menu.file add command -label "Close View" \
 		-accelerator "  Alt+W" \
-		-command "TnmTerm::Close $w"
+		-command "tnmTerm::close $w"
 	bind $w <<TnmTermClose>> "$w.menu.file invoke {Close View}"
 
 	$w.menu add cascade -label "Find" -menu $w.menu.find
 	menu $w.menu.find -tearoff 0
 	$w.menu.find add command -label "Find..." \
 		-accelerator "  Alt+F" \
-		-command "TnmTerm::Find $w"
+		-command "tnmTerm::find $w"
 	bind $w <<TnmTermFind>> "$w.menu.find invoke {Find...}"
 if {0} {
 	$w.menu.find add separator
 	$w.menu.find add command -label "Filter..." \
 		-accelerator "  Alt+T" \
-		-command "TnmTerm::EditFilter $w"
+		-command "tnmTerm::editFilter $w"
 	bind $w <<TnmTermFilter>> "$w.menu.find invoke {Filter...}"
 }
 
 	$w.menu add cascade -label "Options" -menu $w.menu.options
 	menu $w.menu.options -tearoff 0
 	$w.menu.options add checkbutton -label "Freeze" \
-		-offvalue 0 -onvalue 1 -variable TnmTerm::state(freeze,$w) \
+		-offvalue 0 -onvalue 1 -variable tnmTerm::state(freeze,$w) \
 		-accelerator "  Alt+Z"
 	set state(freeze,$w) 0
 	bind $w <<TnmTermFreeze>> "$w.menu.options invoke Freeze"
 	$w.menu.options add checkbutton -label "Wrap" \
 		-offvalue none -onvalue word \
-		-variable TnmTerm::state(wrap,$w) \
+		-variable tnmTerm::state(wrap,$w) \
 		-accelerator "  Alt+V" \
-		-command "$w.t configure -wrap \[set TnmTerm::state(wrap,$w)\]"
+		-command "$w.t configure -wrap \[set tnmTerm::state(wrap,$w)\]"
 	set state(wrap,$w) none
 	bind $w <<TnmTermWrap>> "$w.menu.options invoke Wrap"
 	$w.menu.options add separator
 	$w.menu.options add checkbutton -label "X Scroll" \
-		-offvalue 0 -onvalue 1 -variable TnmTerm::state(xscroll,$w) \
-		-accelerator "  Alt+X" -command "TnmTerm::ToggleXScroll $w"
-        TnmTerm::ToggleXScroll $w
+		-offvalue 0 -onvalue 1 -variable tnmTerm::state(xscroll,$w) \
+		-accelerator "  Alt+X" -command "tnmTerm::toggleXScroll $w"
+        tnmTerm::toggleXScroll $w
 	bind $w <<TnmTermScrollX>> "$w.menu.options invoke {X Scroll}"
 	$w.menu.options add checkbutton -label "Y Scroll" \
-		-offvalue 0 -onvalue 1 -variable TnmTerm::state(yscroll,$w) \
-		-accelerator "  Alt+Y" -command "TnmTerm::ToggleYScroll $w"
+		-offvalue 0 -onvalue 1 -variable tnmTerm::state(yscroll,$w) \
+		-accelerator "  Alt+Y" -command "tnmTerm::toggleYScroll $w"
 	$w.menu.options invoke "Y Scroll"
-        TnmTerm::ToggleYScroll $w
+        tnmTerm::toggleYScroll $w
 	bind $w <<TnmTermScrollY>> "$w.menu.options invoke {Y Scroll}"
 
 	static offset
@@ -188,7 +188,7 @@ if {0} {
 }
 
 
-# TnmTerm::NewView --
+# tnmTerm::newView --
 #
 #	Create a new output window (aka a new view).
 #
@@ -197,7 +197,7 @@ if {0} {
 # Results:
 #	None.
 
-proc TnmTerm::NewView w {
+proc tnmTerm::newView w {
     set parent [winfo parent $w]
     if {[string compare $parent "."] == 0} {
 	set parent ""
@@ -208,12 +208,12 @@ proc TnmTerm::NewView w {
             break
         }
     }
-    TnmTerm::Open $view
+    tnmTerm::open $view
     return
 }
 
 
-# TnmTerm::Close --
+# tnmTerm::close --
 #
 #	Close a terminal window.
 #
@@ -222,13 +222,13 @@ proc TnmTerm::NewView w {
 # Results:
 #	None.
 
-proc TnmTerm::Close w {
+proc tnmTerm::close w {
     destroy $w
     return
 }
 
 
-# TnmTerm::Clear --
+# tnmTerm::clear --
 #
 #	Clear the contents of the output window.
 #
@@ -237,13 +237,13 @@ proc TnmTerm::Close w {
 # Results:
 #	None.
 
-proc TnmTerm::Clear w {
+proc tnmTerm::clear w {
     $w.t delete 0.0 end
     return
 }
 
 
-# TnmTerm::Write --
+# tnmTerm::write --
 #
 #	Write a text string in the output terminal window.
 #
@@ -253,7 +253,7 @@ proc TnmTerm::Clear w {
 # Results:
 #	None.
 
-proc TnmTerm::Write {w txt} {
+proc tnmTerm::write {w txt} {
     variable state
     $w.t insert end $txt
     if !$state(freeze,$w) {
@@ -263,7 +263,7 @@ proc TnmTerm::Write {w txt} {
 }
 
 
-# TnmTerm::SetName --
+# tnmTerm::setName --
 #
 #	Set the name of an output terminal window, which is displayed
 #	in the window decorations as well as in the icon.
@@ -274,14 +274,14 @@ proc TnmTerm::Write {w txt} {
 # Results:
 #	None.
 
-proc TnmTerm::SetName { w name } {
+proc tnmTerm::setName { w name } {
     wm title $w $name
     wm iconname $w $name
     return
 }
 
 
-# TnmTerm::SetIcon --
+# tnmTerm::setIcon --
 #
 #	Set the icon bitmap of an output terminal window.
 #
@@ -291,13 +291,13 @@ proc TnmTerm::SetName { w name } {
 # Results:
 #	None.
 
-proc TnmTerm::SetIcon { w bitmap } {
+proc tnmTerm::setIcon { w bitmap } {
     wm iconbitmap $w $bitmap
     return
 }
 
 
-# TnmTerm::ToggleFreeze --
+# tnmTerm::toggleFreeze --
 #
 #	Toggle the freeze state of an output terminal window.
 #
@@ -306,14 +306,14 @@ proc TnmTerm::SetIcon { w bitmap } {
 # Results:
 #	None.
 
-proc TnmTerm::ToggleFreeze w {
+proc tnmTerm::toggleFreeze w {
     variable state
     $w.menu.options invoke Freeze
     return $state(freeze,$w)
 }
 
 
-# TnmTerm::ToggleWrap --
+# tnmTerm::toggleWrap --
 #
 #	Toggle the text wrap feature of an output terminal window.
 #
@@ -322,14 +322,14 @@ proc TnmTerm::ToggleFreeze w {
 # Results:
 #	None.
 
-proc TnmTerm::ToggleWrap w {
+proc tnmTerm::toggleWrap w {
     variable state
     $w.menu.options invoke Wrap
     return [expr {$state(wrap,$w) == "word"}]
 }
 
 
-# TnmTerm::ToggleXScroll --
+# tnmTerm::toggleXScroll --
 #
 #	Toggle the horizontal scrollbar of an output terminal window.
 #
@@ -338,7 +338,7 @@ proc TnmTerm::ToggleWrap w {
 # Results:
 #	None.
 
-proc TnmTerm::ToggleXScroll w {
+proc tnmTerm::toggleXScroll w {
     variable state
     if $state(xscroll,$w) {
 	grid $w.xscroll -in $w -row 1 -column 0 \
@@ -350,7 +350,7 @@ proc TnmTerm::ToggleXScroll w {
 }
 
 
-# TnmTerm::ToggleYScroll --
+# tnmTerm::toggleYScroll --
 #
 #	Toggle the vertical scrollbar of an output terminal window.
 #
@@ -359,7 +359,7 @@ proc TnmTerm::ToggleXScroll w {
 # Results:
 #	None.
 
-proc TnmTerm::ToggleYScroll w {
+proc tnmTerm::toggleYScroll w {
     variable state
     if $state(yscroll,$w) {
 	grid $w.yscroll -in $w -row 0 -column 1 \
@@ -371,7 +371,7 @@ proc TnmTerm::ToggleYScroll w {
 }
 
 
-# TnmTerm::Save --
+# tnmTerm::save --
 #
 #	Save the contents of the output terminal window in a file.
 #
@@ -380,7 +380,7 @@ proc TnmTerm::ToggleYScroll w {
 # Results:
 #	None.
 
-proc TnmTerm::Save w {
+proc tnmTerm::save w {
 
     set types {
 	{{Text Files}	{.txt}	}
@@ -392,7 +392,7 @@ proc TnmTerm::Save w {
     if {$fname==""} return
     set mode "w"
     if {[file exists $fname]} {
-	set result [Tnm_DialogConfirm $w.r info \
+	set result [tnm_dialogConfirm $w.r info \
 		"File $fname already exists!" [list replace append cancel]]
 	switch [lindex $result 0] {
 	    "cancel" {
@@ -406,17 +406,17 @@ proc TnmTerm::Save w {
 	    }
 	}
     }
-    if {[catch {open $fname $mode} file]} {
-	Tnm_DialogConfirm $w.r error "Unable to open $fname." ok
+    if {[catch {::open $fname $mode} file]} {
+	tnm_dialogConfirm $w.r error "Unable to open $fname." ok
 	return
     }
     puts $file [$w.t get 1.0 end]
-    close $file
+    ::close $file
     return
 }
 
 
-# TnmTerm::Load --
+# tnmTerm::load --
 #
 #	Read the contents of the output terminal window from a file.
 #
@@ -425,7 +425,7 @@ proc TnmTerm::Save w {
 # Results:
 #	None.
 
-proc TnmTerm::Load w {
+proc tnmTerm::load w {
 
     set types {
 	{{Text Files}	{.txt}	}
@@ -435,19 +435,19 @@ proc TnmTerm::Load w {
     set fname [tk_getOpenFile -defaultextension .txt -filetypes $types \
 	    -parent $w -title "Read from file:"]
     if {$fname == ""} return
-    if {[catch {open $fname r} file]} {
-	Tnm_DialogConfirm $w.r error "Unable to read from $fname" ok
+    if {[catch {::open $fname r} file]} {
+	tnm_dialogConfirm $w.r error "Unable to read from $fname" ok
 	return
     }
     $w.t delete 0.0 end
     $w.t insert end [read $file]
     $w.t yview 1.0
-    close $file
+    ::close $file
     return
 }
 
 
-# TnmTerm::Print --
+# tnmTerm::print --
 #
 #	Send the contents of the output terminal window to the
 #	printer.
@@ -457,38 +457,38 @@ proc TnmTerm::Load w {
 # Results:
 #	None.
 
-proc TnmTerm::Print { w } {
+proc tnmTerm::print { w } {
     global env
     variable tnm
 
     set fname "$tnm(tmp)/output-[pid]"
     catch {file delete -force $fname}
     if {[file exists $fname] && ![file writable $fname]} {
-	Tnm_DialogConfirm $w.r error "Can not write temporary file $fname." ok
+	tnm_dialogConfirm $w.r error "Can not write temporary file $fname." ok
 	return
     }
-    if {[catch {open $fname w} file]} {
-	Tnm_DialogConfirm $w.r error "Can not open $fname: $file" ok
+    if {[catch {::open $fname w} file]} {
+	tnm_dialogConfirm $w.r error "Can not open $fname: $file" ok
 	return
     }
 
     if {[catch {puts $file [$w.t get 1.0 end]} err]} {
-	Tnm_DialogConfirm $w.r error "Failed to write $fname: $err" ok
+	tnm_dialogConfirm $w.r error "Failed to write $fname: $err" ok
     }
-    close $file
+    ::close $file
     foreach dir [split $env(PATH) ":"] {
 	if {[file executable $dir/lpr]} {
 	    set lpr $dir/lpr
 	    break
 	}
     }
-    set res [Tnm_DialogRequest $w.r questhead \
+    set res [tnm_dialogRequest $w.r questhead \
 	    "Saved to temporary file $fname.\n\nEnter print command:" \
 	    $lpr "print cancel" ]
     if {[lindex $res 0] == "print"} {
 	set cmd [lindex $res 1]
 	if {[catch {eval exec $cmd $fname} err]} {
-	    Tnm_DialogConfirm $w.r error "$lpr $fname failed:\n$err" ok
+	    tnm_dialogConfirm $w.r error "$lpr $fname failed:\n$err" ok
 	}
     }
     catch {file delete -force $fname}
@@ -496,7 +496,7 @@ proc TnmTerm::Print { w } {
 }
 
 
-# TnmTerm::EMail --
+# tnmTerm::email --
 #
 #	Send the contents of the output terminal window as an 
 #	email message.
@@ -506,7 +506,7 @@ proc TnmTerm::Print { w } {
 # Results:
 #	None.
 
-proc TnmTerm::EMail w {
+proc tnmTerm::email w {
     global env
     variable tnm
 
@@ -520,17 +520,17 @@ proc TnmTerm::EMail w {
 	}
     }
 
-    set res [Tnm_DialogRequest $w.r questhead \
+    set res [tnm_dialogRequest $w.r questhead \
 	    "Please enter the email address:" $tnm(email) "ok cancel"]
     if {[lindex $res 0] == "cancel"} return
     set to [lindex $res 1]
     if {$to == ""} {
-	Tnm_DialogConfirm $w.r warning "Ignoring empty email address." ok
+	tnm_dialogConfirm $w.r warning "Ignoring empty email address." ok
         return
     }
-    set res [Tnm_DialogRequest $w.r questhead \
+    set res [tnm_dialogRequest $w.r questhead \
 	    "Please enter the subject of this email:" \
-	    "\[TnmTerm Output\]" "ok none cancel"]
+	    "\[tnmTerm Output\]" "ok none cancel"]
     switch [lindex $res 0] {
 	cancel return
 	none {
@@ -541,14 +541,14 @@ proc TnmTerm::EMail w {
 	}
     }
 
-    if {[catch {TnmInet::SendMail $to [$w.t get 1.0 end] $subject} msg]} {
-        Tnm_DialogConfirm $w.r error "Unable send mail: $msg" ok
+    if {[catch {tnmInet::sendMail $to [$w.t get 1.0 end] $subject} msg]} {
+        tnm_dialogConfirm $w.r error "Unable send mail: $msg" ok
     }
     return
 }
 
 
-# TnmTerm::Find --
+# tnmTerm::find --
 #
 #	Find a regular expression in the text of the output
 #	terminal window.
@@ -558,12 +558,12 @@ proc TnmTerm::EMail w {
 # Results:
 #	None.
 
-proc TnmTerm::Find w {
+proc tnmTerm::find w {
     variable state
     if {! [info exists state(find,$w)]} {
 	set state(find,$w) ""
     }
-    set result [Tnm_DialogRequest $w.find questhead \
+    set result [tnm_dialogRequest $w.find questhead \
 	    "Find the following regular expression:" \
 	    $state(find,$w) "find clear cancel" ]
     if {[lindex $result 0] == "cancel"} return
@@ -581,7 +581,7 @@ proc TnmTerm::Find w {
 }
 
 
-# TnmTerm::EditFilter --
+# tnmTerm::editFilter --
 #
 #	Edit the filter expression that defines which text is 
 #	displayed in the output terminal window.
@@ -591,12 +591,12 @@ proc TnmTerm::Find w {
 # Results:
 #	None.
 
-proc TnmTerm::EditFilter w {
+proc tnmTerm::editFilter w {
     variable state
     if {! [info exists state(filter,$w)]} {
 	set state(filter,$w) .
     }
-    set result [Tnm_DialogRequest $w.filter questhead \
+    set result [tnm_dialogRequest $w.filter questhead \
 	    "Edit the regular filter expression:" \
 	    $state(filter,$w) "accept cancel" ]
     if {[lindex $result 0] == "cancel"} return

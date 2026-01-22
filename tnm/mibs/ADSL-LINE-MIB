@@ -787,7 +787,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              adslAtucPerfCurr15MinLprs        PerfCurrentCount,
              adslAtucPerfCurr15MinESs         PerfCurrentCount,
              adslAtucPerfCurr15MinInits       PerfCurrentCount,
-             adslAtucPerfCurr1DayTimeElapsed  AdslPerfTimeElapsed,
+             adslAtucPerfCurr1dayTimeElapsed  AdslPerfTimeElapsed,
              adslAtucPerfCurr1DayLofs         AdslPerfCurrDayCount,
              adslAtucPerfCurr1DayLoss         AdslPerfCurrDayCount,
              adslAtucPerfCurr1DayLols         AdslPerfCurrDayCount,
@@ -983,7 +983,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
 
          -- 1-day current and previous performance group
          --
-         adslAtucPerfCurr1DayTimeElapsed OBJECT-TYPE
+         adslAtucPerfCurr1dayTimeElapsed OBJECT-TYPE
              SYNTAX      AdslPerfTimeElapsed(0..86399)
              UNITS       "seconds"
              MAX-ACCESS  read-only
@@ -1001,7 +1001,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of the number of seconds when there was Loss of
                  Framing during the current day as measured by
-                 adslAtucPerfCurr1DayTimeElapsed."
+                 adslAtucPerfCurr1dayTimeElapsed."
          ::= { adslAtucPerfDataEntry 17 }
 
          adslAtucPerfCurr1DayLoss  OBJECT-TYPE
@@ -1014,7 +1014,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
 
                  "Count of the number of seconds when there was Loss of
                  Signal during the current day as measured by
-                 adslAtucPerfCurr1DayTimeElapsed."
+                 adslAtucPerfCurr1dayTimeElapsed."
          ::= { adslAtucPerfDataEntry 18 }
 
          adslAtucPerfCurr1DayLols  OBJECT-TYPE
@@ -1025,7 +1025,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of the number of seconds when there was Loss of
                  Link during the current day as measured by
-                 adslAtucPerfCurr1DayTimeElapsed."
+                 adslAtucPerfCurr1dayTimeElapsed."
          ::= { adslAtucPerfDataEntry 19 }
 
          adslAtucPerfCurr1DayLprs  OBJECT-TYPE
@@ -1036,7 +1036,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of the number of seconds when there was Loss of
                  Power during the current day as measured by
-                 adslAtucPerfCurr1DayTimeElapsed."
+                 adslAtucPerfCurr1dayTimeElapsed."
          ::= { adslAtucPerfDataEntry 20 }
 
          adslAtucPerfCurr1DayESs OBJECT-TYPE
@@ -1046,7 +1046,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              STATUS      current
              DESCRIPTION
                  "Count of Errored Seconds during the current day as
-                 measured by adslAtucPerfCurr1DayTimeElapsed.
+                 measured by adslAtucPerfCurr1dayTimeElapsed.
                  The errored second parameter is a count of
                  one-second intervals containing one or more crc
                  anomalies, or one or more los or sef defects."
@@ -1058,7 +1058,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              STATUS      current
              DESCRIPTION
                  "Count of the line initialization attempts in the
-                 day as measured by adslAtucPerfCurr1DayTimeElapsed.
+                 day as measured by adslAtucPerfCurr1dayTimeElapsed.
                  Includes both successful and failed attempts."
 
 
@@ -1178,7 +1178,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              adslAturPerfCurr15MinLoss        PerfCurrentCount,
              adslAturPerfCurr15MinLprs        PerfCurrentCount,
              adslAturPerfCurr15MinESs         PerfCurrentCount,
-             adslAturPerfCurr1DayTimeElapsed  AdslPerfTimeElapsed,
+             adslAturPerfCurr1dayTimeElapsed  AdslPerfTimeElapsed,
              adslAturPerfCurr1DayLofs         AdslPerfCurrDayCount,
              adslAturPerfCurr1DayLoss         AdslPerfCurrDayCount,
              adslAturPerfCurr1DayLprs         AdslPerfCurrDayCount,
@@ -1332,7 +1332,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
 
          -- 1-day current and previous performance group
          --
-         adslAturPerfCurr1DayTimeElapsed OBJECT-TYPE
+         adslAturPerfCurr1dayTimeElapsed OBJECT-TYPE
              SYNTAX      AdslPerfTimeElapsed(0..86399)
              UNITS       "seconds"
              MAX-ACCESS  read-only
@@ -1350,7 +1350,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of the number of seconds when there was Loss
                  of Framing during the current day as measured by
-                 adslAturPerfCurr1DayTimeElapsed."
+                 adslAturPerfCurr1dayTimeElapsed."
          ::= { adslAturPerfDataEntry 13 }
 
          adslAturPerfCurr1DayLoss  OBJECT-TYPE
@@ -1363,7 +1363,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
 
                  "Count of the number of seconds when there was Loss
                  of Signal during the current day as measured by
-                 adslAturPerfCurr1DayTimeElapsed."
+                 adslAturPerfCurr1dayTimeElapsed."
          ::= { adslAturPerfDataEntry 14 }
 
          adslAturPerfCurr1DayLprs  OBJECT-TYPE
@@ -1374,7 +1374,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of the number of seconds when there was Loss
                  of Power during the current day as measured by
-                 adslAturPerfCurr1DayTimeElapsed."
+                 adslAturPerfCurr1dayTimeElapsed."
          ::= { adslAturPerfDataEntry 15 }
 
     adslAturPerfCurr1DayESs OBJECT-TYPE
@@ -1384,7 +1384,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              STATUS      current
              DESCRIPTION
                  "Count of Errored Seconds during the current day as
-                 measured by adslAturPerfCurr1DayTimeElapsed.
+                 measured by adslAturPerfCurr1dayTimeElapsed.
                  The errored second parameter is a count of
                  one-second intervals containing one or more crc
                  anomalies, or one or more los or sef defects."
@@ -1696,7 +1696,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
           adslAtucChanPerfCurr15MinTransmittedBlks PerfCurrentCount,
           adslAtucChanPerfCurr15MinCorrectedBlks   PerfCurrentCount,
           adslAtucChanPerfCurr15MinUncorrectBlks   PerfCurrentCount,
-          adslAtucChanPerfCurr1DayTimeElapsed      AdslPerfTimeElapsed,
+          adslAtucChanPerfCurr1dayTimeElapsed      AdslPerfTimeElapsed,
           adslAtucChanPerfCurr1DayReceivedBlks     AdslPerfCurrDayCount,
           adslAtucChanPerfCurr1DayTransmittedBlks  AdslPerfCurrDayCount,
           adslAtucChanPerfCurr1DayCorrectedBlks    AdslPerfCurrDayCount,
@@ -1840,7 +1840,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
 
          -- 1-day current and previous performance group
          --
-         adslAtucChanPerfCurr1DayTimeElapsed OBJECT-TYPE
+         adslAtucChanPerfCurr1dayTimeElapsed OBJECT-TYPE
              SYNTAX      AdslPerfTimeElapsed(0..86399)
              UNITS       "seconds"
              MAX-ACCESS  read-only
@@ -1859,7 +1859,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
                  channel during the current day as measured by
 
 
-                 adslAtucChanPerfCurr1DayTimeElapsed."
+                 adslAtucChanPerfCurr1dayTimeElapsed."
          ::= { adslAtucChanPerfDataEntry 13 }
 
          adslAtucChanPerfCurr1DayTransmittedBlks  OBJECT-TYPE
@@ -1869,7 +1869,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of all encoded blocks transmitted on this
                  channel during the current day as measured by
-                 adslAtucChanPerfCurr1DayTimeElapsed."
+                 adslAtucChanPerfCurr1dayTimeElapsed."
          ::= { adslAtucChanPerfDataEntry 14 }
 
          adslAtucChanPerfCurr1DayCorrectedBlks  OBJECT-TYPE
@@ -1879,7 +1879,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of all blocks received with errors that were
                  corrected on this channel during the current day as
-                 measured by adslAtucChanPerfCurr1DayTimeElapsed."
+                 measured by adslAtucChanPerfCurr1dayTimeElapsed."
          ::= { adslAtucChanPerfDataEntry 15 }
 
          adslAtucChanPerfCurr1DayUncorrectBlks  OBJECT-TYPE
@@ -1889,7 +1889,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of all blocks received with uncorrectable
                  errors on this channel during the current day as
-                 measured by adslAtucChanPerfCurr1DayTimeElapsed."
+                 measured by adslAtucChanPerfCurr1dayTimeElapsed."
          ::= { adslAtucChanPerfDataEntry 16 }
 
          adslAtucChanPerfPrev1DayMoniSecs OBJECT-TYPE
@@ -1982,7 +1982,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
           adslAturChanPerfCurr15MinTransmittedBlks PerfCurrentCount,
           adslAturChanPerfCurr15MinCorrectedBlks   PerfCurrentCount,
           adslAturChanPerfCurr15MinUncorrectBlks   PerfCurrentCount,
-          adslAturChanPerfCurr1DayTimeElapsed      AdslPerfTimeElapsed,
+          adslAturChanPerfCurr1dayTimeElapsed      AdslPerfTimeElapsed,
           adslAturChanPerfCurr1DayReceivedBlks     AdslPerfCurrDayCount,
           adslAturChanPerfCurr1DayTransmittedBlks  AdslPerfCurrDayCount,
           adslAturChanPerfCurr1DayCorrectedBlks    AdslPerfCurrDayCount,
@@ -2126,7 +2126,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
 
          -- 1-day current and previous performance group
          --
-         adslAturChanPerfCurr1DayTimeElapsed OBJECT-TYPE
+         adslAturChanPerfCurr1dayTimeElapsed OBJECT-TYPE
              SYNTAX      AdslPerfTimeElapsed(0..86399)
              UNITS       "seconds"
              MAX-ACCESS  read-only
@@ -2143,7 +2143,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of all encoded blocks received on this
                  channel during the current day as measured by
-                 adslAturChanPerfCurr1DayTimeElapsed."
+                 adslAturChanPerfCurr1dayTimeElapsed."
          ::= { adslAturChanPerfDataEntry 13 }
 
          adslAturChanPerfCurr1DayTransmittedBlks  OBJECT-TYPE
@@ -2153,7 +2153,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of all encoded blocks transmitted on this
                  channel during the current day as measured by
-                 adslAturChanPerfCurr1DayTimeElapsed."
+                 adslAturChanPerfCurr1dayTimeElapsed."
 
          ::= { adslAturChanPerfDataEntry 14 }
 
@@ -2165,7 +2165,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of all blocks received with errors that were
                  corrected on this channel during the current day as
-                 measured by adslAturChanPerfCurr1DayTimeElapsed."
+                 measured by adslAturChanPerfCurr1dayTimeElapsed."
          ::= { adslAturChanPerfDataEntry 15 }
 
          adslAturChanPerfCurr1DayUncorrectBlks  OBJECT-TYPE
@@ -2175,7 +2175,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
              DESCRIPTION
                  "Count of all blocks received with uncorrectable
                  errors on this channel during the current day as
-                 measured by adslAturChanPerfCurr1DayTimeElapsed."
+                 measured by adslAturChanPerfCurr1dayTimeElapsed."
          ::= { adslAturChanPerfDataEntry 16 }
 
          adslAturChanPerfPrev1DayMoniSecs OBJECT-TYPE
@@ -4036,7 +4036,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
                 adslAturPerfCurr15MinTimeElapsed,
                 adslAturPerfCurr15MinLofs, adslAturPerfCurr15MinLoss,
                 adslAturPerfCurr15MinLprs, adslAturPerfCurr15MinESs,
-                adslAturPerfCurr1DayTimeElapsed,
+                adslAturPerfCurr1dayTimeElapsed,
                 adslAturPerfCurr1DayLofs, adslAturPerfCurr1DayLoss,
                 adslAturPerfCurr1DayLprs, adslAturPerfCurr1DayESs,
                 adslAturPerfPrev1DayMoniSecs,
@@ -4068,7 +4068,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
                 adslAtucChanPerfCurr15MinTransmittedBlks,
                 adslAtucChanPerfCurr15MinCorrectedBlks,
                 adslAtucChanPerfCurr15MinUncorrectBlks,
-                adslAtucChanPerfCurr1DayTimeElapsed,
+                adslAtucChanPerfCurr1dayTimeElapsed,
                 adslAtucChanPerfCurr1DayReceivedBlks,
                 adslAtucChanPerfCurr1DayTransmittedBlks,
                 adslAtucChanPerfCurr1DayCorrectedBlks,
@@ -4106,7 +4106,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
                 adslAturChanPerfCurr15MinTransmittedBlks,
                 adslAturChanPerfCurr15MinCorrectedBlks,
                 adslAturChanPerfCurr15MinUncorrectBlks,
-                adslAturChanPerfCurr1DayTimeElapsed,
+                adslAturChanPerfCurr1dayTimeElapsed,
                 adslAturChanPerfCurr1DayReceivedBlks,
                 adslAturChanPerfCurr1DayTransmittedBlks,
                 adslAturChanPerfCurr1DayCorrectedBlks,
@@ -4283,7 +4283,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
                    adslAtucPerfCurr15MinTimeElapsed,
                    adslAtucPerfCurr15MinLofs, adslAtucPerfCurr15MinLoss,
                    adslAtucPerfCurr15MinESs, adslAtucPerfCurr15MinInits,
-                   adslAtucPerfCurr1DayTimeElapsed,
+                   adslAtucPerfCurr1dayTimeElapsed,
                    adslAtucPerfCurr1DayLofs, adslAtucPerfCurr1DayLoss,
                    adslAtucPerfCurr1DayESs, adslAtucPerfCurr1DayInits,
                    adslAtucPerfPrev1DayMoniSecs,
@@ -4322,7 +4322,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
                    adslAturPerfCurr15MinTimeElapsed,
                    adslAturPerfCurr15MinLofs, adslAturPerfCurr15MinLoss,
                    adslAturPerfCurr15MinLprs, adslAturPerfCurr15MinESs,
-                   adslAturPerfCurr1DayTimeElapsed,
+                   adslAturPerfCurr1dayTimeElapsed,
                    adslAturPerfCurr1DayLofs, adslAturPerfCurr1DayLoss,
                    adslAturPerfCurr1DayLprs, adslAturPerfCurr1DayESs,
                    adslAturPerfPrev1DayMoniSecs,
@@ -4353,7 +4353,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
                    adslAtucChanPerfCurr15MinTransmittedBlks,
                    adslAtucChanPerfCurr15MinCorrectedBlks,
                    adslAtucChanPerfCurr15MinUncorrectBlks,
-                   adslAtucChanPerfCurr1DayTimeElapsed,
+                   adslAtucChanPerfCurr1dayTimeElapsed,
                    adslAtucChanPerfCurr1DayReceivedBlks,
                    adslAtucChanPerfCurr1DayTransmittedBlks,
                    adslAtucChanPerfCurr1DayCorrectedBlks,
@@ -4391,7 +4391,7 @@ ADSL-LINE-MIB DEFINITIONS ::= BEGIN
                    adslAturChanPerfCurr15MinTransmittedBlks,
                    adslAturChanPerfCurr15MinCorrectedBlks,
                    adslAturChanPerfCurr15MinUncorrectBlks,
-                   adslAturChanPerfCurr1DayTimeElapsed,
+                   adslAturChanPerfCurr1dayTimeElapsed,
                    adslAturChanPerfCurr1DayReceivedBlks,
                    adslAturChanPerfCurr1DayTransmittedBlks,
                    adslAturChanPerfCurr1DayCorrectedBlks,

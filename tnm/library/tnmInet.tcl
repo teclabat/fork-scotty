@@ -8,20 +8,20 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# @(#) $Id: TnmInet.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
+# @(#) $Id: tnmInet.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 
-package require Tnm 3.1
-package provide TnmInet 3.1.3
+package require tnm 3.1
+package provide tnmInet 3.1.3
 
-namespace eval TnmInet {
-    namespace export GetIpAddress GetIpName DayTime Finger TraceRoute
-    namespace export TcpServices RpcServices
-    namespace export SendMail
+namespace eval tnmInet {
+    namespace export getIpAddress getIpName dayTime finger traceRoute
+    namespace export tcpServices rpcServices
+    namespace export sendMail
     # namespace export WhoIs NfsMounts NfsExports
     # namespace export Telnet Ping
 }
 
-# TnmInet::GetIpAddress --
+# tnmInet::getIpAddress --
 #
 #	Get the IP address for a given IP name. This procedure
 #	first tries to lookup the address in the local network
@@ -33,19 +33,19 @@ namespace eval TnmInet {
 # Results:
 #       The IP address or an error if all lookup attempts failed.
 
-proc TnmInet::GetIpAddress {something} {
-    if {![catch {Tnm::netdb hosts name $something}]} {
+proc tnmInet::getIpAddress {something} {
+    if {![catch {tnm::netdb hosts name $something}]} {
 	return $something
     }
-    if [catch {Tnm::netdb hosts address $something} ip] {
-	if [catch {Tnm::dns address $something} ip] {
+    if [catch {tnm::netdb hosts address $something} ip] {
+	if [catch {tnm::dns address $something} ip] {
 	    error "failed to lookup IP address for \"$something\""
 	}
     }
     return $ip
 }
 
-# TnmInet::GetIpName --
+# tnmInet::getIpName --
 #
 #	Get the IP name for a given IP address. This procedure
 #	first tries to lookup the name in the local network
@@ -57,19 +57,19 @@ proc TnmInet::GetIpAddress {something} {
 # Results:
 #       The IP name or an error if all lookup attempts failed.
 
-proc TnmInet::GetIpName {something} {
-    if {![catch {Tnm::netdb hosts address $something}]} {
+proc tnmInet::getIpName {something} {
+    if {![catch {tnm::netdb hosts address $something}]} {
 	return $something
     }
-    if [catch {Tnm::netdb hosts name $something} name] {
-	if [catch {Tnm::dns name $something} name] {
+    if [catch {tnm::netdb hosts name $something} name] {
+	if [catch {tnm::dns name $something} name] {
 	    error "failed to lookup IP name for \"$something\""
 	}
     }
     return $name
 }
 
-# TnmInet::DayTime --
+# tnmInet::dayTime --
 #
 #	Retrieve the time of the day from a remote host.
 #
@@ -78,7 +78,7 @@ proc TnmInet::GetIpName {something} {
 # Results:
 #	The time of the day as reported by the remote host.
 
-proc TnmInet::DayTime {{host localhost}} {
+proc tnmInet::dayTime {{host localhost}} {
     set s [socket $host daytime]
     fconfigure $s -translation crlf
     set code [catch {gets $s txt} msg]
@@ -87,7 +87,7 @@ proc TnmInet::DayTime {{host localhost}} {
     string trim $txt \n
 }
 
-# TnmInet::Finger --
+# tnmInet::finger --
 #
 #	Get information about a host or a user on a host by using the
 #	finger user information protocol (RFC 1288).
@@ -98,7 +98,7 @@ proc TnmInet::DayTime {{host localhost}} {
 # Results:
 #	The finger information as reported by the remote host.
 
-proc TnmInet::Finger {{host {localhost}} {user {}}} {
+proc tnmInet::finger {{host {localhost}} {user {}}} {
     set s [socket $host finger]
     fconfigure $s -translation crlf
     set txt ""
@@ -111,7 +111,7 @@ proc TnmInet::Finger {{host {localhost}} {user {}}} {
     string trim $txt \n
 }
 
-# TnmInet::TraceRoute --
+# tnmInet::traceRoute --
 #
 #	Trace a route to a remote host. This is based on the classic 
 #	van Jacobsen traceroute algorithm.
@@ -123,11 +123,11 @@ proc TnmInet::Finger {{host {localhost}} {user {}}} {
 # Results:
 #	The routing trace in human readable format (much like traceroute).
 
-proc TnmInet::TraceRoute {{host localhost} {maxlength 32} {retries 3}} {
-    if {![catch {Tnm::netdb ip class $host} dst]} {
+proc tnmInet::traceRoute {{host localhost} {maxlength 32} {retries 3}} {
+    if {![catch {tnm::netdb ip class $host} dst]} {
 	set dst $host
-    } elseif {[catch {Tnm::netdb hosts address $host} dst]} {
-	if {[catch {Tnm::dns address $host} dst]} {
+    } elseif {[catch {tnm::netdb hosts address $host} dst]} {
+	if {[catch {tnm::dns address $host} dst]} {
 	    error "unknown host name \"$host\""
 	}
     }
@@ -136,7 +136,7 @@ proc TnmInet::TraceRoute {{host localhost} {maxlength 32} {retries 3}} {
     }
     set l ""
     for {set ttl 1} {[lsearch $l $dst] < 0 && $ttl < $maxlength} {incr ttl} {
-        set trace [Tnm::icmp -retries 0 trace $ttl $icmparg]
+        set trace [tnm::icmp -retries 0 trace $ttl $icmparg]
         set l ""
         set time ""
         foreach {ip rtt} $trace {
@@ -149,8 +149,8 @@ proc TnmInet::TraceRoute {{host localhost} {maxlength 32} {retries 3}} {
         }
 	set names ""
         foreach ip $l {
-            if {[catch {Tnm::netdb hosts name $ip} name]} {
-                if {[catch {Tnm::dns name $ip} name]} {
+            if {[catch {tnm::netdb hosts name $ip} name]} {
+                if {[catch {tnm::dns name $ip} name]} {
                     set name $ip
                 }
             }
@@ -162,7 +162,7 @@ proc TnmInet::TraceRoute {{host localhost} {maxlength 32} {retries 3}} {
     string trim $txt \n
 }
 
-# TnmInet::TcpServices --
+# tnmInet::tcpServices --
 #
 #	Test the TCP services listed in the netdb services database
 #	by connecting to the ports listed there. This does not really
@@ -175,10 +175,10 @@ proc TnmInet::TraceRoute {{host localhost} {maxlength 32} {retries 3}} {
 #	A human readable list of services the allow to establish a
 #	TCP connection.
 
-proc TnmInet::TcpServices {{host localhost}} {
+proc tnmInet::tcpServices {{host localhost}} {
     set txt ""
     set services "X11 6000"
-    foreach {name port protocol} [join [Tnm::netdb services]] {
+    foreach {name port protocol} [join [tnm::netdb services]] {
 	if {[string compare $protocol tcp] == 0} {
 	    lappend services $name $port
 	}
@@ -193,7 +193,7 @@ proc TnmInet::TcpServices {{host localhost}} {
     string trim $txt \n
 }
 
-# TnmInet::RpcServices --
+# tnmInet::rpcServices --
 #
 #	Test the RPC services registered by the portmapper of a
 #	remote host by calling their procedure number 0.
@@ -205,12 +205,12 @@ proc TnmInet::TcpServices {{host localhost}} {
 #	result of each test. The time used to call procedure 0 is
 #	returned if the test was successful.
 
-proc TnmInet::RpcServices {{host localhost}} {
+proc tnmInet::rpcServices {{host localhost}} {
     set txt ""
-    set server [Tnm::sunrpc info $host]
+    set server [tnm::sunrpc info $host]
     foreach probe [lsort -ascii $server] {
 	set probe [eval format "{%10s %2d %s %5d %-16s}" $probe]
-	if {[catch {Tnm::sunrpc probe $host \
+	if {[catch {tnm::sunrpc probe $host \
 		[lindex $probe 0] [lindex $probe 1] [lindex $probe 2]} res]} {
 	    append txt "$probe\n"
 	} else {
@@ -221,7 +221,7 @@ proc TnmInet::RpcServices {{host localhost}} {
     string trim $txt \n
 }
 
-# TnmInet::SendMail --
+# tnmInet::sendMail --
 #
 #	This procedure sends a mail message to a list of recipients. 
 #	It uses the SMTP protocol (RFC 821) to deliver the mail message
@@ -235,14 +235,14 @@ proc TnmInet::RpcServices {{host localhost}} {
 # Result:
 #	None.
 
-proc TnmInet::SendMail {recipients message {subject {}}} {
+proc tnmInet::sendMail {recipients message {subject {}}} {
     global tnm
 
     if ![info exists tnm(email)] {
 	set tnm(email) "$tnm(user)@$tnm(domain)"
     }
     if [catch {socket $tnm(host) smtp} s] {
-	if [catch {Tnm::dns mx $tnm(domain)} mxhosts] {
+	if [catch {tnm::dns mx $tnm(domain)} mxhosts] {
 	    error "no smtp gateway found"
 	}
 	foreach {h p} [join $mxhosts] {
@@ -260,29 +260,29 @@ proc TnmInet::SendMail {recipients message {subject {}}} {
     }
     fconfigure $s -blocking true -buffering line
 
-    TnmInet::Expect $s 220
+    tnmInet::expect $s 220
     puts $s "HELO $tnm(host).$tnm(domain)"
-    TnmInet::Expect $s 250
+    tnmInet::expect $s 250
     puts $s "MAIL FROM:<$tnm(email)>"
-    TnmInet::Expect $s 250
+    tnmInet::expect $s 250
     foreach r $recipients {
 	puts $s "RCPT TO:<$r>"
-	TnmInet::Expect $s 250
+	tnmInet::expect $s 250
     }
     puts $s "DATA"
-    TnmInet::Expect $s 354
+    tnmInet::expect $s 354
     puts $s "To: [join $recipients ,]"
     if {[string length $subject]} {
 	puts $s "Subject: $subject"
     }
     puts $s $message
     puts $s "."
-    TnmInet::Expect $s 250
+    tnmInet::expect $s 250
     close $s
     return
 }
 
-# TnmInet::Expect --
+# tnmInet::expect --
 #
 #	This is a utility procedure to read from a stream until a 
 #	RFC 821 response has been recceived.
@@ -293,7 +293,7 @@ proc TnmInet::SendMail {recipients message {subject {}}} {
 # Results:
 #	None. Errors are generated if something goes wrong.
 
-proc TnmInet::Expect {channel code} {
+proc tnmInet::expect {channel code} {
     while 1 {
 	set n [gets $channel line]
 	if {$n < 0} { error "error while reading from $channel" }

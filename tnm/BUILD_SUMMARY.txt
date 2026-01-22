@@ -126,22 +126,22 @@ USAGE INSTRUCTIONS
    lappend auto_path "D:/CM.tcltk/tcltk86/release/lib"
 
 3. Load package:
-   package require Tnm
+   package require tnm
 
 4. Use TNM commands (10 available):
-   Tnm::snmp   - SNMP sessions and operations
-   Tnm::mib    - MIB management and parsing
-   Tnm::icmp   - ICMP echo/ping operations (mask/timestamp removed on Windows)
-   Tnm::udp    - UDP socket operations
-   Tnm::dns    - DNS queries (limited)
-   Tnm::netdb  - Network database lookups (sunrpcs removed)
-   Tnm::syslog - Syslog message generation
-   Tnm::job    - Job control and scheduling
-   Tnm::map    - Network map management
-   Tnm::ntp    - NTP operations (limited)
+   tnm::snmp   - SNMP sessions and operations
+   tnm::mib    - MIB management and parsing
+   tnm::icmp   - ICMP echo/ping operations (mask/timestamp removed on Windows)
+   tnm::udp    - UDP socket operations
+   tnm::dns    - DNS queries (limited)
+   tnm::netdb  - Network database lookups (sunrpcs removed)
+   tnm::syslog - Syslog message generation
+   tnm::job    - Job control and scheduling
+   tnm::map    - Network map management
+   tnm::ntp    - NTP operations (limited)
 
 Example SNMP Usage:
-  set s [Tnm::snmp generator -version SNMPv2c -address 192.168.1.1]
+  set s [tnm::snmp generator -version SNMPv2c -address 192.168.1.1]
   set result [$s get sysDescr.0]
   $s destroy
 

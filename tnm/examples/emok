@@ -2,7 +2,7 @@
 # the next line restarts using tclsh -*- tcl -*- \
 exec tclsh "$0" "$@"
 
-package require Tnm 3.0
+package require tnm 3.0
 
 ##
 ## Test if we can resolve a given email address. This script contacts

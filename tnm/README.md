@@ -164,7 +164,7 @@ or complete modules to this package. Below is a list of contributors
 
 * Dave Zeltserman <davez9@gte.net> provided useful feedback on a pre-release of Tnm 3.0 on the Windows platform.
 
-* David Perkins <dperkins@dsperkins.com> reviewed the Tnm::mib command and provided useful clarifications and suggestions.
+* David Perkins <dperkins@dsperkins.com> reviewed the tnm::mib command and provided useful clarifications and suggestions.
 
 * Viktor Dukhovni <Viktor-Dukhovni@deshaw.com> provided some bug fixes for early Tnm 3.0 snapshots.
 

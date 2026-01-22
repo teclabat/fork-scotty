@@ -1,4 +1,4 @@
-# TnmEther.tcl --
+# tnmEther.tcl --
 #
 #	This file contains a simple database of ethernet codes used
 #	by various vendors. The main purpose of this module is to
@@ -13,16 +13,16 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# @(#) $Id: TnmEther.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
+# @(#) $Id: tnmEther.tcl,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 
-package require Tnm 3.1
-package provide TnmEther 3.1.3
+package require tnm 3.1
+package provide tnmEther 3.1.3
 
-namespace eval TnmEther {
-    namespace export GetVendor GetEthers
+namespace eval tnmEther {
+    namespace export getVendor getEthers
 }
 
-# TnmEther::GetVendor --
+# tnmEther::getVendor --
 #
 #	Get the vendor for a given IEEE 802 ethernet address.
 #
@@ -32,15 +32,15 @@ namespace eval TnmEther {
 #	The name of the vendor or an empty string if there is
 #	no known vendor for the given ethernet address.
 
-proc TnmEther::GetVendor {ether} {
+proc tnmEther::getVendor {ether} {
     set l [string toupper [join [lrange [split $ether :] 0 2] {}]]
-    if {[info exists TnmEther::vendor($l)]} {
-	return $TnmEther::vendor($l)
+    if {[info exists tnmEther::vendor($l)]} {
+	return $tnmEther::vendor($l)
     }
     return
 }
 
-# TnmEther::GetEthers --
+# tnmEther::getEthers --
 #
 #	Get the ethernet address prefixes for all vendors that 
 #	match a given pattern.
@@ -50,17 +50,17 @@ proc TnmEther::GetVendor {ether} {
 # Results:
 #	A list of ethernet address prefixes in the format aa:bb:cc.
 
-proc TnmEther::GetEthers {pattern} {
+proc tnmEther::getEthers {pattern} {
     set result {}
-    foreach ether [array names TnmEther::vendor] {
-	if {[regexp -nocase -- $pattern $TnmEther::vendor($ether)]} {
+    foreach ether [array names tnmEther::vendor] {
+	if {[regexp -nocase -- $pattern $tnmEther::vendor($ether)]} {
 	    lappend result $ether
 	}
     }
     return $result
 }
 
-namespace eval TnmEther {
+namespace eval tnmEther {
     variable vendor
 
 set vendor(000002) {BBN (was internal usage only, no longer used)}

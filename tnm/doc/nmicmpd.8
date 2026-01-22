@@ -6,7 +6,7 @@
 '\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 '\" 
 .so man.macros
-.TH nmicmpd 8 "July 1997" Tnm "Tnm Tcl Extension"
+.TH nmicmpd 8 "July 1997" tnm "tnm Tcl Extension"
 .BS
 '\" Note:  do not modify the .SH NAME line immediately below!
 .SH NAME
@@ -28,7 +28,7 @@ minimum delay between ICMP messages or the maximum number of ICMP
 messages on the wire can be used to control the network load created
 by this daemon.
 
-The \fBnmicmpd\fR daemon is usually used by the Tnm(n) Tcl extension
+The \fBnmicmpd\fR daemon is usually used by the tnm(n) Tcl extension
 which starts the daemon automatically when needed. However, you may
 also choose to run this daemon under the control of inetd(8). This
 allows remote sites to send ICMP messages from your machine.
@@ -121,7 +121,7 @@ ICMP packets may be send in parallel to limit the number of ICMP
 packets on the wire.
 
 .SH SEE ALSO
-scotty(1), tkined(1), Tnm(n)
+scotty(1), tkined(1), tnm(n)
 
 .SH AUTHORS
 Erik Schoenfelder <schoenfr@gaertner.de>

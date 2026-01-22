@@ -15,36 +15,36 @@ exec tclsh "$0" "$@"
 #
 # @(#) $Id: bridge,v 1.1.1.1 2006/12/07 12:16:57 karl Exp $
 
-package require Tnm
-package require TnmSnmp $tnm(version)
+package require tnm
+package require tnmSnmp $tnm(version)
 
-Tnm::mib load BRIDGE-MIB
+tnm::mib load BRIDGE-MIB
 
 proc GetIfTable {s} {
     global ifDescr ifType ifOperStatus ifAdminStatus
     $s walk x {ifIndex ifDescr ifType ifOperStatus ifAdminStatus} {
-	set ifIndex [Tnm::snmp value $x 0]
-	set ifDescr($ifIndex) [Tnm::snmp value $x 1]
-	set ifType($ifIndex) [Tnm::snmp value $x 2]
-	set ifOperStatus($ifIndex) [Tnm::snmp value $x 3]
-	set ifAdminStatus($ifIndex) [Tnm::snmp value $x 4]
+	set ifIndex [tnm::snmp value $x 0]
+	set ifDescr($ifIndex) [tnm::snmp value $x 1]
+	set ifType($ifIndex) [tnm::snmp value $x 2]
+	set ifOperStatus($ifIndex) [tnm::snmp value $x 3]
+	set ifAdminStatus($ifIndex) [tnm::snmp value $x 4]
     }
 }
 
 proc GetPortTable {s} {
     global dot1dBasePortIfIndex
     $s walk x {dot1dBasePort dot1dBasePortIfIndex} {
-	set port [Tnm::snmp value $x 0]
-	set dot1dBasePortIfIndex($port) [Tnm::snmp value $x 1]
+	set port [tnm::snmp value $x 0]
+	set dot1dBasePortIfIndex($port) [tnm::snmp value $x 1]
     }
 }
 
 proc GetForwardingDatabase {s} {
     global dot1dTpFdbPort dot1dTpFdbStatus
     $s walk x {dot1dTpFdbAddress dot1dTpFdbPort dot1dTpFdbStatus} {
-	set mac [Tnm::snmp value $x 0]
-	set dot1dTpFdbPort($mac) [Tnm::snmp value $x 1]
-	set dot1dTpFdbStatus($mac) [Tnm::snmp value $x 2]
+	set mac [tnm::snmp value $x 0]
+	set dot1dTpFdbPort($mac) [tnm::snmp value $x 1]
+	set dot1dTpFdbStatus($mac) [tnm::snmp value $x 2]
     }
 }
 
@@ -54,10 +54,10 @@ proc GetFilterTable {s} {
 	dot1dStaticAddress dot1dStaticReceivePort 
 	dot1dStaticAllowedToGoTo dot1dStaticStatus
     } {
-	set mac [Tnm::snmp value $x 0]
-	set port [Tnm::snmp value $x 1]
-	set dot1dStaticAllowedToGoTo($mac,$port) [Tnm::snmp value $x 2]
-	set dot1dStaticStatus($mac,$port) [Tnm::snmp value $x 3]
+	set mac [tnm::snmp value $x 0]
+	set port [tnm::snmp value $x 1]
+	set dot1dStaticAllowedToGoTo($mac,$port) [tnm::snmp value $x 2]
+	set dot1dStaticStatus($mac,$port) [tnm::snmp value $x 3]
     }
 }
 
@@ -123,7 +123,7 @@ proc SetFilter {s mac {port 0}} {
 }
 
 foreach ip $argv {
-    set s [Tnm::snmp generator -address $ip]
+    set s [tnm::snmp generator -address $ip]
     $s bind recv { puts -nonewline stderr "." }
     GetIfTable $s
     GetPortTable $s

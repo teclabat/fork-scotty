@@ -121,7 +121,7 @@ if (icmpPtr->type == TNM_ICMP_TYPE_MASK
 - No `IcmpSendTimestamp()` or equivalent function exists
 - ICMP timestamp is rarely used in modern networks (NTP has replaced it)
 
-**Workaround**: Use NTP (Network Time Protocol) instead via `Tnm::ntp` command.
+**Workaround**: Use NTP (Network Time Protocol) instead via `tnm::ntp` command.
 
 ---
 
@@ -244,7 +244,7 @@ targetPtr->u.rtt = pIpe->RoundTripTime * 1000;  // Convert ms to microseconds
 | Test ID | Test Description | Reason | Workaround |
 |---------|-----------------|--------|------------|
 | icmp-2.0 | ICMP mask request | ICMP.DLL doesn't support mask requests | None - use network config APIs |
-| icmp-2.1 | ICMP timestamp | ICMP.DLL doesn't support timestamp | Use `Tnm::ntp` instead |
+| icmp-2.1 | ICMP timestamp | ICMP.DLL doesn't support timestamp | Use `tnm::ntp` instead |
 
 ### Tests That OFTEN Fail on Windows (13 failures)
 
@@ -422,14 +422,14 @@ For **typical network monitoring** use cases, Windows ICMP support is **adequate
 
 ```tcl
 # Basic ping - WORKS PERFECTLY
-set result [Tnm::icmp echo 192.168.1.1]
+set result [tnm::icmp echo 192.168.1.1]
 if {[lindex $result 1] > 0} {
     puts "Host is reachable, RTT: [lindex $result 1] microseconds"
 }
 
 # Ping multiple hosts - WORKS PERFECTLY
 set hosts {192.168.1.1 192.168.1.2 192.168.1.3}
-set results [Tnm::icmp echo $hosts]
+set results [tnm::icmp echo $hosts]
 foreach {host rtt} $results {
     if {$rtt > 0} {
         puts "$host is reachable"
@@ -438,7 +438,7 @@ foreach {host rtt} $results {
 
 # Traceroute - WORKS PERFECTLY
 for {set ttl 1} {$ttl <= 30} {incr ttl} {
-    set result [Tnm::icmp ttl $ttl 8.8.8.8]
+    set result [tnm::icmp ttl $ttl 8.8.8.8]
     set hop [lindex $result 0]
     if {$hop != ""} {
         puts "Hop $ttl: $hop"
@@ -446,7 +446,7 @@ for {set ttl 1} {$ttl <= 30} {incr ttl} {
 }
 
 # Custom timeout/retries - WORKS PERFECTLY
-set result [Tnm::icmp -timeout 5 -retries 3 echo 192.168.1.100]
+set result [tnm::icmp -timeout 5 -retries 3 echo 192.168.1.100]
 ```
 
 ### What Doesn't Work ❌
@@ -454,23 +454,23 @@ set result [Tnm::icmp -timeout 5 -retries 3 echo 192.168.1.100]
 **Address Mask Discovery**:
 ```tcl
 # DOESN'T WORK ON WINDOWS
-set mask [lindex [Tnm::icmp mask 192.168.1.1] 1]
+set mask [lindex [tnm::icmp mask 192.168.1.1] 1]
 # Returns empty string (timeout)
 
-# WORKAROUND: Use Tnm::netdb or ipconfig
-set info [Tnm::netdb hosts]
+# WORKAROUND: Use tnm::netdb or ipconfig
+set info [tnm::netdb hosts]
 # Parse network information from system
 ```
 
 **Timestamp Requests**:
 ```tcl
 # DOESN'T WORK ON WINDOWS
-set timestamp [lindex [Tnm::icmp timestamp 192.168.1.1] 1]
+set timestamp [lindex [tnm::icmp timestamp 192.168.1.1] 1]
 # Returns empty string (timeout)
 
-# WORKAROUND: Use Tnm::ntp for time synchronization
-package require Tnm
-set result [Tnm::ntp 192.168.1.1]
+# WORKAROUND: Use tnm::ntp for time synchronization
+package require tnm
+set result [tnm::ntp 192.168.1.1]
 # Use NTP instead of ICMP timestamp
 ```
 
@@ -479,13 +479,13 @@ set result [Tnm::ntp 192.168.1.1]
 # DOESN'T WORK AS EXPECTED ON WINDOWS
 # This should take ~5 seconds (10 hosts * 500ms delay)
 set hosts {host1 host2 host3 host4 host5 host6 host7 host8 host9 host10}
-set results [Tnm::icmp -delay 500 echo $hosts]
+set results [tnm::icmp -delay 500 echo $hosts]
 # On Windows: Completes in milliseconds (all sent immediately)
 # On Unix: Takes ~5 seconds (proper spacing)
 
 # WORKAROUND: Implement delay in Tcl
 foreach host $hosts {
-    set result [Tnm::icmp echo $host]
+    set result [tnm::icmp echo $host]
     # Process result
     after 500  ; # Sleep 500ms
 }
@@ -500,7 +500,7 @@ foreach host $hosts {
 1. **Use ICMP echo for basic reachability testing** - Works perfectly
 2. **Use TTL-based traceroute** - Works perfectly
 3. **Avoid ICMP mask requests** - Use network config APIs instead
-4. **Avoid ICMP timestamp** - Use NTP (`Tnm::ntp`) instead
+4. **Avoid ICMP timestamp** - Use NTP (`tnm::ntp`) instead
 5. **Don't rely on delay parameter** - Implement rate limiting in Tcl if needed
 6. **Accept millisecond RTT precision** - Microseconds not available on Windows
 7. **Test window parameter behavior** - May differ from Unix expectations
