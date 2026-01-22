@@ -1,28 +1,31 @@
-confdefs.h
-config.h
-config.log
+# TEA build artifacts
+configure
 config.status
-conftest.*
+config.log
+config.cache
+config.h
+autom4te.cache/
 Makefile
 pkgIndex.tcl
-ether.h
-ether.x
-ether_clnt.c
-ether_svc.c
-ether_xdr.c
-mount.h
-mount.x
-mount_clnt.c
-mount_svc.c
-mount_xdr.c
-pcnfsd.h
-pcnfsd.x
-pcnfsd_clnt.c
-pcnfsd_svc.c
-pcnfsd_xdr.c
-rstat.h
-rstat.x
-rstat_clnt.c
-rstat_svc.c
-rstat_xdr.c
-!tclconfig/install-sh
+
+# Compiled files
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.a
+*.lib
+*.exp
+*.ilk
+*.pdb
+
+# Backup files
+*~
+*.old
+*.bak
+
+# Editor files
+*.swp
+.gse
+.origin

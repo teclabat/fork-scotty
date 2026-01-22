@@ -24,8 +24,8 @@ lappend auto_path $tnm(library)/library
 # list definitions.
 
 namespace eval tnm {
-    namespace export dns icmp ined job map mib netdb ntp smx
-    namespace export snmp sunrpc syslog udp
+    namespace export dns icmp job map mib netdb ntp
+    namespace export snmp syslog udp
 }
 
 # Alias definitions for SNMP sessions. You can add more local 
