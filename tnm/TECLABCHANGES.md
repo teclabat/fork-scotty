@@ -1491,3 +1491,199 @@ fi
 - No functional changes to SNMP, ICMP, UDP, DNS, MIB operations
 - Test pass rate: 100% (excluding known platform-specific skips)
 
+---
+
+## DNS and NTP Fixes (January 27, 2026)
+
+### 35. Fixed tnm::dns Crashes on Windows
+
+**Files Modified**:
+- `compat/tnm_compat.c` (lines 16-35: completed `_res` structure)
+
+**Problem**: `tnm::dns` commands crashed on Windows with segmentation fault when accessing `_res.dnsrch[]` array.
+
+**Root Cause**: The `_res` resolver structure stub in `tnm_compat.c` was incomplete. It was missing the `dnsrch` field that `tnmDns.c` accesses at lines 640 and 677:
+```c
+} else if (! _res.dnsrch[i]) {   // CRASH: field doesn't exist!
+```
+
+**Fix**: Added missing `dnsrch` field and proper initialization:
+```c
+#define MAXDNSRCH 6  /* Max search domains */
+#define MAXNS 3      /* Max name servers */
+
+typedef struct __res_state {
+    int retrans;
+    int retry;
+    unsigned long options;
+    int nscount;
+    struct sockaddr_in nsaddr_list[MAXNS];
+    char *dnsrch[MAXDNSRCH + 1];  /* CRITICAL: search list, NULL-terminated */
+} *res_state;
+
+/* Zero-initialize to prevent garbage values */
+struct __res_state _res = {0};
+
+int res_init(void) {
+    memset(&_res, 0, sizeof(_res));
+    _res.retrans = 2;      /* 2 second timeout */
+    _res.retry = 2;        /* 2 retries */
+    _res.nscount = 0;      /* No servers configured */
+    return 0;  /* Return success */
+}
+```
+
+**Impact**:
+- `package require tnm` loads without crash
+- DNS queries return graceful error "cannot make query" (stub behavior)
+- No more segmentation faults
+
+### 36. Enhanced tnm::ntp with Mode 3 Client Queries
+
+**Files Modified**:
+- `generic/tnmNtp.c` (extensive changes: new `time` subcommand, dict returns)
+
+**Problem**: `tnm::ntp status server` returned "no ntp response" when querying public NTP servers like `pool.ntp.org`.
+
+**Root Cause**: The original implementation used NTP Control Mode (mode 6) which is disabled by most public NTP servers for security reasons.
+
+**Fix**: Added new `time` subcommand using NTP Client Mode (mode 3):
+
+```c
+/* New NTP time packet structure for mode 3 queries */
+struct ntp_time_pkt {
+    unsigned char li_vn_mode;      /* LI, Version, Mode */
+    unsigned char stratum;
+    unsigned char poll;
+    signed char precision;
+    unsigned int root_delay;
+    unsigned int root_dispersion;
+    unsigned int ref_id;
+    unsigned int ref_ts_sec;
+    unsigned int ref_ts_frac;
+    unsigned int orig_ts_sec;
+    unsigned int orig_ts_frac;
+    unsigned int recv_ts_sec;
+    unsigned int recv_ts_frac;
+    unsigned int xmit_ts_sec;
+    unsigned int xmit_ts_frac;
+};
+#define NTP_EPOCH_OFFSET 2208988800UL  /* 1900 to 1970 */
+```
+
+**API Changes**:
+- **Explicit subcommand required**: `tnm::ntp time server` or `tnm::ntp status server`
+- **Returns dict directly** (no result variable needed):
+  ```tcl
+  set r [tnm::ntp time pool.ntp.org]
+  puts "Time: [clock format [dict get $r time]]"
+  puts "Stratum: [dict get $r stratum]"
+  ```
+
+**time subcommand returns**:
+- `time` - Unix timestamp (seconds since 1970)
+- `offset` - Clock offset in seconds (float)
+- `delay` - Round-trip delay in seconds (float)
+- `stratum` - Server stratum (1-15)
+- `precision` - Server precision (power of 2)
+- `refid` - Reference identifier string
+
+**status subcommand returns**:
+- Dict with `sys.*` and `peer.*` variables (mode 6, for NTP server monitoring)
+
+**Impact**:
+- Public NTP servers now work: `tnm::ntp time pool.ntp.org`
+- Backwards incompatible: explicit subcommand required
+- Both `time` and `status` return dicts directly
+
+### 37. Changed tnm::icmp Timeout to Milliseconds (Breaking Change)
+
+**Files Modified**:
+- `generic/tnmIcmp.c` (line 267: default timeout 5 → 5000)
+- `win/tnmWinIcmp.c` (line 155: removed *1000 multiplication)
+- `unix/tnmUnixIcmp.c` (lines 46-64: new protocol structure with 16-bit timeout)
+- `unix/nmicmpd.c` (extensive: updated daemon protocol to version 0x01)
+- `doc/icmp.n.in` (documentation update)
+
+**Problem**: The `-timeout` option used different units on Windows (milliseconds internally) and Unix (seconds in daemon protocol). This made cross-platform scripts inconsistent.
+
+**Root Cause**:
+- Windows ICMP.DLL expects milliseconds natively
+- Unix nmicmpd daemon protocol used `u_char` for timeout (0-255 seconds max)
+- Code had inconsistent multiplication/division to convert units
+
+**Fix - Protocol Version 0x01**:
+
+Changed Unix daemon protocol from version 0x00 to 0x01 with 16-bit timeout/delay fields:
+
+```c
+/* Old protocol (version 0x00) - tnmUnixIcmp.c */
+typedef struct IcmpMsg {
+    u_char version;     /* 0x00 */
+    u_char type;
+    u_char status;
+    u_char flags;
+    unsigned int tid;
+    struct in_addr addr;
+    u_char ttl;
+    u_char timeout;     /* seconds (0-255) */
+    u_char retries;
+    u_char delay;       /* seconds (0-255) */
+    // ...
+} IcmpMsg;
+
+/* New protocol (version 0x01) - tnmUnixIcmp.c */
+#define ICMP_MSG_VERSION    0x01
+#define ICMP_MSG_REQUEST_SIZE   22
+
+typedef struct IcmpMsg {
+    u_char version;         /* 0x01 */
+    u_char type;
+    u_char status;
+    u_char flags;
+    unsigned int tid;
+    struct in_addr addr;
+    u_char ttl;
+    u_char retries;
+    unsigned short timeout; /* milliseconds (0-65535) */
+    unsigned short delay;   /* milliseconds (0-65535) */
+    unsigned short size;
+    unsigned short window;
+    unsigned int data;
+} IcmpMsg;
+```
+
+**Daemon changes (nmicmpd.c)**:
+- Updated structure to match new protocol
+- Removed `* 1000` multiplication in retry interval calculation
+- Added `ntohs()` conversions for timeout and delay fields
+
+**API Changes**:
+- **Breaking Change**: `-timeout` and `-delay` now in **milliseconds** on both platforms
+- Default timeout: **5000 ms** (was 5 seconds)
+- Default delay: **0 ms** (unchanged)
+- Maximum delay: **255 ms** (hardware limit preserved)
+
+**Migration**:
+```tcl
+# Old (seconds):
+tnm::icmp -timeout 5 echo host
+
+# New (milliseconds):
+tnm::icmp -timeout 5000 echo host
+```
+
+**Test Results**:
+```
+Default timeout: 5000ms  ✅
+Set timeout to 2000: 2000ms  ✅
+Set delay to 100: 100ms  ✅
+Echo 127.0.0.1: 0.0ms RTT  ✅
+```
+
+**Impact**:
+- Consistent millisecond units on both Windows and Linux
+- Scripts using old second-based timeout need update (multiply by 1000)
+- Better precision for short timeouts
+- Linux requires rebuilt nmicmpd daemon with new protocol
+
