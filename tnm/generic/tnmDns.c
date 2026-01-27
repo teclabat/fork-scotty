@@ -26,6 +26,16 @@
 #include <resolv.h>
 
 /*
+ * Windows-specific DNS support using DnsQuery API.
+ * This provides native DNS resolution on Windows without requiring
+ * the BSD resolver library.
+ */
+#if defined(_WIN32) || defined(__WIN32__) || defined(WINNT)
+#define USE_WINDOWS_DNS 1
+#include <windns.h>
+#endif
+
+/*
  * enable debug output of resover routine DnsDoQuery(), DnsHaveQuery()
  * with #define DEBUG_RESOLV
  */
@@ -239,6 +249,195 @@ DnsGetHostName(Tcl_Interp *interp, const char *hname)
  *----------------------------------------------------------------------
  */
 
+#ifdef USE_WINDOWS_DNS
+/*
+ * Windows-specific implementation using DnsQuery API.
+ * This provides native DNS resolution without BSD resolver.
+ */
+static void
+DnsDoQuery(char *query_string, int query_type, a_res *query_result)
+{
+    DNS_STATUS status;
+    PDNS_RECORD pDnsRecord = NULL;
+    PDNS_RECORD pRecord;
+    WORD wType;
+    DWORD i;
+
+#ifdef DEBUG_RESOLV
+    fprintf(stderr, "DnsDoQuery (Windows): query_type=%d %s\n",
+	    query_type, query_string);
+#endif
+
+    /* Initialize result structure */
+    query_result->type = -1;
+    query_result->n = 0;
+
+    /* Map BSD DNS type constants to Windows DNS type constants */
+    switch (query_type) {
+        case T_A:     wType = DNS_TYPE_A;     break;
+        case T_NS:    wType = DNS_TYPE_NS;    break;
+        case T_CNAME: wType = DNS_TYPE_CNAME; break;
+        case T_SOA:   wType = DNS_TYPE_SOA;   break;
+        case T_PTR:   wType = DNS_TYPE_PTR;   break;
+        case T_HINFO: wType = DNS_TYPE_HINFO; break;
+        case T_MX:    wType = DNS_TYPE_MX;    break;
+        case T_TXT:   wType = DNS_TYPE_TEXT;  break;
+        default:
+            query_result->n = -1;
+            snprintf(query_result->u.str[0], sizeof(query_result->u.str[0]),
+                     "unsupported query type %d", query_type);
+            return;
+    }
+
+    /* Perform the DNS query using Windows API */
+    status = DnsQuery_A(query_string, wType, DNS_QUERY_STANDARD,
+                        NULL, &pDnsRecord, NULL);
+
+    if (status != ERROR_SUCCESS) {
+        query_result->n = -1;
+        /* Map Windows DNS error codes to standard error messages */
+        switch (status) {
+            case DNS_ERROR_RCODE_NAME_ERROR:
+                strcpy(query_result->u.str[0], "non existent domain");
+                break;
+            case DNS_ERROR_RCODE_SERVER_FAILURE:
+                strcpy(query_result->u.str[0], "server failure");
+                break;
+            case DNS_ERROR_RCODE_FORMAT_ERROR:
+                strcpy(query_result->u.str[0], "format error");
+                break;
+            case DNS_ERROR_RCODE_REFUSED:
+                strcpy(query_result->u.str[0], "query refused");
+                break;
+            case DNS_ERROR_RCODE_NOT_IMPLEMENTED:
+                strcpy(query_result->u.str[0], "not implemented");
+                break;
+            case ERROR_TIMEOUT:
+            case DNS_ERROR_RCODE_YXDOMAIN:
+                strcpy(query_result->u.str[0], "query timeout");
+                break;
+            default:
+                snprintf(query_result->u.str[0], sizeof(query_result->u.str[0]),
+                         "DNS query failed (error %lu)", (unsigned long)status);
+        }
+        return;
+    }
+
+    /* Process the DNS records returned */
+    for (pRecord = pDnsRecord; pRecord != NULL; pRecord = pRecord->pNext) {
+        if (query_result->n >= MAXRESULT) break;
+
+        switch (pRecord->wType) {
+            case DNS_TYPE_A:
+                if (query_type == T_A) {
+                    query_result->type = T_A;
+                    /* Windows stores IP in network byte order already */
+                    query_result->u.addr[query_result->n].s_addr =
+                        pRecord->Data.A.IpAddress;
+                    query_result->n++;
+                }
+                break;
+
+            case DNS_TYPE_PTR:
+                if (query_type == T_PTR) {
+                    query_result->type = T_PTR;
+                    strncpy(query_result->u.str[query_result->n],
+                            pRecord->Data.PTR.pNameHost, 255);
+                    query_result->u.str[query_result->n][255] = '\0';
+                    query_result->n++;
+                }
+                break;
+
+            case DNS_TYPE_NS:
+                if (query_type == T_NS) {
+                    query_result->type = T_NS;
+                    strncpy(query_result->u.str[query_result->n],
+                            pRecord->Data.NS.pNameHost, 255);
+                    query_result->u.str[query_result->n][255] = '\0';
+                    query_result->n++;
+                }
+                break;
+
+            case DNS_TYPE_CNAME:
+                if (query_type == T_CNAME) {
+                    query_result->type = T_CNAME;
+                    strncpy(query_result->u.str[query_result->n],
+                            pRecord->Data.CNAME.pNameHost, 255);
+                    query_result->u.str[query_result->n][255] = '\0';
+                    query_result->n++;
+                }
+                break;
+
+            case DNS_TYPE_MX:
+                if (query_type == T_MX) {
+                    query_result->type = T_MX;
+                    snprintf(query_result->u.str[query_result->n],
+                             sizeof(query_result->u.str[0]), "%s %d",
+                             pRecord->Data.MX.pNameExchange,
+                             pRecord->Data.MX.wPreference);
+                    query_result->n++;
+                }
+                break;
+
+            case DNS_TYPE_SOA:
+                if (query_type == T_SOA) {
+                    query_result->type = T_SOA;
+                    strncpy(query_result->u.str[query_result->n],
+                            pRecord->Data.SOA.pNamePrimaryServer, 255);
+                    query_result->u.str[query_result->n][255] = '\0';
+                    query_result->n++;
+                }
+                break;
+
+            case DNS_TYPE_HINFO:
+                if (query_type == T_HINFO) {
+                    query_result->type = T_HINFO;
+                    /* HINFO has CPU and OS strings */
+                    if (query_result->n < MAXRESULT && pRecord->Data.HINFO.pStringArray[0]) {
+                        strncpy(query_result->u.str[query_result->n],
+                                pRecord->Data.HINFO.pStringArray[0], 255);
+                        query_result->u.str[query_result->n][255] = '\0';
+                        query_result->n++;
+                    }
+                    if (query_result->n < MAXRESULT && pRecord->Data.HINFO.pStringArray[1]) {
+                        strncpy(query_result->u.str[query_result->n],
+                                pRecord->Data.HINFO.pStringArray[1], 255);
+                        query_result->u.str[query_result->n][255] = '\0';
+                        query_result->n++;
+                    }
+                }
+                break;
+
+            case DNS_TYPE_TEXT:
+                if (query_type == T_TXT) {
+                    query_result->type = T_TXT;
+                    /* TXT records can have multiple strings */
+                    for (i = 0; i < pRecord->Data.TXT.dwStringCount &&
+                         query_result->n < MAXRESULT; i++) {
+                        strncpy(query_result->u.str[query_result->n],
+                                pRecord->Data.TXT.pStringArray[i], 255);
+                        query_result->u.str[query_result->n][255] = '\0';
+                        query_result->n++;
+                    }
+                }
+                break;
+        }
+    }
+
+    /* Free the DNS record list */
+    if (pDnsRecord) {
+        DnsRecordListFree(pDnsRecord, DnsFreeRecordList);
+    }
+
+    /* Set error if no matching records found */
+    if (query_result->n == 0) {
+        query_result->n = -1;
+        strcpy(query_result->u.str[0], "no answer");
+    }
+}
+
+#else /* !USE_WINDOWS_DNS - BSD resolver implementation */
+
 static void
 DnsDoQuery(char *query_string, int query_type, a_res *query_result)
 {
@@ -279,7 +478,8 @@ DnsDoQuery(char *query_string, int query_type, a_res *query_result)
 		       (u_char *) &query, sizeof(query));
     if (qlen <= 0) {
 	query_result->n = -1;
-	sprintf(query_result->u.str[0], "cannot make query '%s'", query_string);
+	snprintf(query_result->u.str[0], sizeof(query_result->u.str[0]),
+		 "cannot make query '%s'", query_string);
 	return;
     }
 
@@ -287,12 +487,12 @@ DnsDoQuery(char *query_string, int query_type, a_res *query_result)
      * res_send(msg, msglen, answer, anslen)
      */
 
-    alen = res_send((u_char *) &query, qlen, 
+    alen = res_send((u_char *) &query, qlen,
 		    (u_char *) &answer, sizeof (answer));
     if (alen <= 0) {
 	query_result->n = -1;
-	sprintf (query_result->u.str[0], "cannot send query '%s'; error %d", 
-		 query_string, h_errno);
+	snprintf(query_result->u.str[0], sizeof(query_result->u.str[0]),
+		 "cannot send query '%s'; error %d", query_string, h_errno);
 	return;
     }
 
@@ -319,7 +519,8 @@ DnsDoQuery(char *query_string, int query_type, a_res *query_result)
 	else if (q->qb1.rcode == 5)
 	    strcpy(query_result->u.str[0], "query refused");
 	else
-	    sprintf(query_result->u.str[0], "unknown error %d", q->qb1.rcode);
+	    snprintf(query_result->u.str[0], sizeof(query_result->u.str[0]),
+		     "unknown error %d", q->qb1.rcode);
 	query_result->type = query_type;
 	query_result->n = -1;
 	return;
@@ -583,8 +784,9 @@ DnsDoQuery(char *query_string, int query_type, a_res *query_result)
 
 	    if (query_result->type == T_MX || query_result->type == -1) {
 		query_result->type = T_MX;
-		sprintf(query_result->u.str[query_result->n++], 
-			"%s %d", buf, prio);
+		snprintf(query_result->u.str[query_result->n],
+			 sizeof(query_result->u.str[0]), "%s %d", buf, prio);
+		query_result->n++;
 	    }
 
 	} else {
@@ -593,6 +795,7 @@ DnsDoQuery(char *query_string, int query_type, a_res *query_result)
 	}
     }
 }
+#endif /* !USE_WINDOWS_DNS */
 
 /*
  *----------------------------------------------------------------------
@@ -636,15 +839,15 @@ DnsHaveQuery(const char *query_string, int query_type, a_res *query_result, int 
     for (i = -1; i < MAXDNSRCH + 1; i++) {
 
         if (i == -1) {
-	    strcpy(tmp, query_string);
+	    snprintf(tmp, sizeof(tmp), "%s", query_string);
 	} else if (! _res.dnsrch[i]) {
 	    break;
 	} else if (last == '.') {
 	    break;
 	} else {
-	    sprintf(tmp, "%s.%s", query_string, _res.dnsrch[i]);
+	    snprintf(tmp, sizeof(tmp), "%s.%s", query_string, _res.dnsrch[i]);
 	}
-	
+
 	DnsDoQuery(tmp, query_type, &res);
 #ifdef DEBUG_RESOLV
 	fprintf(stderr, "DnsDoQuery1: res.type=%d, res.n=%d\n", res.type, res.n);
@@ -673,15 +876,15 @@ DnsHaveQuery(const char *query_string, int query_type, a_res *query_result, int 
     for (i = -1; i < MAXDNSRCH + 1; i++) {
 
 	if (i == -1) {
-	    strcpy(tmp, query_string);
+	    snprintf(tmp, sizeof(tmp), "%s", query_string);
 	} else if (! _res.dnsrch[i]) {
 	    break;
 	} else if (last == '.') {
 	    break;
 	} else {
-	    sprintf(tmp, "%s.%s", query_string, _res.dnsrch[i]);
+	    snprintf(tmp, sizeof(tmp), "%s.%s", query_string, _res.dnsrch[i]);
 	}
-	
+
 	DnsDoQuery(tmp, query_type, &res);
 #ifdef DEBUG_RESOLV
 	fprintf(stderr, "DnsDoQuery2: res.type=%d, res.n=%d\n", res.type, res.n);
@@ -803,7 +1006,7 @@ DnsPtr(Tcl_Interp *interp, const char *ip)
 	return TCL_ERROR;
     }
 
-    sprintf(tmp, "%d.%d.%d.%d.in-addr.arpa", d, c, b, a);
+    snprintf(tmp, sizeof(tmp), "%d.%d.%d.%d.in-addr.arpa", d, c, b, a);
     DnsHaveQuery(tmp, T_PTR, &res, 0);
 
     if (res.n < 0 || res.type != T_PTR) {

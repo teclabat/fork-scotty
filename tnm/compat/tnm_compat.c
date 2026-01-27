@@ -11,22 +11,37 @@
 #include <windows.h>
 #include <winsock.h>
 #include <errno.h>
+#include <string.h>
 
-/* DNS Resolver stub */
+/* DNS Resolver constants (must match tnmDns.c expectations) */
+#ifndef MAXDNSRCH
+#define MAXDNSRCH 6     /* Max search domains */
+#endif
+#ifndef MAXNS
+#define MAXNS 3         /* Max name servers */
+#endif
+
+/* DNS Resolver stub - must include all fields accessed by tnmDns.c */
 typedef struct __res_state {
-    int retrans;
-    int retry;
-    unsigned long options;
-    int nscount;
-    struct sockaddr_in nsaddr_list[3];
+    int retrans;                          /* retransmission timeout */
+    int retry;                            /* number of retries */
+    unsigned long options;                /* option flags */
+    int nscount;                          /* number of name servers */
+    struct sockaddr_in nsaddr_list[MAXNS];/* name server addresses */
+    char *dnsrch[MAXDNSRCH + 1];          /* search list (NULL-terminated) */
 } *res_state;
 
-struct __res_state _res;
+/* Zero-initialize to prevent garbage values and NULL-terminate dnsrch */
+struct __res_state _res = {0};
 
 int res_init(void) {
-    /* Stub: DNS resolver not available on MinGW */
-    errno = ENOSYS;
-    return -1;
+    /* Initialize with safe defaults for Windows */
+    memset(&_res, 0, sizeof(_res));
+    _res.retrans = 2;      /* 2 second timeout */
+    _res.retry = 2;        /* 2 retries */
+    _res.nscount = 0;      /* No servers configured */
+    /* dnsrch[] is NULL from memset - will terminate search loop immediately */
+    return 0;  /* Return success to allow graceful error handling */
 }
 
 int res_mkquery(int op, const char *dname, int class, int type,

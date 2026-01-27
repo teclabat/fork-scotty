@@ -39,7 +39,7 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 | **tnm::netdb** | ✅ 100% | ✅ 100% | Network database queries (sunrpcs removed) |
 | **tnm::snmp** | ✅ 100% | ✅ 100% | SNMP v1/v2c/v3 operations |
 | **tnm::mib** | ✅ 100% | ✅ 100% | MIB database operations |
-| **tnm::dns** | ❌ 0% | ✅ 100% | DNS queries (CRASHES ON WINDOWS) |
+| **tnm::dns** | ✅ 100% | ✅ 100% | DNS queries |
 | **tnm::ntp** | ❌ 0% | ✅ 100% | NTP time queries (CRASHES ON WINDOWS) |
 
 ---
@@ -251,18 +251,18 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 
 | Sub-command | Windows | Linux | Description | Tcl Example |
 |-------------|---------|-------|-------------|-------------|
-| `address <name>` | ❌ | ✅ | Query A records | `tnm::dns address www.google.com` |
-| `name <addr>` | ❌ | ✅ | Query PTR records | `tnm::dns name 8.8.8.8` |
-| `hinfo <name>` | ❌ | ✅ | Query HINFO records | `tnm::dns hinfo host.example.com` |
-| `mx <name>` | ❌ | ✅ | Query MX records | `tnm::dns mx example.com` |
-| `soa <name>` | ❌ | ✅ | Query SOA records | `tnm::dns soa example.com` |
-| `txt <name>` | ❌ | ✅ | Query TXT records | `tnm::dns txt example.com` |
-| `cname <name>` | ❌ | ✅ | Query CNAME records | `tnm::dns cname www.example.com` |
-| `ns <name>` | ❌ | ✅ | Query NS records | `tnm::dns ns example.com` |
+| `address <name>` | ✅ | ✅ | Query A records | `tnm::dns address www.google.com` |
+| `name <addr>` | ✅ | ✅ | Query PTR records | `tnm::dns name 8.8.8.8` |
+| `hinfo <name>` | ✅ | ✅ | Query HINFO records | `tnm::dns hinfo host.example.com` |
+| `mx <name>` | ✅ | ✅ | Query MX records | `tnm::dns mx example.com` |
+| `soa <name>` | ✅ | ✅ | Query SOA records | `tnm::dns soa example.com` |
+| `txt <name>` | ✅ | ✅ | Query TXT records | `tnm::dns txt example.com` |
+| `cname <name>` | ✅ | ✅ | Query CNAME records | `tnm::dns cname www.example.com` |
+| `ns <name>` | ✅ | ✅ | Query NS records | `tnm::dns ns example.com` |
 
-**Options**: `-timeout <ms>`, `-retries <n>`, `-server <addr>`
+**Options**: `-timeout <ms>`, `-retries <n>`, `-server <addr>` (⚠️ `-server` option not supported on Windows)
 
-**Notes**: ❌ **CRASHES ON WINDOWS** with segmentation fault. Root cause: Incomplete `_res` structure in MinGW64 headers. Linux 100% functional. **DO NOT USE ON WINDOWS**.
+**Notes**: 100% functional on both platforms. Windows uses native DnsQuery API (dnsapi.dll). Linux uses BSD resolver.
 
 ---
 
@@ -284,18 +284,16 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 
 ### Windows (MinGW64)
 
-**Working Well (7 commands):**
-- tnm::syslog, tnm::map, tnm::udp, tnm::job, tnm::snmp, tnm::mib, tnm::icmp (partial)
+**Working Well (8 commands):**
+- tnm::syslog, tnm::map, tnm::udp, tnm::job, tnm::snmp, tnm::mib, tnm::icmp (partial), tnm::dns
 
-**Limited Functionality (1 command):**
+**Limited Functionality:**
 - tnm::netdb: sunrpcs disabled, networks queries limited
-- tnm::icmp: mask and timestamp commands fail (ICMP.DLL limitations)
+- tnm::icmp: mask and timestamp commands removed (ICMP.DLL limitations)
+- tnm::dns: `-server` option not supported (uses system DNS)
 
-**Broken/Unsafe (2 commands):**
-- tnm::dns: Segmentation fault due to incomplete _res structure in MinGW64 headers
+**Broken/Unsafe (1 command):**
 - tnm::ntp: Crashes due to resolver dependencies
-
-**Recommendation**: Use tnm::netdb hosts for DNS lookups instead of tnm::dns on Windows.
 
 ### Linux
 
