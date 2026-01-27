@@ -2,7 +2,7 @@
 
 **Version**: 3.1.3
 **Platform**: Windows (MinGW64) & Linux
-**Date**: January 21, 2026
+**Date**: January 27, 2026
 
 ## Purpose
 
@@ -299,9 +299,10 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 
 ### Linux
 
-**All core commands fully functional** except:
-- tnm::smx: Untested (requires SMX framework)
-- tnm::ined: GUI-specific (requires Tkined)
+**All core commands fully functional**. The following commands were removed from all platforms:
+- tnm::smx: Removed (unused Script MIB Executive feature)
+- tnm::ined: Removed (Tkined GUI integration not needed)
+- tnm::netdb sunrpcs: Removed (RPC support disabled)
 
 ---
 
@@ -368,6 +369,6 @@ tnm::mib walk system oidVar labelVar {
 
 ---
 
-**Document Generated**: January 21, 2026
+**Document Generated**: January 27, 2026
 **TNM Version**: 3.1.3
 **Build Platform**: Windows MinGW64 / Linux

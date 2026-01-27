@@ -1396,3 +1396,98 @@ case optMyPort:
 - No impact on Linux (already worked correctly)
 - DLL size unchanged (1-line fix)
 
+---
+
+## Linux Build Fixes (January 27, 2026)
+
+### 34. Fixed Linux Build - Compat Headers Override System Headers
+
+**Files Modified**:
+- `compile-tnm.sh` (line 34: removed --with-tcl)
+- `configure.ac` (lines 155-160, 420-431: conditional -Icompat)
+- `compat/sys/cdefs.h` (added Linux guard)
+- `compat/rpc/rpc.h` (added Linux guard)
+- `compat/resolv.h` (added Linux guard)
+- `generic/tnmNetdb.c` (removed all RPC code)
+- `unix/tnmUnixPort.h` (removed EXTERN TnmSmxInit declaration)
+- `Makefile.in` (line 382: fixed pkgIndex.tcl install path)
+
+**Problem**: TNM failed to compile on Linux with errors like:
+```
+/usr/include/stdio.h:33:10: fatal error: bits/libc-header-start.h: No such file or directory
+```
+
+**Root Cause**: The `compat/` directory contains old BSD compatibility headers intended for Windows. When `-Icompat` was added to CPPFLAGS, these old headers overrode modern glibc system headers on Linux, causing:
+- `compat/sys/cdefs.h` missing `__THROW`, `__nonnull`, `__attribute_malloc__` macros
+- `compat/resolv.h` missing modern `res_state`, `res_ninit` types
+- `compat/rpc/rpc.h` conflicting with system RPC headers
+
+**Fix 1 - Configure Auto-Detection**:
+```bash
+# compile-tnm.sh - removed explicit --with-tcl
+# Before:
+./configure --with-tcl=$COMPILEDIR/tcl/win --mandir=$COMPILEDIR/docman/$PACKAGE
+# After:
+./configure --mandir=$COMPILEDIR/docman/$PACKAGE
+```
+
+**Fix 2 - Conditional -Icompat (Windows Only)**:
+```m4
+# configure.ac - only add compat directory on Windows
+if test "x${TEA_PLATFORM}" = "xwindows"; then
+  if test -d compat; then
+    echo "Adding compat directory for Windows build..."
+    export CPPFLAGS="${CPPFLAGS} -Icompat"
+  fi
+fi
+```
+
+**Fix 3 - Linux Guards in Compat Headers**:
+```c
+// compat/sys/cdefs.h, compat/rpc/rpc.h, compat/resolv.h
+#if defined(__linux__) || defined(__GLIBC__)
+#include_next <sys/cdefs.h>  // or <rpc/rpc.h> or <resolv.h>
+#else
+// ... old compat code for Windows ...
+#endif
+```
+
+**Fix 4 - Remove RPC Support Completely**:
+```c
+// generic/tnmNetdb.c - removed:
+// - #include <rpc/rpc.h>
+// - struct rpcent definition
+// - NetdbSunrpcs() function and forward declaration
+// - sunrpcs was already removed from command table
+```
+
+**Fix 5 - Fix TnmSmxInit Declaration Order**:
+```c
+// unix/tnmUnixPort.h - removed early EXTERN declaration
+// TnmSmxInit is now only declared in tnmInt.h after tcl.h is included
+```
+
+**Fix 6 - Fix pkgIndex.tcl Install Path**:
+```makefile
+# Makefile.in - pkgIndex.tcl is generated in build root, not library/
+# Before:
+@$(INSTALL_DATA) $(TNM_LIBRARY_DIR)/pkgIndex.tcl $(DESTDIR)$(TNM_INSTALL_DIR)/library
+# After:
+@$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(TNM_INSTALL_DIR)/library
+```
+
+**Build Results (Linux)**:
+- ✅ `make` - Compiles successfully (libtnm3.1.3.so, 318 KB)
+- ✅ `make install` - Installs correctly
+- ✅ `make test` - 602 tests: 554 passed, 48 skipped, 0 failed
+
+**Platform Support**:
+- ✅ **Windows**: Uses compat/ headers via -Icompat (unchanged)
+- ✅ **Linux**: Uses system headers, compat/ headers bypassed via #include_next
+
+**Impact**:
+- TNM now builds on both Windows and Linux from same source tree
+- RPC/sunrpcs functionality removed (was already disabled on Windows)
+- No functional changes to SNMP, ICMP, UDP, DNS, MIB operations
+- Test pass rate: 100% (excluding known platform-specific skips)
+
