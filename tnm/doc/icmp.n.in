@@ -80,8 +80,8 @@ tnm::icmp command deals with lost ICMP packets.
 .TP
 .BI "-timeout " time
 The \fB-timeout\fR option defines the time the tnm::icmp command will
-wait for a response. The \fItime\fR is defined in seconds with a
-default of 5 seconds.
+wait for a response. The \fItime\fR is defined in milliseconds with a
+default of 5000 milliseconds (5 seconds).
 .TP
 .BI "-retries " number
 The \fB-retries\fR option defines how many times a request is

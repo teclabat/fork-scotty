@@ -204,28 +204,29 @@ static int checkComplementPort = 1;
 
 /*
  * Communication is done via stdin/stdout. The message format is
- * aligned with the the beginning of this structure. Numbers larger 
+ * aligned with the the beginning of this structure. Numbers larger
  * than a char are in network-byteorder.
+ *
+ * Version 0x01: Changed timeout/delay from u_char to uint16_t (milliseconds)
  */
 
+#define ICMP_MSG_VERSION	0x01
+#define ICMP_MSG_REQUEST_SIZE	22
+
 typedef struct _jobElem {
-    unsigned char version;
+    unsigned char version;		/* Protocol version (0x01) */
     unsigned char type;
     unsigned char status;
     unsigned char flags;
     uint32_t tid;
     struct in_addr addr;
-    union {
-	struct {
-	    unsigned char ttl;
-	    unsigned char timeout;
-	    unsigned char retries;
-	    unsigned char delay;
-	} c;					/* receive parameter */
-	unsigned int data;			/* reply parameter */
-    } u;
-    uint16_t size;				/* packet size requested */
-    uint16_t window;				/* comm. window size */
+    unsigned char ttl;
+    unsigned char retries;
+    uint16_t timeout;			/* timeout in milliseconds */
+    uint16_t delay;			/* delay in milliseconds */
+    uint16_t size;			/* packet size requested */
+    uint16_t window;			/* comm. window size */
+    uint32_t data;			/* reply data */
 
     /*
      * private section of a job:
@@ -248,7 +249,7 @@ typedef struct _jobElem {
 
 
 #define ICMP_PROTO_VERSION	0		/* protocol version */
-#define ICMP_PROTO_CMD_LEN	20		/* length of a command */
+#define ICMP_PROTO_CMD_LEN	ICMP_MSG_REQUEST_SIZE	/* length of a command (22 bytes) */
 #define ICMP_PROTO_REPLY_LEN	16		/* length of a reply */
 
 #define ICMP_TYPE_ECHO		1		/* icmp echo request */
@@ -802,44 +803,44 @@ ReceivePacket()
 	       sizeof(struct timeval)); 
 	{ 
 	    int tdiff = time_diff_usec(tp1, tp2);
-	    memcpy((char *) &job->u.data, (char *) &tdiff, 
-		   sizeof(job->u.data));
-	    job->u.data = htonl(job->u.data);
+	    memcpy((char *) &job->data, (char *) &tdiff, 
+		   sizeof(job->data));
+	    job->data = htonl(job->data);
 	}
 	job->done = 1;
 	job->addr = sfrom.sin_addr;
 	dsyslog(LOG_DEBUG, "job %d: echo from %s with rtt %d", job->tid,
-		inet_ntoa(job->addr), ntohl(job->u.data));
+		inet_ntoa(job->addr), ntohl(job->data));
 	break;
 
     case ICMP_TYPE_MASK:
-	memcpy((char *) &job->u.data, icp->icmp_data, sizeof(job->u.data));
+	memcpy((char *) &job->data, icp->icmp_data, sizeof(job->data));
 	job->done = 1;
 	job->addr = sfrom.sin_addr;
 	dsyslog(LOG_DEBUG, "job %d: mask 0x%lx\n", job->tid,
-		(unsigned long) ntohl((long) job->u.data));
+		(unsigned long) ntohl((long) job->data));
 	break;
 	
     case ICMP_TYPE_TSTAMP:
 	{ 
 	    int val = ntohl(((int32_t *) icp->icmp_data) [1]) -
 		ntohl(((int32_t *) icp->icmp_data) [0]);
-	    memcpy((char *) &job->u.data, (char *) &val, sizeof(job->u.data));
-	    job->u.data = htonl(job->u.data);
+	    memcpy((char *) &job->data, (char *) &val, sizeof(job->data));
+	    job->data = htonl(job->data);
 	}
 	job->done = 1;
 	job->addr = sfrom.sin_addr;
 	dsyslog(LOG_DEBUG, "job %d: timestamp diff %ld", 
-		job->tid, (long) job->u.data);
+		job->tid, (long) job->data);
 	break;
 
     case ICMP_TYPE_TRACE:
 	tp1 = job->p.trace.tv;		/* time sent */
 	{
 	    int tdiff = time_diff_usec(tp1, tp2);
-	    memcpy((char *) &job->u.data, (char *) &tdiff, 
-		   sizeof(job->u.data));
-	    job->u.data = htonl(job->u.data);
+	    memcpy((char *) &job->data, (char *) &tdiff, 
+		   sizeof(job->data));
+	    job->data = htonl(job->data);
 	}
 	job->addr = sfrom.sin_addr;
 	if (ttl_is_done) {
@@ -962,7 +963,7 @@ resend:
 	    PosixError("sendto failed");
 	}
 	job->status = ICMP_STATUS_GENERROR;
-	job->u.data = 0;
+	job->data = 0;
 	job->done = 1;
 	return 1;
     } else {
@@ -1020,7 +1021,7 @@ SendTrace(jobElem *job)
     ip->ip_off = 0;
     ip->ip_p = IPPROTO_UDP;
     ip->ip_len = job->size;
-    ip->ip_ttl = job->u.c.ttl;
+    ip->ip_ttl = job->ttl;
     ip->ip_dst = sto->sin_addr;	       /* needed for linux (no bind) */
     
     udph->uh_sport = htons(job->id);
@@ -1047,7 +1048,7 @@ SendTrace(jobElem *job)
      */
 #ifdef USE_DLPI
     { 
-	int opt_ttl = job->u.c.ttl;
+	int opt_ttl = job->ttl;
 	socklen_t opt_ttl_len = sizeof(opt_ttl);
 	
 	if (setsockopt(ipsock, IPPROTO_IP, IP_TTL, 
@@ -1057,7 +1058,7 @@ SendTrace(jobElem *job)
 	if (getsockopt(ipsock, IPPROTO_IP, IP_TTL,
 		       (char *) &opt_ttl, &opt_ttl_len) < 0)
 	    PosixError("can not set ttl (getsockopt)");
-	else if (job->u.c.ttl != opt_ttl)
+	else if (job->ttl != opt_ttl)
 	    syslog(LOG_ERR, "can not set ttl (dlpi)");
     }
 #endif
@@ -1068,7 +1069,7 @@ SendTrace(jobElem *job)
     if (! SendPacket(job, ipsock, (char *) outpack, job->size,
 		     (struct sockaddr *) sto, sizeof (struct sockaddr_in))) {
         dsyslog(LOG_DEBUG, "job %d: ttl %d sent to %s port %u (0x%x)",
-		job->tid, job->u.c.ttl, inet_ntoa(job->addr),
+		job->tid, job->ttl, inet_ntoa(job->addr),
 		(unsigned) job->p.trace.port,
 		(unsigned) job->p.trace.port);
     }
@@ -1430,6 +1431,8 @@ ReadJob()
     }
     
     /* convert network-byteorder parameter fields: */
+    job->timeout = ntohs(job->timeout);
+    job->delay = ntohs(job->delay);
     job->size = ntohs(job->size);
     job->window = ntohs(job->window);
     
@@ -1437,8 +1440,8 @@ ReadJob()
     job->status = ICMP_STATUS_NOERROR;
     job->flags = 0;
 
-    /* init internal values: */
-    job->retry_ival = (1000 * job->u.c.timeout) / (job->u.c.retries + 1);
+    /* init internal values: timeout is already in milliseconds */
+    job->retry_ival = job->timeout / (job->retries + 1);
 
     job->probe_cnt = 0;
     job->time_sent.tv_sec = job->time_sent.tv_usec = 0;
@@ -1474,7 +1477,7 @@ ReadJob()
     dsyslog(LOG_DEBUG,
        "job %d: type=%d id=%u status=%d dest=%s size=%d retries=%d timeout=%d",
 	    job->tid, job->type, job->id, job->status, inet_ntoa(job->addr),
-	    job->size, job->u.c.retries, job->u.c.timeout);
+	    job->size, job->retries, job->timeout);
 
     /* 
      * sanity checks: 
@@ -1484,14 +1487,14 @@ ReadJob()
 	syslog(LOG_ERR, "job %d: bad version %d or type %d",
 	       job->tid, job->version, job->type);
 	job->status = ICMP_STATUS_GENERROR;
-	job->u.data = 0;
+	job->data = 0;
 	job->done = 1;
     }
 
     if (job->size > max_data_len || job->size < MIN_DATALEN) {
 	syslog(LOG_ERR, "job %d: bad size %d", job->tid, job->size);
 	job->status = ICMP_STATUS_GENERROR;
-	job->u.data = 0;
+	job->data = 0;
 	job->done = 1;
     }
 
@@ -1607,14 +1610,14 @@ retry:
 
 	dsyslog(LOG_DEBUG, 
 		"job %d: done %d, probe_cnt %d, retries %d, tdiff %ld, ival %d",
-		job->tid, job->done, job->probe_cnt, job->u.c.retries,
+		job->tid, job->done, job->probe_cnt, job->retries,
 		time_diff(job->time_sent,now), job->retry_ival);
 
 	/*
 	 * Send a packet if the we have a try left and a timeout reached:
 	 */
 
-	if (! job->done && job->probe_cnt <= (job->u.c.retries + 1)
+	if (! job->done && job->probe_cnt <= (job->retries + 1)
 	      && time_diff(job->time_sent,now) > job->retry_ival) {
 
 	      dsyslog(LOG_DEBUG, 
@@ -1632,15 +1635,15 @@ retry:
 	       * Process answers and wait delay time:
 	       */
 
-	      ReceivePending(job->u.c.delay);
+	      ReceivePending(job->delay);
 	      goto retry;
 
-	} else if (! job->done && job->probe_cnt > job->u.c.retries + 1) {
+	} else if (! job->done && job->probe_cnt > job->retries + 1) {
 
 	    dsyslog(LOG_DEBUG, "job %d: failed after %d tries", 
 		    job->tid, job->probe_cnt);
 	    job->done = 1;
-	    job->u.data = 0;
+	    job->data = 0;
 	    job->status |= ICMP_STATUS_TIMEOUT;
 	    goto retry;
 	}

@@ -151,7 +151,8 @@ IcmpThread(LPDWORD lpdwParam)
 
     for (i = 0; i <= icmpPtr->retries; i++) {
 
-	int timeout = (1000 * icmpPtr->timeout) * (i + 1)
+	/* timeout is already in milliseconds */
+	int timeout = icmpPtr->timeout * (i + 1)
 	    / (icmpPtr->retries + 1);
 	
 #if 0

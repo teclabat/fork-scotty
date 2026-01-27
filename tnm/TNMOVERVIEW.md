@@ -96,9 +96,14 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 | `ttl <hop> <hosts>` | ✅ | ✅ | Set TTL for echo | `tnm::icmp ttl 5 192.168.1.1` |
 | `trace <hop> <hosts>` | ✅ | ✅ | Traceroute functionality | `tnm::icmp trace 10 google.com` |
 
-**Options**: `-timeout <ms>`, `-retries <n>`, `-size <bytes>`, `-delay <ms>` (⚠️ Not supported on Windows), `-window <n>` (⚠️ Different behavior on Windows)
+**Options**: `-timeout <ms>` (default 5000), `-retries <n>` (default 2), `-size <bytes>` (default 64), `-delay <ms>` (default 0, max 255), `-window <n>` (default 10)
 
-**Notes**: Windows 100% functional for available commands. `mask` and `timestamp` removed from Windows builds due to ICMP.DLL limitations. Echo and trace work reliably. Linux 100% functional with all commands.
+**Notes**:
+- **Breaking Change**: `-timeout` and `-delay` are now in **milliseconds** on both platforms (previously seconds on some platforms)
+- Default timeout is 5000ms (5 seconds)
+- Windows: `mask` and `timestamp` removed due to ICMP.DLL limitations
+- Linux: Requires nmicmpd daemon with setuid root for raw socket access
+- Echo and trace work reliably on both platforms
 
 ---
 
@@ -307,7 +312,6 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 - tnm::netdb: sunrpcs disabled, networks queries limited
 - tnm::icmp: mask and timestamp commands removed (ICMP.DLL limitations)
 - tnm::dns: `-server` option not supported (uses system DNS)
-- tnm::ntp: Uses mode 6 control queries (many public servers disable this)
 
 ### Linux
 

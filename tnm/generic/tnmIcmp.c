@@ -29,9 +29,9 @@ static char tnmIcmpControl[] = "tnmIcmpControl";
 
 typedef struct IcmpControl {
     int retries;		/* Default number of retries. */
-    int timeout;		/* Default timeout in seconds. */
+    int timeout;		/* Default timeout in milliseconds. */
     int size;			/* Default size of the ICMP packet. */
-    int delay;			/* Default delay between ICMP packets. */
+    int delay;			/* Default delay between ICMP packets (ms). */
     int window;			/* Default window of active ICMP packets. */
 } IcmpControl;
 
@@ -264,11 +264,11 @@ Tnm_IcmpObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *con
     if (! control) {
 	control = (IcmpControl *) ckalloc(sizeof(IcmpControl));
 	control->retries = 2;
-	control->timeout = 5;
+	control->timeout = 5000;	/* milliseconds */
 	control->size = 64;
 	control->delay = 0;
 	control->window = 10;
-	Tcl_SetAssocData(interp, tnmIcmpControl, AssocDeleteProc, 
+	Tcl_SetAssocData(interp, tnmIcmpControl, AssocDeleteProc,
 			 (ClientData) control);
     }
 

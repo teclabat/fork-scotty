@@ -39,30 +39,28 @@ static Tcl_Channel channel = NULL;
 /*
  * The following structure is used to talk to the nmicmpd daemon. See
  * the nmicmpd(8) man page for a description of this message format.
+ *
+ * Version 01: Changed timeout from u_char (seconds) to unsigned short (ms)
  */
 
-#define ICMP_MSG_VERSION	00
-#define ICMP_MSG_REQUEST_SIZE	20
+#define ICMP_MSG_VERSION	0x01
+#define ICMP_MSG_REQUEST_SIZE	22
 #define ICMP_MSG_RESPONSE_SIZE	16
 
 typedef struct IcmpMsg {
-    u_char version;		/* The protocol version. */
+    u_char version;		/* The protocol version (0x01). */
     u_char type;		/* The requested ICMP operation. */
     u_char status;		/* Status information. */
     u_char flags;		/* Flags exchanged with the daemon. */
     unsigned int tid;		/* The unique transaction identifier. */
     struct in_addr addr;	/* The target IPv4 address. */
-    union {
-	struct {
-	    u_char ttl;		/* The ttl field of a request. */
-	    u_char timeout;	/* The timeout field of a request. */
-	    u_char retries;	/* The retries of a request. */
-	    u_char delay;	/* The delay of a request. */
-	} c;
-	unsigned int data;	/* The data value of a response. */
-    } u;
+    u_char ttl;			/* The ttl field of a request. */
+    u_char retries;		/* The retries of a request. */
+    unsigned short timeout;	/* The timeout in milliseconds. */
+    unsigned short delay;	/* The delay in milliseconds. */
     unsigned short size;	/* The requested ICMP message size. */
     unsigned short window;	/* The window size for this request. */
+    unsigned int data;		/* The data value of a response. */
 } IcmpMsg;
 
 /*
@@ -185,18 +183,19 @@ TnmIcmp(Tcl_Interp *interp, TnmIcmpRequest *icmpPtr)
 	icmpMsg.version = ICMP_MSG_VERSION;
 	icmpMsg.type = icmpPtr->type;
 	icmpMsg.status = TNM_ICMP_STATUS_NOERROR;
-	icmpMsg.flags = 0;	
+	icmpMsg.flags = 0;
 	icmpMsg.tid = htonl(targetPtr->tid);
 	icmpMsg.addr = targetPtr->dst;
-	icmpMsg.u.c.ttl = 0;
+	icmpMsg.ttl = 0;
 	if (icmpMsg.type == TNM_ICMP_TYPE_TRACE) {
-	    icmpMsg.u.c.ttl = icmpPtr->ttl;
+	    icmpMsg.ttl = icmpPtr->ttl;
 	}
-	icmpMsg.u.c.timeout = icmpPtr->timeout;
-	icmpMsg.u.c.retries = icmpPtr->retries;
-	icmpMsg.u.c.delay = icmpPtr->delay;
+	icmpMsg.retries = icmpPtr->retries;
+	icmpMsg.timeout = htons((unsigned short) icmpPtr->timeout);
+	icmpMsg.delay = htons((unsigned short) icmpPtr->delay);
 	icmpMsg.size = htons((unsigned short) icmpPtr->size);
 	icmpMsg.window = htons((unsigned short) icmpPtr->window);
+	icmpMsg.data = 0;
 	rc = Tcl_Write(channel, (char *) &icmpMsg, ICMP_MSG_REQUEST_SIZE);
 	if (rc > 0) {
 	    if (Tcl_Flush(channel) != TCL_OK) {
