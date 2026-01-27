@@ -254,13 +254,13 @@ TnmIcmp(Tcl_Interp *interp, TnmIcmpRequest *icmpPtr)
 		    switch (icmpMsg.type) {
 		    case TNM_ICMP_TYPE_ECHO:
 		    case TNM_ICMP_TYPE_TRACE:
-			targetPtr->u.rtt = ntohl(icmpMsg.u.data);
+			targetPtr->u.rtt = ntohl(icmpMsg.data);
 			break;
 		    case TNM_ICMP_TYPE_MASK:
-			targetPtr->u.mask = ntohl(icmpMsg.u.data);
+			targetPtr->u.mask = ntohl(icmpMsg.data);
 			break;
 		    case TNM_ICMP_TYPE_TIMESTAMP:
-			targetPtr->u.tdiff = ntohl(icmpMsg.u.data);
+			targetPtr->u.tdiff = ntohl(icmpMsg.data);
 			break;
 		    }
 		    targetPtr->status = icmpMsg.status;

@@ -26,6 +26,18 @@
 /* Define to 1 if you have the <config.h> header file. */
 #undef HAVE_CONFIG_H
 
+/* define if the compiler supports basic C++11 syntax */
+#undef HAVE_CXX11
+
+/* define if the compiler supports basic C++14 syntax */
+#undef HAVE_CXX14
+
+/* define if the compiler supports basic C++17 syntax */
+#undef HAVE_CXX17
+
+/* Is 'DIR64' in <sys/types.h>? */
+#undef HAVE_DIR64
+
 /* Define to 1 if you have the 'dup2' function. */
 #undef HAVE_DUP2
 
@@ -89,9 +101,6 @@
 /* Define if your libresolv provides res_mkquery. */
 #undef HAVE_LIBRESOLV
 
-/* Do we have <limits.h>? */
-#undef HAVE_LIMITS_H
-
 /* Define to 1 if you have the 'lseek64' function. */
 #undef HAVE_LSEEK64
 
@@ -147,6 +156,9 @@
 /* socklen_t available */
 #undef HAVE_SOCKLEN_T
 
+/* Do we have <stdbool.h>? */
+#undef HAVE_STDBOOL_H
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
@@ -195,9 +207,6 @@
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #undef HAVE_SYS_IOCTL_H
 
-/* Define to 1 if you have the <sys/param.h> header file. */
-#undef HAVE_SYS_PARAM_H
-
 /* Define to 1 if you have the <sys/select.h> header file. */
 #undef HAVE_SYS_SELECT_H
 
@@ -243,33 +252,6 @@
 /* No Compiler support for module scope symbols */
 #undef MODULE_SCOPE
 
-/* Do we have <dirent.h>? */
-#undef NO_DIRENT_H
-
-/* Do we have <dlfcn.h>? */
-#undef NO_DLFCN_H
-
-/* Do we have <errno.h>? */
-#undef NO_ERRNO_H
-
-/* Do we have <float.h>? */
-#undef NO_FLOAT_H
-
-/* Do we have <limits.h>? */
-#undef NO_LIMITS_H
-
-/* Do we have <stdlib.h>? */
-#undef NO_STDLIB_H
-
-/* Do we have <string.h>? */
-#undef NO_STRING_H
-
-/* Do we have <sys/wait.h>? */
-#undef NO_SYS_WAIT_H
-
-/* Do we have <values.h>? */
-#undef NO_VALUES_H
-
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
@@ -311,20 +293,20 @@
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
 
+/* Is this an optimized build? */
+#undef TCL_CFG_OPTIMIZED
+
 /* Is memory debugging enabled? */
 #undef TCL_MEM_DEBUG
 
 /* Are we building with threads enabled? */
 #undef TCL_THREADS
 
-/* Are wide integers to be implemented with C 'long's? */
+/* Do 'long' and 'long long' have the same size (64-bit)? */
 #undef TCL_WIDE_INT_IS_LONG
 
 /* What type should be used to define wide integers? */
 #undef TCL_WIDE_INT_TYPE
-
-/* UNDER_CE version */
-#undef UNDER_CE
 
 /* Use TclOO stubs */
 #undef USE_TCLOO_STUBS
@@ -370,9 +352,6 @@
 
 /* Do we want the thread-safe OS API? */
 #undef _THREAD_SAFE
-
-/* _WIN32_WCE version */
-#undef _WIN32_WCE
 
 /* Do we want to use the XOPEN network library? */
 #undef _XOPEN_SOURCE_EXTENDED

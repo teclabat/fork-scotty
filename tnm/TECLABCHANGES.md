@@ -1687,3 +1687,110 @@ Echo 127.0.0.1: 0.0ms RTT  ✅
 - Better precision for short timeouts
 - Linux requires rebuilt nmicmpd daemon with new protocol
 
+### 38. Fixed IcmpMsg Structure Field Access in Unix ICMP Code
+
+**Files Modified**:
+- `unix/tnmUnixIcmp.c` (lines 257, 260, 263)
+
+**Problem**: The IcmpMsg structure was changed from using a union (`u.data`) to a direct field (`data`) in protocol version 0x01, but the Unix ICMP code still referenced the old union field names:
+```c
+targetPtr->u.rtt = ntohl(icmpMsg.u.data);   // ERROR: 'IcmpMsg' has no member named 'u'
+```
+
+**Fix**: Updated field references from `icmpMsg.u.data` to `icmpMsg.data`:
+```c
+// BEFORE:
+targetPtr->u.rtt = ntohl(icmpMsg.u.data);
+targetPtr->u.mask = ntohl(icmpMsg.u.data);
+targetPtr->u.tdiff = ntohl(icmpMsg.u.data);
+
+// AFTER:
+targetPtr->u.rtt = ntohl(icmpMsg.data);
+targetPtr->u.mask = ntohl(icmpMsg.data);
+targetPtr->u.tdiff = ntohl(icmpMsg.data);
+```
+
+**Impact**: Linux ICMP functionality now compiles correctly with the updated protocol structure.
+
+### 39. Fixed ICMP Protocol Version Mismatch in nmicmpd
+
+**Files Modified**:
+- `unix/nmicmpd.c` (line 251)
+
+**Problem**: ICMP tests failed with "nmicmpd: failed to send ICMP message" even with correct permissions. The daemon rejected all requests as having a bad protocol version.
+
+**Root Cause**: The daemon had two conflicting version definitions:
+- `ICMP_MSG_VERSION 0x01` (line 213) - used in the message structure
+- `ICMP_PROTO_VERSION 0` (line 251) - used for version checking
+
+The library sends version 0x01, but the daemon checked for version 0, causing all requests to fail validation.
+
+**Fix**:
+```c
+// BEFORE (line 251):
+#define ICMP_PROTO_VERSION	0		/* protocol version */
+
+// AFTER:
+#define ICMP_PROTO_VERSION	ICMP_MSG_VERSION	/* protocol version (0x01) */
+```
+
+**Impact**: All ICMP tests now pass (36/36). Full test suite: 580 passed, 48 skipped, 0 failed.
+
+### 40. Made dnsapi Library Conditional (Windows Only)
+
+**Files Modified**:
+- `Makefile.in` (line 204)
+- `configure.ac` (line 392)
+
+**Problem**: The `-ldnsapi` flag was unconditionally added to LIBS in Makefile.in, causing Linux builds to fail with:
+```
+/usr/bin/ld: cannot find -ldnsapi: No such file or directory
+```
+`dnsapi` is a Windows DLL for DNS queries (dnsapi.dll) and does not exist on Linux.
+
+**Fix in Makefile.in**:
+```makefile
+# BEFORE (line 204):
+LIBS		= @PKG_LIBS@ @LIBS@ -ldnsapi
+
+# AFTER:
+LIBS		= @PKG_LIBS@ @LIBS@
+```
+
+**Fix in configure.ac** (Windows-specific section):
+```m4
+# BEFORE (line 392):
+TEA_ADD_LIBS([-lws2_32 -ltcl86])
+
+# AFTER:
+TEA_ADD_LIBS([-lws2_32 -ltcl86 -ldnsapi])
+```
+
+**Impact**:
+- Linux builds link successfully without Windows-specific libraries
+- Windows builds still include dnsapi for native DNS API support
+- DNS functionality on Linux uses the BSD resolver (`-lresolv`)
+
+---
+
+## Build Status Summary (January 27, 2026)
+
+### Linux Build
+- **Status**: ✅ SUCCESS
+- **Shared Library**: `libtnm3.1.3.so` (318 KB)
+- **ICMP Daemon**: `nmicmpd` (26 KB)
+- **SNMP Trap Daemon**: `nmtrapd` (17 KB)
+- **Test Results**: 580 passed, 48 skipped, 0 failed (100% pass rate)
+- **All Commands**: Working correctly (icmp, dns, snmp, mib, udp, ntp, netdb, syslog, map, job)
+
+### Windows Build (MinGW64)
+- **Status**: ✅ SUCCESS (previously completed)
+- **DLL**: `tnm313.dll` (2.9 MB)
+
+### Cross-Platform Compatibility
+Both platforms now build from the same source tree with platform-specific conditional compilation handling:
+- `-ldnsapi` only on Windows
+- `-lresolv` only on Linux
+- Unix daemons (nmicmpd, nmtrapd) only on Unix/Linux
+- Windows modules (tnmWin*.c) only on Windows
+

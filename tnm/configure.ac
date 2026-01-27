@@ -389,7 +389,7 @@ if test "x${TEA_PLATFORM}" = "xwindows"; then
                     win/tnmWinIcmp.c
                     compat/tnm_compat.c
                    ])
-    TEA_ADD_LIBS([-lws2_32 -ltcl86])
+    TEA_ADD_LIBS([-lws2_32 -ltcl86 -ldnsapi])
     SHLIB_LD="${SHLIB_LD} -Wl,--export-all-symbols"
     if test -d "$(${CYGPATH} ${srcdir}/win)"; then
         TEA_ADD_INCLUDES([-I\"$(${CYGPATH} ${srcdir}/win)\"])

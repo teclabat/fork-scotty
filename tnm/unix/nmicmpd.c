@@ -248,7 +248,7 @@ typedef struct _jobElem {
 } jobElem;
 
 
-#define ICMP_PROTO_VERSION	0		/* protocol version */
+#define ICMP_PROTO_VERSION	ICMP_MSG_VERSION	/* protocol version (0x01) */
 #define ICMP_PROTO_CMD_LEN	ICMP_MSG_REQUEST_SIZE	/* length of a command (22 bytes) */
 #define ICMP_PROTO_REPLY_LEN	16		/* length of a reply */
 
