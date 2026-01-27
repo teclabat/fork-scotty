@@ -40,7 +40,7 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 | **tnm::snmp** | ✅ 100% | ✅ 100% | SNMP v1/v2c/v3 operations |
 | **tnm::mib** | ✅ 100% | ✅ 100% | MIB database operations |
 | **tnm::dns** | ✅ 100% | ✅ 100% | DNS queries |
-| **tnm::ntp** | ❌ 0% | ✅ 100% | NTP time queries (CRASHES ON WINDOWS) |
+| **tnm::ntp** | ✅ 100% | ✅ 100% | NTP control queries (mode 6) |
 
 ---
 
@@ -268,15 +268,31 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 
 ## tnm::ntp
 
-**Purpose**: NTP (Network Time Protocol) queries
+**Purpose**: NTP (Network Time Protocol) time and status queries
 
 | Sub-command | Windows | Linux | Description | Tcl Example |
 |-------------|---------|-------|-------------|-------------|
-| `<server> <arrayvar>` | ❌ | ✅ | Query NTP server | `tnm::ntp pool.ntp.org result` |
+| `time <server>` | ✅ | ✅ | Get time from NTP server (mode 3) | `tnm::ntp time pool.ntp.org` |
+| `status <server>` | ✅ | ✅ | Query NTP server status (mode 6) | `tnm::ntp status ntpserver` |
 
-**Options**: `-timeout <ms>`, `-retries <n>`
+**Options**: `-timeout <seconds>`, `-retries <n>`
 
-**Notes**: ❌ **CRASHES ON WINDOWS** due to resolver dependency issues. Linux functional. Returns time synchronization data in array variable. **DO NOT USE ON WINDOWS**.
+**time subcommand** (Recommended for public NTP servers):
+- Uses NTP client mode (mode 3) - works with all public NTP pool servers
+- Returns dict: `time` (Unix timestamp), `offset` (seconds), `delay` (seconds), `stratum`, `precision`, `refid`
+- Example:
+  ```tcl
+  set r [tnm::ntp time pool.ntp.org]
+  puts "Server time: [clock format [dict get $r time]]"
+  puts "Stratum: [dict get $r stratum]"
+  ```
+
+**status subcommand** (For NTP server monitoring):
+- Uses NTP control mode (mode 6) - only works with servers that allow it
+- Returns dict: `sys.*` and `peer.*` variables for detailed server status
+- Note: Most public NTP servers disable control mode for security
+
+**Notes**: 100% functional on both platforms.
 
 ---
 
@@ -284,16 +300,14 @@ This document provides a comprehensive reference for all TNM (Tcl Network Manage
 
 ### Windows (MinGW64)
 
-**Working Well (8 commands):**
-- tnm::syslog, tnm::map, tnm::udp, tnm::job, tnm::snmp, tnm::mib, tnm::icmp (partial), tnm::dns
+**Working Well (9 commands):**
+- tnm::syslog, tnm::map, tnm::udp, tnm::job, tnm::snmp, tnm::mib, tnm::icmp (partial), tnm::dns, tnm::ntp
 
 **Limited Functionality:**
 - tnm::netdb: sunrpcs disabled, networks queries limited
 - tnm::icmp: mask and timestamp commands removed (ICMP.DLL limitations)
 - tnm::dns: `-server` option not supported (uses system DNS)
-
-**Broken/Unsafe (1 command):**
-- tnm::ntp: Crashes due to resolver dependencies
+- tnm::ntp: Uses mode 6 control queries (many public servers disable this)
 
 ### Linux
 

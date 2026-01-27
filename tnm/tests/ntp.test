@@ -25,7 +25,7 @@ catch {
 
 set target $tnm(host)
 set ::tcltest::testConstraints(ntpNotAvailable) \
-	[expr ! [catch {ntp $target foo}]]
+	[expr ! [catch {ntp time $target}]]
 
 # save default settings...
 set ntpTimeout [ntp -timeout]
@@ -33,13 +33,13 @@ set ntpRetries [ntp -retries]
 
 test ntp-1.1 {ntp no arguments} {
     list [catch {ntp} msg] $msg
-} {1 {wrong # args: should be "ntp ?-timeout t? ?-retries r? host arrayName"}}
+} {1 {wrong # args: should be "ntp ?-timeout t? ?-retries r? (time|status) host"}}
 test ntp-1.2 {ntp too many arguments} {
-    list [catch {ntp foo bar boo} msg] $msg
-} {1 {wrong # args: should be "ntp ?-timeout t? ?-retries r? host arrayName"}}
-test ntp-1.3 {ntp wrong option} {
-    list [catch {ntp !@#$ foo} msg] $msg
-} {1 {illegal IP address or name "!@#$"}}
+    list [catch {ntp time foo bar} msg] $msg
+} {1 {wrong # args: should be "ntp ?-timeout t? ?-retries r? (time|status) host"}}
+test ntp-1.3 {ntp missing subcommand} {
+    list [catch {ntp foo} msg] [string match "*unknown subcommand*" $msg]
+} {1 1}
 
 test ntp-2.1 {ntp timeout option} {
     ntp -timeout 11
@@ -69,11 +69,12 @@ test ntp-2.7 {ntp options} {
 # restore default settings...
 ntp -retries $ntpRetries -timeout $ntpTimeout
 
-test dns-3.1 {dns address option} ntpNotAvailable {
+test ntp-3.1 {ntp time returns dict} ntpNotAvailable {
     global target
-    ntp $target foo
-    array names foo
-} {sys.rootdelay sys.peer peer.stratum sys.stratum peer.peer peer.precision sys.precision sys.rootdispersion sys.system peer.refid peer.rootdelay peer.rootdispersion peer.system sys.refid}
+    set result [ntp time $target]
+    # Check that result is a valid dict with expected keys
+    expr {[dict exists $result time] && [dict exists $result stratum] && [dict exists $result refid]}
+} {1}
 
 ::tcltest::cleanupTests
 return
