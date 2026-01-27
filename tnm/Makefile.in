@@ -379,7 +379,7 @@ install-lib:
 	    echo "Installing $$i"; \
 	    $(INSTALL_DATA) $$i $(DESTDIR)$(TNM_INSTALL_DIR)/library; \
 	    done
-	@$(INSTALL_DATA) $(TNM_LIBRARY_DIR)/pkgIndex.tcl $(DESTDIR)$(TNM_INSTALL_DIR)/library
+	@$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(TNM_INSTALL_DIR)/library
 
 TNM_AGENT_DIR	= agents
 TNM_AGENTS =	$(TNM_AGENT_DIR)/snmpd-tnm.tcl \

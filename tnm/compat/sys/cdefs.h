@@ -61,6 +61,15 @@
 #ifndef	_CDEFS_H_
 #define	_CDEFS_H_
 
+/*
+ * On Linux/glibc systems, use the system cdefs.h which defines
+ * __THROW, __nonnull, __attribute_malloc__ and other modern macros.
+ * This compat header is only needed for very old or non-glibc systems.
+ */
+#if defined(__linux__) || defined(__GLIBC__)
+#include_next <sys/cdefs.h>
+#else
+
 #if defined(__cplusplus)
 #define	__BEGIN_DECLS	extern "C" {
 #define	__END_DECLS	};
@@ -142,5 +151,7 @@
 #define	__dead
 #define	__pure
 #endif
+
+#endif /* !(__linux__ || __GLIBC__) */
 
 #endif /* !_CDEFS_H_ */

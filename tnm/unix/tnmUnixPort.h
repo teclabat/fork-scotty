@@ -97,10 +97,9 @@
 /*
  *----------------------------------------------------------------
  * Definitions for UNIX-only features.
+ * Note: TnmSmxInit is declared in tnmInt.h after tcl.h is included,
+ * to avoid dependency on EXTERN and Tcl_Interp being defined here.
  *----------------------------------------------------------------
  */
-
-EXTERN int
-TnmSmxInit		(Tcl_Interp *interp);
 
 #endif /* _TNMUNIXPORT */

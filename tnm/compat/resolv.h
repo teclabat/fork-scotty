@@ -61,6 +61,15 @@
 #ifndef _RESOLV_H_
 #define	_RESOLV_H_
 
+/*
+ * On Linux/glibc systems, use the system resolv.h which has modern
+ * resolver types (res_state, res_ninit, etc.).
+ * This compat header is only needed for Windows and older systems.
+ */
+#if defined(__linux__) || defined(__GLIBC__)
+#include_next <resolv.h>
+#else
+
 #if defined(__WIN32__) || defined(_WIN32)
 #ifndef WINNT
 #define WINNT
@@ -269,5 +278,7 @@ int	 res_nameinquery __P((const char *, int, int,
 int	 res_queriesmatch __P((const u_char *, const u_char *,
 			       const u_char *, const u_char *));
 __END_DECLS
+
+#endif /* !(__linux__ || __GLIBC__) */
 
 #endif /* !_RESOLV_H_ */

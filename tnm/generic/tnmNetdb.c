@@ -21,21 +21,6 @@
 #include "tnmInt.h"
 #include "tnmPort.h"
 
-#include <rpc/rpc.h>
-
-/*
- * Some machines have no rpcent structure. Here is definition that
- * seems to work in this cases.
- */
-
-#ifndef HAVE_RPCENT
-struct rpcent {
-    char *r_name;	/* name of server for this rpc program */
-    char **r_aliases;	/* alias list */
-    int r_number;	/* rpc program number */
-};
-#endif
-
 /*
  * Forward declarations for procedures defined later in this file:
  */
@@ -62,10 +47,7 @@ static int
 NetdbProtocols		(Tcl_Interp *interp, 
 				     int objc, Tcl_Obj *const objv[]);
 static int
-NetdbServices		(Tcl_Interp *interp, 
-				     int objc, Tcl_Obj *const objv[]);
-static int
-NetdbSunrpcs		(Tcl_Interp *interp, 
+NetdbServices		(Tcl_Interp *interp,
 				     int objc, Tcl_Obj *const objv[]);
 
 
@@ -809,114 +791,6 @@ NetdbServices(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 
     return TCL_OK;
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * NetdbSunrpcs --
- *
- *	This procedure is invoked to process the "netdb sunrpcs" command.
- *	See the user documentation for details on what it does.
- *
- * Results:
- *	A standard Tcl result.
- *
- * Side effects:
- *	See the user documentation.
- *
- *----------------------------------------------------------------------
- */
-
-#if 0  /* RPC support disabled for MinGW64 compatibility */
-static int
-NetdbSunrpcs(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
-{
-    struct rpcent *rpc;
-    int num, result;
-
-    enum commands { cmdAliases, cmdName, cmdNumber } cmd;
-
-    static const char *cmdTable[] = {
-	"aliases", "name", "number", (char *) NULL
-    };
-
-    /*
-     * First, process the "netdb sunrpcs" command option.
-     */
-
-    if (objc == 2) {
-#ifdef HAVE_GETRPCENT
-	Tcl_Obj *listPtr, *elemPtr;
-
-	listPtr = Tcl_GetObjResult(interp);
-	setrpcent(0);
-	while ((rpc = (struct rpcent *) getrpcent())) {	
-	    elemPtr = Tcl_NewListObj(0, NULL);
-	    Tcl_ListObjAppendElement(interp, elemPtr,
-				     Tcl_NewStringObj(rpc->r_name, -1));
-	    Tcl_ListObjAppendElement(interp, elemPtr,
-				     Tcl_NewIntObj(rpc->r_number));
-	    Tcl_ListObjAppendElement(interp, listPtr, elemPtr);
-	}
-	endrpcent();
-#endif
-	return TCL_OK;
-    }
-
-    /*
-     * Process any queries for the "netdb sunrpcs" command.
-     */
-
-    result = Tcl_GetIndexFromObj(interp, objv[2], cmdTable, 
-				 "option", TCL_EXACT, (int *) &cmd);
-    if (result != TCL_OK) {
-	return result;
-    }
-    
-    switch (cmd) {
-    case cmdAliases:
-    case cmdName:
-	if (objc != 4) {
-	    Tcl_WrongNumArgs(interp, 3, objv, "number");
-	    return TCL_ERROR;
-	}
-	if (TnmGetUnsignedFromObj(interp, objv[3], &num) != TCL_OK) {
-	    return TCL_ERROR;
-	}
-	rpc = (struct rpcent *) getrpcbynumber(num);
-	if (rpc == NULL) {
-	    LookupFailed(interp, objv[3]);
-	    return TCL_ERROR;
-	}
-	if (cmd == cmdName) {
-	    Tcl_SetStringObj(Tcl_GetObjResult(interp), rpc->r_name, -1);
-	} else {
-	    int i;
-	    Tcl_Obj *listPtr = Tcl_GetObjResult(interp);
-	    for (i = 0; rpc->r_aliases[i]; i++) {
-		Tcl_ListObjAppendElement(interp, listPtr, 
-				 Tcl_NewStringObj(rpc->r_aliases[i], -1));
-	    }
-	}
-	break;
-    case cmdNumber:
-	if (objc != 4) {
-	    Tcl_WrongNumArgs(interp, 3, objv, "name");
-	    return TCL_ERROR;
-	}
-	rpc = (struct rpcent *) getrpcbyname(
-	    Tcl_GetStringFromObj(objv[3],NULL));
-	if (rpc == NULL) {
-	    LookupFailed(interp, objv[3]);
-	    return TCL_ERROR;
-	}
-	Tcl_SetIntObj(Tcl_GetObjResult(interp), rpc->r_number);
-	break;
-    }
-
-    return TCL_OK;
-}
-#endif  /* RPC support disabled */
 
 /*
  *----------------------------------------------------------------------

@@ -153,11 +153,11 @@ AC_CHECK_HEADERS([arpa/nameser.h fcntl.h malloc.h malloc/malloc.h netdb.h \
                   zlib.h])dnl
 
 if test "x${ac_cv_header_arpa_nameser_h}" != "xyes"; then
-  if test -e compat/arpa/nameser.h; then
+  if test "x${TEA_PLATFORM}" = "xwindows" && test -e compat/arpa/nameser.h; then
     if test "x${CPPFLAGS}" != "x"; then
-      test -n "${CPPFLAGS}" && export CPPFLAGS="${CPPFLAGS} -Icompat"
+      export CPPFLAGS="${CPPFLAGS} -Icompat"
     else
-      test -z "${CPPFLAGS}" && export CPPFLAGS="-Icompat"
+      export CPPFLAGS="-Icompat"
     fi
   elif test -x "`which locate`"; then
     locate arpa/nameser.h
@@ -420,15 +420,19 @@ fi
 
 TEA_PUBLIC_TCL_HEADERS
 
-if test "x${CPPFLAGS}" = "x"; then
+# Only add compat directory to include path on Windows.
+# On Linux/Unix, the compat headers override system headers and cause build failures.
+if test "x${TEA_PLATFORM}" = "xwindows"; then
   if test -d compat; then
-    echo "making sure to include the compat directory..."
-    test -z "${CPPFLAGS}" && export CPPFLAGS="-Icompat"
+    echo "Adding compat directory for Windows build..."
+    if test "x${CPPFLAGS}" = "x"; then
+      export CPPFLAGS="-Icompat"
+    else
+      export CPPFLAGS="${CPPFLAGS} -Icompat"
+    fi
   else
     AC_MSG_WARN([compat directory missing])
   fi
-else
-  echo "CPPFLAGS are ${CPPFLAGS}"
 fi
 AC_SUBST([CPPFLAGS])dnl
 

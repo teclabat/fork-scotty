@@ -48,6 +48,14 @@
 #ifndef __RPC_HEADER__
 #define __RPC_HEADER__
 
+/*
+ * On Linux/glibc systems, use the system RPC headers.
+ * This compat header is only needed for Windows NT.
+ */
+#if defined(__linux__) || defined(__GLIBC__)
+#include_next <rpc/rpc.h>
+#else
+
 #ifdef WIN32
 #ifndef FD_SETSIZE
 #define FD_SETSIZE	128
@@ -103,5 +111,7 @@ extern int xdr_opaque_auth();
  */
 /* routines for parsing /etc/rpc */
 #include <rpc/netdb.h>		/* structures and routines to parse /etc/rpc */
+
+#endif /* !(__linux__ || __GLIBC__) */
 
 #endif /* ndef __RPC_HEADER__ */
