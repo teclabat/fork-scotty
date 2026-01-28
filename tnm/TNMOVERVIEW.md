@@ -1,7 +1,7 @@
 # TNM 3.1.3 Command Reference
 
-**Version**: 3.1.3
-**Platform**: Windows (MinGW64) & Linux
+**Version**: 3.1.3 \
+**Platform**: Windows (MinGW64) & Linux \
 **Date**: January 27, 2026
 
 ## Purpose
