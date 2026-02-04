@@ -264,7 +264,8 @@ GetMibColumnNode(Tcl_Interp *interp, Tcl_Obj *objPtr, TnmOid **oidPtrPtr, TnmOid
 static Tcl_Obj*
 GetIndexList(Tcl_Interp *interp, TnmMibNode *nodePtr, TnmMibNode ***indexNodeList, int *implied)
 {
-    int i, code = TCL_OK, idxc;
+    Tcl_Size i, idxc;
+    int code = TCL_OK;
     Tcl_Obj *idxObj, **idxv;
 
     if (nodePtr == NULL || nodePtr->parentPtr == NULL) {
@@ -479,7 +480,8 @@ TnmMibLoadFile(Tcl_Interp *interp, Tcl_Obj *objPtr)
      */
 
     if (fileName) {
-	int i, objc, code;
+	Tcl_Size i, objc;
+	int code;
 	Tcl_Obj **objv;
 	
 	code = Tcl_ListObjGetElements(NULL, mibFilesLoaded,
@@ -553,7 +555,7 @@ int
 TnmMibLoadCore(Tcl_Interp *interp)
 {
     Tcl_Obj *listPtr, *part1Ptr, *part2Ptr, **objv;
-    int i, objc;
+    Tcl_Size i, objc;
     static int alreadyDone = 0;
 
     if (alreadyDone) {
@@ -603,7 +605,7 @@ int
 TnmMibLoad(Tcl_Interp *interp)
 {
     Tcl_Obj *listPtr, *part1Ptr, *part2Ptr, **objv;
-    int i, objc;
+    Tcl_Size i, objc;
     static int alreadyDone = 0;
 
     if (alreadyDone) {
@@ -920,7 +922,7 @@ Tnm_MibObjCmd(ClientData clientData, Tcl_Interp *interp, int	objc, Tcl_Obj *cons
 
     case cmdChild: {
 	TnmOid nodeOid;
-	int len;
+	Tcl_Size len;
 	if (objc < 3 || objc > 4) {
             Tcl_WrongNumArgs(interp, 2, objv, "node ?varName?");
             return TCL_ERROR;

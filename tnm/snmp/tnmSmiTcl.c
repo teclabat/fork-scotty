@@ -272,7 +272,7 @@ GetSmiList(Tcl_Interp *interp, SmiNode *smiNode, Tcl_Obj *objPtr)
     SmiElement *smiElem;
     SmiNode *smiElemNode;
     SmiModule *smiModule;
-    int len;
+    Tcl_Size len;
     
     listPtr = Tcl_NewListObj(0, NULL);
     for (smiElem = smiGetFirstElement(smiNode);
@@ -321,7 +321,8 @@ static int
 LoadCore(Tcl_Interp *interp)
 {
     Tcl_Obj *listPtr, *part1Ptr, *part2Ptr, **objv;
-    int i, objc, cnt = 0;
+    Tcl_Size i, objc;
+    int cnt = 0;
     static int alreadyDone = 0;
 
     if (alreadyDone) {
@@ -646,8 +647,9 @@ Tnm_SmiObjCmd(ClientData clientData, Tcl_Interp *interp, int	objc, Tcl_Obj *cons
 	TnmOid oid;
 	SmiNode *childNode;
 	Tcl_Obj *elemObjPtr;
-	int i, len;
-	
+	unsigned int i;
+	Tcl_Size len;
+
 	if (objc < 3 || objc > 4) {
             Tcl_WrongNumArgs(interp, 2, objv, "node ?varName?");
             return TCL_ERROR;
@@ -1243,11 +1245,11 @@ Tnm_SmiObjCmd(ClientData clientData, Tcl_Interp *interp, int	objc, Tcl_Obj *cons
 	    || smiNode->nodekind == SMI_NODEKIND_COLUMN) {
 	    smiType = smiGetNodeType(smiNode);
 	    if (! smiType) {
-		panic("smiNode without smiType");
+		Tcl_Panic("smiNode without smiType");
 	    }
 	    smiModule = smiGetTypeModule(smiType);
 	    if (! smiModule) {
-		panic("smiType without smiModule");
+		Tcl_Panic("smiType without smiModule");
 	    }
 	    if (smiType->decl == SMI_DECL_IMPLICIT_TYPE) {
 		/*

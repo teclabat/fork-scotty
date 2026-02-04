@@ -82,7 +82,7 @@ static void
 MapDeleteProc	(ClientData clientData);
 
 static void
-MapDestroyProc	(char *memPtr);
+MapDestroyProc	(void *memPtr);
 
 static Tcl_Obj*
 GetOption	(Tcl_Interp *interp, ClientData object, 
@@ -877,7 +877,7 @@ MapDeleteProc(ClientData clientData)
  */
 
 static void
-MapDestroyProc(char *memPtr)
+MapDestroyProc(void *memPtr)
 {
     TnmMap *map = (TnmMap *) memPtr;
 
@@ -1372,7 +1372,8 @@ CopyMap(Tcl_Interp *interp, TnmMap *mapPtr, int objc, Tcl_Obj *const objv[])
     TnmMapItem *itemPtr, **itemv;
     Tcl_CmdInfo info;
     Tcl_Obj **elemPtrs;
-    int i, listLen, result;
+    Tcl_Size i, listLen;
+    int result;
 
     if (objc != 3) {
 	Tcl_WrongNumArgs(interp, 2, objv, "items");

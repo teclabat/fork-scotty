@@ -629,10 +629,10 @@ FindNextInstance(TnmSnmp *session, TnmOid *oidPtr)
 static int
 GetRequest(Tcl_Interp *interp, TnmSnmp *session, TnmSnmpPdu *request, TnmSnmpPdu *response)
 {
-    int i, code;
+    Tcl_Size i, vbListLen;
+    int code;
     TnmSnmpNode *inst;
     Tcl_Obj *vbList, **vbListElems;
-    int vbListLen;
 
     vbList = Tcl_NewStringObj(Tcl_DStringValue(&request->varbind), -1);
     code = Tcl_ListObjGetElements((Tcl_Interp *) NULL, vbList,

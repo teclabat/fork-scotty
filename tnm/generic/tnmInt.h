@@ -209,14 +209,14 @@ TnmGetInteger32FromObj	(Tcl_Interp *interp, Tcl_Obj *objPtr,
 TNM_EXTERN Tcl_ObjType tnmOctetStringType;
 
 TNM_EXTERN Tcl_Obj*
-TnmNewOctetStringObj	(char *bytes, int length);
+TnmNewOctetStringObj	(char *bytes, Tcl_Size length);
 
 TNM_EXTERN void
 TnmSetOctetStringObj	(Tcl_Obj *objPtr, char *bytes,
-				     int length);
+				     Tcl_Size length);
 TNM_EXTERN char*
 TnmGetOctetStringFromObj (Tcl_Interp *interp, Tcl_Obj *objPtr,
-				     int *lengthPtr);
+				     Tcl_Size *lengthPtr);
 
 TNM_EXTERN Tcl_ObjType tnmIpAddressType;
 
@@ -432,7 +432,7 @@ TNM_EXTERN void
 TnmHexEnc	(char *s, int n, char *d);
 
 TNM_EXTERN int
-TnmHexDec	(const char *s, char *d, int *n);
+TnmHexDec	(const char *s, char *d, Tcl_Size *n);
 
 /*
  *----------------------------------------------------------------

@@ -965,7 +965,7 @@ SaveMsg(TnmMapMsg *msgPtr)
     char buffer[80];
     Tcl_Obj *obj;
     char *str;
-    int len;
+    Tcl_Size len;
 
     if (! path && msgPtr->itemPtr) {
 	path = msgPtr->itemPtr->path;
@@ -1008,7 +1008,8 @@ SaveMsg(TnmMapMsg *msgPtr)
 int
 MatchMsg(TnmMapMsg *msgPtr, Tcl_Obj *storeList)
 {
-    int i, code, objc;
+    Tcl_Size i, objc;
+    int code;
     Tcl_Obj **objv;
 
     if (Tcl_ListObjGetElements(NULL, storeList, &objc, &objv) == TCL_OK) {
@@ -1045,7 +1046,7 @@ TnmMapExpireMsgs(TnmMapMsg **msgListPtr, long expireTime)
 {
     TnmMapMsg *msgPtr;
     char *s;
-    int len;
+    Tcl_Size len;
 
     for (msgPtr = *msgListPtr; msgPtr; msgPtr = msgPtr->nextPtr) {
         if (msgPtr->token && msgPtr->interp) {

@@ -115,11 +115,12 @@ AssocDeleteProc(ClientData clientData, Tcl_Interp *interp)
 static int
 IcmpRequest(Tcl_Interp *interp, Tcl_Obj *hosts, TnmIcmpRequest *icmpPtr)
 {
-    int i, code, objc;
+    Tcl_Size i, objc;
+    int code;
     struct sockaddr_in addr;
     static unsigned int lastTid = 1;
     Tcl_Obj *listPtr, **objv;
-    
+
     code = Tcl_ListObjGetElements(interp, hosts, &objc, &objv);
     if (code != TCL_OK) {
 	return TCL_ERROR;

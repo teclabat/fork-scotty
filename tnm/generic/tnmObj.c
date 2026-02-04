@@ -585,7 +585,7 @@ SetUnsigned32FromAny(interp, objPtr)
 {
     const Tcl_ObjType *oldTypePtr = objPtr->typePtr;
     char *string, *end, *p;
-    int length;
+    Tcl_Size length;
     TnmUnsigned32 u;
 
     /*
@@ -678,7 +678,7 @@ SetUnsigned32FromAny(interp, objPtr)
  */
 
 Tcl_Obj*
-TnmNewOctetStringObj(char *bytes, int length)
+TnmNewOctetStringObj(char *bytes, Tcl_Size length)
 {
     Tcl_Obj *objPtr = Tcl_NewObj();
     TnmSetOctetStringObj(objPtr, bytes, length);
@@ -705,7 +705,7 @@ TnmNewOctetStringObj(char *bytes, int length)
  */
 
 void
-TnmSetOctetStringObj(Tcl_Obj *objPtr, char *bytes, int length)
+TnmSetOctetStringObj(Tcl_Obj *objPtr, char *bytes, Tcl_Size length)
 {
     const Tcl_ObjType *oldTypePtr = objPtr->typePtr;
     size_t size = length;
@@ -747,7 +747,7 @@ TnmSetOctetStringObj(Tcl_Obj *objPtr, char *bytes, int length)
  */
 
 char*
-TnmGetOctetStringFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *lengthPtr)
+TnmGetOctetStringFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, Tcl_Size *lengthPtr)
 {
     int result;
 
@@ -758,7 +758,7 @@ TnmGetOctetStringFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *lengthPtr)
 	}
     }
 
-    *lengthPtr = (int) objPtr->internalRep.twoPtrValue.ptr2;
+    *lengthPtr = (Tcl_Size)(size_t) objPtr->internalRep.twoPtrValue.ptr2;
     return (char *) objPtr->internalRep.twoPtrValue.ptr1;
 }
 
@@ -877,7 +877,7 @@ SetOctetStringFromAny(interp, objPtr)
 {
     const Tcl_ObjType *oldTypePtr = objPtr->typePtr;
     char *string, *bytes;
-    int length;
+    Tcl_Size length;
 
     /*
      * Get the string representation. Make it up-to-date if necessary.
@@ -919,7 +919,7 @@ SetOctetStringFromAny(interp, objPtr)
     }
 
     objPtr->internalRep.twoPtrValue.ptr1 = (VOID *) bytes;
-    objPtr->internalRep.twoPtrValue.ptr2 = (VOID *) length;
+    objPtr->internalRep.twoPtrValue.ptr2 = (VOID *)(size_t) length;
     objPtr->typePtr = &tnmOctetStringType;
     return TCL_OK;
 }    
@@ -1102,7 +1102,7 @@ SetIpAddressFromAny(interp, objPtr)
 {
     const Tcl_ObjType *oldTypePtr = objPtr->typePtr;
     char *string;
-    int length;
+    Tcl_Size length;
     struct sockaddr_in inaddr;
 
     /*

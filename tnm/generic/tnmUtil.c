@@ -262,7 +262,8 @@ TnmGetTableKeyFromObj(Tcl_Interp *interp, TnmTable *table, Tcl_Obj *objPtr, char
 void
 TnmListFromList(Tcl_Obj *objPtr, Tcl_Obj *listPtr, char *pattern)
 {
-    int i, objc, code;
+    Tcl_Size i, objc;
+    int code;
     Tcl_Obj **objv;
 
     code = Tcl_ListObjGetElements(NULL, objPtr, &objc, &objv);
@@ -1427,10 +1428,7 @@ TnmHexEnc(char *s, int n, char *d)
  */
 
 int
-TnmHexDec(s, d, n)
-    const char *s;
-    char *d;
-    int *n;
+TnmHexDec(const char *s, char *d, Tcl_Size *n)
 {
     int v;
     char c;
@@ -1512,7 +1510,8 @@ TnmGetHandle(Tcl_Interp *interp, char *prefix, unsigned *id)
 int
 TnmMatchTags(Tcl_Interp *interp, Tcl_Obj *tagListObj, Tcl_Obj *patternListObj)
 {
-    int i, j, code, tagLen, patLen;
+    Tcl_Size i, j, tagLen, patLen;
+    int code;
     Tcl_Obj **tagPtrs, **patPtrs;
     int match = 0;
 
@@ -1559,7 +1558,8 @@ TnmMatchTags(Tcl_Interp *interp, Tcl_Obj *tagListObj, Tcl_Obj *patternListObj)
 int
 TnmMkDir(Tcl_Interp *interp, Tcl_Obj *obj)
 {
-    int result = TCL_OK, j, pobjc;
+    int result = TCL_OK;
+    Tcl_Size j, pobjc;
     Tcl_Obj *split = NULL;
     Tcl_Obj *target = NULL;
     Tcl_Obj *errfile = NULL;

@@ -304,7 +304,8 @@ static int
 EncodeMessage(Tcl_Interp *interp, TnmSnmp *session, TnmSnmpPdu *pdu, TnmBer *ber)
 {
     u_char *seqToken;
-    int version = 0, parameterLen = 0;
+    int version = 0;
+    Tcl_Size parameterLen = 0;
     u_char *parameter = NULL;
 #ifdef TNM_SNMPv2U
 #define PARAM_MAX_LENGTH 340
@@ -471,7 +472,7 @@ EncodeUsmSecParams(TnmSnmp *session, TnmSnmpPdu *pdu, int *lengthPtr)
 {
     u_char *seqToken;
     char *user, *engineID;
-    int userLength, engineIDLength;
+    Tcl_Size userLength, engineIDLength;
     static u_char buffer[TNM_SNMP_MAXSIZE];
     TnmBer *ber;
 
@@ -549,7 +550,7 @@ EncodeScopedPDU(Tcl_Interp *interp, TnmSnmp *session, TnmSnmpPdu *pdu, TnmBer *b
 {
     u_char *seqToken;
     char *context, *engineID;
-    int contextLength, engineIDLength;
+    Tcl_Size contextLength, engineIDLength;
 
     ber = TnmBerEncSequenceStart(ber, ASN1_SEQUENCE, &seqToken);
 
@@ -591,7 +592,7 @@ EncodeUsecParameter(TnmSnmp *session, TnmSnmpPdu *pdu, u_char *parameter)
 {
     u_char *p = parameter, *context, *user;
     u_int boots = 0, clock = 0;
-    int contextLength, userLength;
+    Tcl_Size contextLength, userLength;
 
     /* 
      * The first byte is the model indicator, which is 0 for the USEC 
@@ -804,7 +805,7 @@ EncodePDU(Tcl_Interp *interp, TnmSnmp *session, TnmSnmpPdu *pdu, TnmBer *ber)
 {    
     u_char *pduSeqToken, *vbSeqToken, *vblSeqToken;
     
-    int i, vblc, vbc;
+    Tcl_Size i, vblc, vbc;
     const char **vblv, **vbv;
 
     Tnm_Oid *oid;
@@ -1103,7 +1104,7 @@ EncodePDU(Tcl_Interp *interp, TnmSnmp *session, TnmSnmpPdu *pdu, TnmBer *ber)
 	    }
 	    case ASN1_OCTET_STRING: {
 		const char *hex = value, *scan;
-		int len;
+		Tcl_Size len;
 		static char *bin = NULL;
 		static size_t binLen = 0;
 		/* quick test for empty strings ... */
@@ -1133,7 +1134,7 @@ EncodePDU(Tcl_Interp *interp, TnmSnmp *session, TnmSnmpPdu *pdu, TnmBer *ber)
 	    }
 	    case ASN1_OPAQUE: {
 		const char *hex = value;
-		int len;
+		Tcl_Size len;
 		static char *bin = NULL;
 		static size_t binLen = 0;
 		if (*hex) {

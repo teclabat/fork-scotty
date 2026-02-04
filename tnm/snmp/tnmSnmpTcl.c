@@ -601,7 +601,8 @@ static int
 SetOption(Tcl_Interp *interp, ClientData object, int option, Tcl_Obj *objPtr)
 {
     TnmSnmp *session = (TnmSnmp *) object;
-    int num, len;
+    int num;
+    Tcl_Size len;
 #ifdef TNM_SNMPv2U
     char *val;
 #endif
@@ -2345,7 +2346,7 @@ AsyncWalkProc(TnmSnmp *session, TnmSnmpPdu *pdu, ClientData clientData)
     AsyncToken *atPtr = (AsyncToken *) clientData;
     Tcl_Interp *interp = atPtr->interp;
     Tcl_Obj *vbList, *newList, **vbListElems, **oidListElems;
-    int vbListLen, oidListLen;
+    Tcl_Size vbListLen, oidListLen;
 
 #if 0
     if (pdu->errorStatus == TNM_SNMP_NOSUCHNAME) {
@@ -2428,10 +2429,10 @@ static int
 AsyncWalk(Tcl_Interp *interp, TnmSnmp *session, Tcl_Obj *oidList, Tcl_Obj *tclCmd)
 {
     TnmSnmpPdu pdu;
-    int i, result;
+    Tcl_Size i, oidListLen;
+    int result;
     AsyncToken *atPtr;
 
-    int oidListLen;
     Tcl_Obj **oidListElems;
     
     /*
@@ -2504,10 +2505,10 @@ AsyncWalk(Tcl_Interp *interp, TnmSnmp *session, Tcl_Obj *oidList, Tcl_Obj *tclCm
 static int
 SyncWalk(Tcl_Interp *interp, TnmSnmp *session, Tcl_Obj *varName, Tcl_Obj *oidList, Tcl_Obj *tclCmd)
 {
-    int i, j, result;
+    Tcl_Size i, j, oidListLen, vbListLen;
+    int result;
     TnmSnmpPdu pdu;
     int numRepeaters = 0;
-    int oidListLen, vbListLen;
     Tcl_Obj **oidListElems, **vbListElems, *vbList;
 
     /* 
@@ -2688,13 +2689,10 @@ SyncWalk(Tcl_Interp *interp, TnmSnmp *session, Tcl_Obj *varName, Tcl_Obj *oidLis
  */
 
 static int
-Delta(interp, obj1Ptr, obj2Ptr)
-    Tcl_Interp *interp;
-    Tcl_Obj *obj1Ptr;
-    Tcl_Obj *obj2Ptr;
+Delta(Tcl_Interp *interp, Tcl_Obj *obj1Ptr, Tcl_Obj *obj2Ptr)
 {
     Tcl_Obj *vbl1Ptr = NULL, *vbl2Ptr = NULL;
-    int i, objc1, objc2;
+    Tcl_Size i, objc1, objc2;
     Tcl_Obj **objv1, **objv2;
     
     /*
@@ -2753,10 +2751,11 @@ Delta(interp, obj1Ptr, obj2Ptr)
     }
 
     for (i = 0; i < objc1; i++) {
-	int dummy, type1, type2;
+	Tcl_Size dummy;
+	int type1, type2;
 	Tcl_Obj **vbv1, **vbv2, *listPtr;
 	TnmOid *oid1Ptr, *oid2Ptr;
-	
+
 	(void) Tcl_ListObjGetElements(interp, objv1[i], &dummy, &vbv1);
 	(void) Tcl_ListObjGetElements(interp, objv2[i], &dummy, &vbv2);
 	oid1Ptr = TnmGetOidFromObj(interp, vbv1[0]);
@@ -2847,7 +2846,8 @@ Extract(Tcl_Interp *interp, int what, Tcl_Obj *objPtr, Tcl_Obj *indexObjPtr)
 {
     Tcl_Obj *listPtr;
     Tcl_Obj **objv, **vbv;
-    int i, objc, vbc, index = -1;
+    Tcl_Size i, objc, vbc;
+    int index = -1;
 
     if (what < 0 || what > 2) {
 	Tcl_Panic("illegal selection value passed to Extract()");

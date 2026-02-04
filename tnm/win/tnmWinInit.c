@@ -75,11 +75,11 @@ EXPORT(int,Tnm_SafeInit)	(Tcl_Interp *interp);
 
 #ifdef __WIN32__
 BOOL APIENTRY
-DllEntryPoint(hInst, reason, reserved)
-    HINSTANCE hInst;		/* Library instance handle. */
-    DWORD reason;		/* Reason this function is being called. */
-    LPVOID reserved;		/* Not used. */
+DllEntryPoint(HINSTANCE hInst, DWORD reason, LPVOID reserved)
 {
+    (void)hInst;
+    (void)reason;
+    (void)reserved;
     return TRUE;
 }
 #endif
@@ -355,8 +355,7 @@ TnmInitDns(Tcl_Interp *interp)
  *----------------------------------------------------------------------
  */
 
-EXPORT(int,Tnm_Init)(interp)
-    Tcl_Interp *interp;
+EXPORT(int,Tnm_Init)(Tcl_Interp *interp)
 {
     return TnmInit(interp, 0);
 }
@@ -378,9 +377,19 @@ EXPORT(int,Tnm_Init)(interp)
  *----------------------------------------------------------------------
  */
 
-EXPORT(int,Tnm_SafeInit)(interp)
-    Tcl_Interp *interp;
+EXPORT(int,Tnm_SafeInit)(Tcl_Interp *interp)
 {
     return TnmInit(interp, 1);
+}
+
+/* Tcl 9 lowercase aliases */
+EXPORT(int,tnm_Init)(Tcl_Interp *interp)
+{
+    return Tnm_Init(interp);
+}
+
+EXPORT(int,tnm_SafeInit)(Tcl_Interp *interp)
+{
+    return Tnm_SafeInit(interp);
 }
 
