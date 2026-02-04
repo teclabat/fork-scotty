@@ -779,7 +779,7 @@ CreateMap(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
     code = TnmSetConfig(interp, &configTable, (ClientData) mapPtr,
 			objc, objv);
     if (code != TCL_OK) {
-	Tcl_EventuallyFree((ClientData) mapPtr, MapDestroyProc);
+	Tcl_EventuallyFree((ClientData) mapPtr, (Tcl_FreeProc *) MapDestroyProc);
         return TCL_ERROR;
     }
 
@@ -855,7 +855,7 @@ MapDeleteProc(ClientData clientData)
 	(*mapPtrPtr) = mapPtr->nextPtr;
     }
 
-    Tcl_EventuallyFree((ClientData) mapPtr, MapDestroyProc);
+    Tcl_EventuallyFree((ClientData) mapPtr, (Tcl_FreeProc *) MapDestroyProc);
 }
 
 /*

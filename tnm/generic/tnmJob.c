@@ -262,7 +262,7 @@ DeleteProc(ClientData clientData)
 	(*jobPtrPtr) = jobPtr->nextPtr;
     }
 
-    Tcl_EventuallyFree((ClientData) jobPtr, DestroyProc);
+    Tcl_EventuallyFree((ClientData) jobPtr, (Tcl_FreeProc *) DestroyProc);
 }
 
 /*
@@ -643,7 +643,7 @@ CreateJob(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 
     code = TnmSetConfig(interp, &config, (ClientData) jobPtr, objc, objv);
     if (code != TCL_OK) {
-	Tcl_EventuallyFree((ClientData) jobPtr, DestroyProc);
+	Tcl_EventuallyFree((ClientData) jobPtr, (Tcl_FreeProc *) DestroyProc);
         return TCL_ERROR;
     }
 

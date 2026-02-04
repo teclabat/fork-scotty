@@ -981,13 +981,13 @@ TnmSnmpDeleteSession(TnmSnmp *session)
 	    if (request->timer) {
 	        Tcl_DeleteTimerHandler(request->timer);
 	    }
-	    Tcl_EventuallyFree((ClientData) request, RequestDestroyProc);
+	    Tcl_EventuallyFree((ClientData) request, (Tcl_FreeProc *) RequestDestroyProc);
 	} else {
 	    rPtrPtr = &(*rPtrPtr)->nextPtr;
 	}
     }
 
-    Tcl_EventuallyFree((ClientData) session, SessionDestroyProc);
+    Tcl_EventuallyFree((ClientData) session, (Tcl_FreeProc *) SessionDestroyProc);
 }
 
 /*
@@ -1217,7 +1217,7 @@ TnmSnmpDeleteRequest(TnmSnmpRequest *request)
 	    Tcl_DeleteTimerHandler(request->timer);
 	    request->timer = NULL;
 	}
-	Tcl_EventuallyFree((ClientData) request, RequestDestroyProc);
+	Tcl_EventuallyFree((ClientData) request, (Tcl_FreeProc *) RequestDestroyProc);
     }
 
     /*

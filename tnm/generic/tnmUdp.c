@@ -209,7 +209,7 @@ DeleteProc(ClientData clientData)
 	(*udpPtrPtr) = udpPtr->nextPtr;
     }
 
-    Tcl_EventuallyFree((ClientData) udpPtr, DestroyProc);
+    Tcl_EventuallyFree((ClientData) udpPtr, (Tcl_FreeProc *) DestroyProc);
 }
 
 /*
@@ -369,7 +369,7 @@ UdpCreate(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
     if (udpPtr->sock == TNM_SOCKET_ERROR) {
 	Tcl_AppendResult(interp, "could not create socket: ", 
 			 Tcl_PosixError(interp), (char *) NULL);
-	Tcl_EventuallyFree((ClientData) udpPtr, DestroyProc);
+	Tcl_EventuallyFree((ClientData) udpPtr, (Tcl_FreeProc *) DestroyProc);
 	return TCL_ERROR;
     }
 
@@ -405,7 +405,7 @@ UdpCreate(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 
     code = TnmSetConfig(interp, &config, (ClientData) udpPtr, objc, objv);
     if (code != TCL_OK) {
-	Tcl_EventuallyFree((ClientData) udpPtr, DestroyProc);
+	Tcl_EventuallyFree((ClientData) udpPtr, (Tcl_FreeProc *) DestroyProc);
         return TCL_ERROR;
     }
 
@@ -418,7 +418,7 @@ UdpCreate(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 	    Tcl_ResetResult(interp);
 	    Tcl_AppendResult(interp, "can not bind socket: ",
 			     Tcl_PosixError(interp), (char *) NULL);
-	    Tcl_EventuallyFree((ClientData) udpPtr, DestroyProc);
+	    Tcl_EventuallyFree((ClientData) udpPtr, (Tcl_FreeProc *) DestroyProc);
 	    return TCL_ERROR;
 	}
     }
