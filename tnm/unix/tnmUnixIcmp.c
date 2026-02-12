@@ -20,13 +20,9 @@
 #include "tnmInt.h"
 #include "tnmPort.h"
 
-/*
- * The default filename where we will find the nmicmpd binary. This
- * is normally overwritten in the Makefile.
- */
-
-#ifndef NMICMPD
-#define NMICMPD "/usr/local/bin/nmicmpd"
+#include <limits.h>
+#ifndef PATH_MAX
+#define PATH_MAX 4096
 #endif
 
 /*
@@ -96,10 +92,27 @@ ForkDaemon(Tcl_Interp *interp)
 {
     int argc = 1;
     const char *argv[2];
+    static char nmicmpd_buf[PATH_MAX];
 
-    argv[0] = getenv("TNM_NMICMPD");
+    /*
+     * Locate nmicmpd relative to the running executable
+     * (i.e. in the same bin/ directory).
+     */
+    argv[0] = NULL;
+    if (Tcl_Eval(interp,
+	    "file normalize [file join [file dirname"
+	    " [info nameofexecutable]] nmicmpd]") == TCL_OK) {
+	const char *path = Tcl_GetStringResult(interp);
+	if (path && access(path, X_OK) == 0) {
+	    strncpy(nmicmpd_buf, path, PATH_MAX - 1);
+	    nmicmpd_buf[PATH_MAX - 1] = '\0';
+	    argv[0] = nmicmpd_buf;
+	}
+    }
+    Tcl_ResetResult(interp);
     if (! argv[0]) {
-	argv[0] = NMICMPD;
+	Tcl_SetResult(interp, "cannot find nmicmpd next to executable", TCL_STATIC);
+	return TCL_ERROR;
     }
     argv[1] = NULL;
 

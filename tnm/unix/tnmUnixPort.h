@@ -24,15 +24,6 @@
 #include <config.h>
 
 /*
- * The default directory name where we will find the tnm library
- * files. This is normally overwritten in the Makefile.
- */
-
-#ifndef TNMLIB
-#define TNMLIB "/usr/local/lib/tnm"
-#endif
-
-/*
  *----------------------------------------------------------------
  * UNIX related includes.
  *----------------------------------------------------------------

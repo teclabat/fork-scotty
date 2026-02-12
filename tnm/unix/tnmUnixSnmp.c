@@ -21,16 +21,12 @@
 
 #include "tnmSnmp.h"
 
-extern int hexdump;		/* flag that controls hexdump */
-
-/*
- * The default filename where we will find the nmtrapd binary. This
- * is normally overwritten in the Makefile.
- */
-
-#ifndef NMTRAPD
-#define NMTRAPD "/usr/local/bin/nmtrapd"
+#include <limits.h>
+#ifndef PATH_MAX
+#define PATH_MAX 4096
 #endif
+
+extern int hexdump;		/* flag that controls hexdump */
 
 /*
  * The following variable holds the channel used to access
@@ -83,10 +79,27 @@ ForkDaemon(Tcl_Interp *interp)
 {
     int argc = 1;
     const char *argv[2];
+    static char nmtrapd_buf[PATH_MAX];
 
-    argv[0] = getenv("TNM_NMTRAPD");
+    /*
+     * Locate nmtrapd relative to the running executable
+     * (i.e. in the same bin/ directory).
+     */
+    argv[0] = NULL;
+    if (Tcl_Eval(interp,
+	    "file normalize [file join [file dirname"
+	    " [info nameofexecutable]] nmtrapd]") == TCL_OK) {
+	const char *path = Tcl_GetStringResult(interp);
+	if (path && access(path, X_OK) == 0) {
+	    strncpy(nmtrapd_buf, path, PATH_MAX - 1);
+	    nmtrapd_buf[PATH_MAX - 1] = '\0';
+	    argv[0] = nmtrapd_buf;
+	}
+    }
+    Tcl_ResetResult(interp);
     if (! argv[0]) {
-	argv[0] = NMTRAPD;
+	Tcl_SetResult(interp, "cannot find nmtrapd next to executable", TCL_STATIC);
+	return TCL_ERROR;
     }
     argv[1] = NULL;
 

@@ -27,8 +27,8 @@
  */
 
 static char*
-FindPath		(Tcl_Interp *interp, char *path,
-				     char *name, char* version);
+FindPathRelativeToExe	(Tcl_Interp *interp,
+				     char *name, char *version);
 static void
 FindProc		(Tcl_Interp *interp, char *name, const char *version);
 EXTERN int
@@ -37,17 +37,21 @@ Tnm_Init		(Tcl_Interp *interp);
 EXTERN int
 Tnm_SafeInit		(Tcl_Interp *interp);
 
-
+
 /*
  *----------------------------------------------------------------------
  *
- * FindPath --
+ * FindPathRelativeToExe --
  *
- *	This procedure searches for the path where an extension
- *	is installed.
+ *	This procedure tries to locate a library directory relative
+ *	to the running executable, using the convention:
+ *	    <exe_dir>/../lib/<name><version>
+ *	This mirrors the approach used on Windows in tnmWinInit.c
+ *	and makes the library relocatable.
  *
  * Results:
- *	A pointer to a string containing the "best guess".
+ *	A pointer to an allocated string with the path, or NULL
+ *	if the directory was not found.
  *
  * Side effects:
  *	None.
@@ -56,50 +60,30 @@ Tnm_SafeInit		(Tcl_Interp *interp);
  */
 
 static char*
-FindPath(Tcl_Interp *interp, char *path, char *name, char *version)
+FindPathRelativeToExe(Tcl_Interp *interp, char *name, char *version)
 {
-    const char *pkgPath;
-    int code, largc, i;
-    const char **largv;
-    Tcl_DString ds;
-    
-    if (access(path, R_OK | X_OK) == 0) {
-	return path;
-    }
+    Tcl_DString cmd;
+    char *result = NULL;
 
-    /*
-     * Try to locate the installation directory by reading
-     * the tcl_pkgPath variable.
-     */
-    
-    pkgPath = Tcl_GetVar(interp, "tcl_pkgPath", TCL_GLOBAL_ONLY);
-    if (! pkgPath) {
-	return path;
-    }
+    Tcl_DStringInit(&cmd);
+    Tcl_DStringAppend(&cmd,
+	"file normalize [file join [file dirname [info nameofexecutable]]"
+	" .. lib ", -1);
+    Tcl_DStringAppend(&cmd, name, -1);
+    Tcl_DStringAppend(&cmd, version, -1);
+    Tcl_DStringAppend(&cmd, "]", 1);
 
-    code = Tcl_SplitList(interp, pkgPath, &largc, &largv);
-    if (code != TCL_OK) {
-	return path;
-    }
-
-    Tcl_DStringInit(&ds);
-    for (i = 0; i < largc; i++) {
-	Tcl_DStringAppend(&ds, largv[i], -1);
-	Tcl_DStringAppend(&ds, "/", 1);
-	Tcl_DStringAppend(&ds, name, -1);
-	Tcl_DStringAppend(&ds, version, -1);
-	if (access(Tcl_DStringValue(&ds), R_OK | X_OK) == 0) {
-	    path = ckstrdup(Tcl_DStringValue(&ds));
-	    Tcl_DStringFree(&ds);
-	    break;
+    if (Tcl_Eval(interp, Tcl_DStringValue(&cmd)) == TCL_OK) {
+	const char *path = Tcl_GetStringResult(interp);
+	if (path && access(path, R_OK | X_OK) == 0) {
+	    result = ckstrdup(path);
 	}
-	Tcl_DStringFree(&ds);
     }
-    ckfree((char *) largv);
-
-    return path;
+    Tcl_ResetResult(interp);
+    Tcl_DStringFree(&cmd);
+    return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -148,14 +132,14 @@ FindProc(Tcl_Interp *interp, char *name, const char *version)
     }
 
     if (found) {
-	Tcl_SetVar2(interp, "tnm", name, 
+	Tcl_SetVar2(interp, "tnm", name,
 		    Tcl_DStringValue(&ds), TCL_GLOBAL_ONLY);
     }
 
     Tcl_DStringFree(&ds);
     ckfree(path);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -178,11 +162,8 @@ TnmInitPath(Tcl_Interp *interp)
 {
     const char *path, *version;
 
-    path = getenv("TNM_LIBRARY");
-    if (! path) {
-	path = FindPath(interp, TNMLIB, "tnm", TNM_VERSION);
-    }
-    Tcl_SetVar2(interp, "tnm", "library", path, TCL_GLOBAL_ONLY);
+    path = FindPathRelativeToExe(interp, "tnm", TNM_VERSION);
+    Tcl_SetVar2(interp, "tnm", "library", path ? path : "", TCL_GLOBAL_ONLY);
 
     /*
      * Also initialize the tkined(library) variable which is used
@@ -190,11 +171,8 @@ TnmInitPath(Tcl_Interp *interp)
      * be removed once Tkined gets integrated into Tnm.
      */
 
-    path = getenv("TKINED_LIBRARY");
-    if (! path) {
-	path = FindPath(interp, TKINEDLIB, "tkined", TKI_VERSION);
-    }
-    Tcl_SetVar2(interp, "tkined", "library", path, TCL_GLOBAL_ONLY);
+    path = FindPathRelativeToExe(interp, "Tkined", TKI_VERSION);
+    Tcl_SetVar2(interp, "tkined", "library", path ? path : "", TCL_GLOBAL_ONLY);
 
     /*
      * Locate tclsh and wish so that we can start additional
@@ -210,7 +188,7 @@ TnmInitPath(Tcl_Interp *interp)
 	FindProc(interp, "wish", version);
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -251,7 +229,7 @@ TnmInitDns(Tcl_Interp *interp)
     }
     Tcl_SetVar2(interp, "tnm", "domain", domain, TCL_GLOBAL_ONLY);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -281,7 +259,7 @@ Tnm_Init(Tcl_Interp *interp)
 
     return code;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -304,5 +282,3 @@ Tnm_SafeInit(Tcl_Interp *interp)
 {
     return TnmInit(interp, 1);
 }
-
-

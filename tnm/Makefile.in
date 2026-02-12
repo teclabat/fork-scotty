@@ -17,16 +17,16 @@
 # have been added to the configure script.
 #========================================================================
 
-PACKAGE_NAME		= @PACKAGE_NAME@
-PACKAGE_VERSION		= @PACKAGE_VERSION@
+PACKAGE_NAME        = @PACKAGE_NAME@
+PACKAGE_VERSION     = @PACKAGE_VERSION@
 TNM_VERSION         = @TNM_VERSION@
 
 # Used to pin calls to tclsh to the version used in the build.
 # TODO: with stubs build this should not be needed.
-TCL_VERSION =	@TCL_VERSION@
+TCL_VERSION  = @TCL_VERSION@
 
 # Used to hardcode the path to tkined inside libTnm.
-TKI_VERSION  =	@TKI_VERSION@
+TKI_VERSION  = @TKI_VERSION@
 
 #========================================================================
 # Nothing of the variables below this line should need to be changed.
@@ -168,7 +168,7 @@ EXTRA_PATH	= $(top_builddir):$(TCL_BIN_DIR)
 EXTRA_EXTRA_PATH	= $(top_builddir):$(TCL_BIN_DIR):$(TK_BIN_DIR)
 TCLLIBPATH	= $(top_builddir)
 TCLSH_ENV	= TCL_LIBRARY=$(TCL_SRC_DIR)/library
-TNM_ENV		= TNM_LIBRARY=$(srcdir)
+TNM_ENV		=
 PKG_ENV		= @LD_LIBRARY_PATH_VAR@="$(EXTRA_PATH):$(@LD_LIBRARY_PATH_VAR@)" \
 		  PATH="$(EXTRA_PATH):$(PATH)" \
 		  TCLLIBPATH="$(TCLLIBPATH)"
@@ -256,28 +256,12 @@ all: binaries libraries doc
 # 
 # tnmSunRpc.o: tnmSunRpc.c mount.h ether.h rstat.h pcnfsd.h
 
-# tnmUnixInit initialize tkined(library) with TKI_INSTALL_DIR and uses
-# TNM_INSTALL_DIR
-# So we need a special treatment of this target.
-#--------------------------------------------------------------------
-
 # Directory in which to install library files belonging to the extension.
 # TNM_INSTALL_DIR =	$(INSTALL_ROOT)$(prefix)/lib/tnm$(TNM_VERSION)
 TNM_INSTALL_DIR	= $(pkglibdir)
 
 # Directory in which to install the library of tkined scripts.
 TKI_INSTALL_DIR =	$(INSTALL_ROOT)$(prefix)/lib/Tkined$(TKI_VERSION)
-
-tnmUnixInit.o: tnmUnixInit.c
-	$(COMPILE) -DTNMLIB=\"$(TNM_INSTALL_DIR)\" -DTKINEDLIB=\"$(TKI_INSTALL_DIR)\" -c $< -o $@
-
-NMICMPD	= $(bindir)/nmicmpd
-tnmUnixIcmp.o: tnmUnixIcmp.c
-	$(COMPILE) -DNMICMPD=\"$(NMICMPD)\" -c $< -o $@
-
-NMTRAPD	= $(bindir)/nmtrapd
-tnmUnixSnmp.o: tnmUnixSnmp.c
-	$(COMPILE) -DNMTRAPD=\"$(NMICMPD)\" -c $< -o $@
 
 
 # scotty et al
@@ -595,9 +579,8 @@ install-doc: doc
 	done
 
 test: binaries libraries
-	$(TNM_ENV) $(TCLSH) $(srcdir)/tests/all.tcl $(TESTFLAGS) \
-		-load "package ifneeded ${PACKAGE_NAME} ${PACKAGE_VERSION} \
-			[list load $(PKG_LIB_FILE) $(PACKAGE_NAME)]"
+	$(bindir)/tclsh $(srcdir)/tests/all.tcl $(TESTFLAGS) \
+		-load "package require tnm"
 
 shell: binaries libraries
 	@$(TNM_ENV) $(TCLSH) $(SCRIPT)
